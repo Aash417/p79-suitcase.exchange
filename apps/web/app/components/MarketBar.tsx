@@ -1,14 +1,20 @@
-import { SYMBOLS } from '../utils/constants';
 import { Ticker } from '../utils/types';
+import { MarketTicker } from './ticker';
 
-export default async function MarketBar() {
+type Props = {
+   market: string;
+};
+
+export default async function MarketBar({ market }: Readonly<Props>) {
    const tic = await fetch('https://api.backpack.exchange/api/v1/tickers');
+
    const res = await tic.json();
-   const ticker = res.find((t: Ticker) => t.symbol === SYMBOLS[12]);
+   const ticker = res.find((t: Ticker) => t.symbol === market);
 
    return (
       <div className="flex items-center justify-between flex-row no-scrollbar overflow-auto pr-4">
-         {/* <Ticker market={market} /> */}
+         <MarketTicker market={market} />
+
          <div className="flex items-center flex-row space-x-8 pl-4">
             <div className="flex flex-col h-full justify-center">
                <p
