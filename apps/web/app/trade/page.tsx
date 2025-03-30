@@ -1,13 +1,13 @@
 import KlineChart from '../components/klineChart';
 import MarketBar from '../components/MarketBar';
+import Orderbook from '../components/orderbook';
 import { SYMBOLS } from '../utils/constants';
-import { getKlines } from '../utils/httpClients';
+import { getDepth, getKlines } from '../utils/httpClients';
 
 export default async function Market() {
    const market = SYMBOLS[11]!; // 'ETH_USDC'
    const klineData = await getKlines(market);
-
-   console.log('klineData :', klineData);
+   const depthdata = await getDepth(market);
 
    return (
       <div className="h-screen w-full rounded-md m-2">
@@ -25,12 +25,12 @@ export default async function Market() {
                   </div>
 
                   {/* Bottom row with columns */}
-                  <div className="col-span-2 bg-green-300 h-full rounded-md">
+                  <div className="col-span-2 bg-[#14151b] h-full rounded-md">
                      <KlineChart market={market} klineData={klineData} />
                   </div>
-                  <div className="bg-red-700 h-full rounded-md">
+                  <div className="bg-[#14151b] h-full rounded-md">
                      <div className="w-55">
-                        hello world how are you the test ground
+                        <Orderbook market={market} depthdata={depthdata} />
                      </div>
                   </div>
                </div>

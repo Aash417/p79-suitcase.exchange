@@ -1,4 +1,4 @@
-import { KLine } from './types';
+import { Depth, KLine } from './types';
 
 export async function getKlines(market: string): Promise<KLine[]> {
    const kline = await fetch(
@@ -7,4 +7,12 @@ export async function getKlines(market: string): Promise<KLine[]> {
    const klineData: KLine[] = await kline.json();
 
    return klineData.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
+}
+
+export async function getDepth(market: string): Promise<Depth> {
+   const depth = await fetch(
+      `https://api.backpack.exchange/api/v1/depth?symbol=${market}`,
+   );
+
+   return await depth.json();
 }

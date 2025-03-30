@@ -13,8 +13,6 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
    const chartRef = useRef<HTMLDivElement>(null);
    const chartManagerRef = useRef<ChartManager>(null);
 
-   console.log('init chart', klineData);
-
    useEffect(() => {
       const init = async () => {
          if (chartRef) {

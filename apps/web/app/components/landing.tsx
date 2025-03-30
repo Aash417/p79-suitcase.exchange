@@ -60,7 +60,7 @@ export default function LandingPage() {
                      {/* </a> */}
 
                      <Link
-                        href="/markets"
+                        href="/trade"
                         title=""
                         className="inline-flex items-center justify-center px-3 sm:px-5 py-2.5 text-sm sm:text-base font-semibold transition-all duration-200 text-white bg-white/20 hover:bg-white/40 focus:bg-white/40 rounded-lg"
                         role="button"
@@ -130,7 +130,7 @@ export default function LandingPage() {
                   </h1>
 
                   <Link
-                     href="/markets"
+                     href="/trade"
                      title=""
                      className="inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg sm:mt-16 hover:bg-blue-700 focus:bg-blue-700"
                      role="button"

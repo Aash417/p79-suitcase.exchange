@@ -22,3 +22,10 @@ export interface KLine {
    trades: string;
    volume: string;
 }
+
+export interface Depth {
+   bids: [string, string][];
+   asks: [string, string][];
+   lastUpdateId: string;
+   timestamp: number;
+}
