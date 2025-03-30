@@ -1,6 +1,7 @@
 import KlineChart from '../components/klineChart';
 import MarketBar from '../components/MarketBar';
 import Orderbook from '../components/orderbook';
+import SwapForm from '../components/swapForm';
 import { SYMBOLS } from '../utils/constants';
 import { getDepth, getKlines } from '../utils/httpClients';
 
@@ -37,7 +38,9 @@ export default async function Market() {
             </div>
 
             {/* Right panel */}
-            <div className="basis-[28vw] bg-cyan-500 rounded-md">two</div>
+            <div className="basis-[28vw] bg-[#14151b] rounded-md">
+               <SwapForm market={market} />
+            </div>
          </div>
       </div>
    );

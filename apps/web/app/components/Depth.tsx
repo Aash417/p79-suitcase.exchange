@@ -3,13 +3,12 @@
 import { useEffect, useState } from 'react';
 import {
    getDepth,
-   getKlines,
    getTicker,
-   getTrades,
+   getTrades
 } from '../../utils/httpClient';
-import { BidTable } from './BidTable';
-import { AskTable } from './AskTable';
 import { SignalingManager } from '../../utils/SignalingManager';
+import { AskTable } from './AskTable';
+import { BidTable } from './BidTable';
 
 export function Depth({ market }: { market: string }) {
    const [bids, setBids] = useState<[string, string][]>();
@@ -27,10 +26,12 @@ export function Depth({ market }: { market: string }) {
                const bidsAfterUpdate = [...(originalBids || [])];
 
                for (let i = 0; i < bidsAfterUpdate.length; i++) {
-                  for (let j = 0; j < data.bids.length; j++) {
-                     if (bidsAfterUpdate[i][0] === data.bids[j][0]) {
-                        bidsAfterUpdate[i][1] = data.bids[j][1];
-                        if (Number(bidsAfterUpdate[i][1]) === 0) {
+                  for (const element of data.bids) {
+                     if (bidsAfterUpdate[i] && bidsAfterUpdate[i][0] === element[0]) {
+                        if (bidsAfterUpdate[i]) {
+                           bidsAfterUpdate[i][1] = element[1];
+                        }
+                        if (bidsAfterUpdate[i] && Number(bidsAfterUpdate[i][1]) === 0) {
                            bidsAfterUpdate.splice(i, 1);
                         }
                         break;
@@ -38,12 +39,12 @@ export function Depth({ market }: { market: string }) {
                   }
                }
 
-               for (let j = 0; j < data.bids.length; j++) {
+               for (const element of data.bids) {
                   if (
-                     Number(data.bids[j][1]) !== 0 &&
-                     !bidsAfterUpdate.map((x) => x[0]).includes(data.bids[j][0])
+                     Number(element[1]) !== 0 &&
+                     !bidsAfterUpdate.map((x) => x[0]).includes(element[0])
                   ) {
-                     bidsAfterUpdate.push(data.bids[j]);
+                     bidsAfterUpdate.push(element);
                      break;
                   }
                }
@@ -57,10 +58,10 @@ export function Depth({ market }: { market: string }) {
                const asksAfterUpdate = [...(originalAsks || [])];
 
                for (let i = 0; i < asksAfterUpdate.length; i++) {
-                  for (let j = 0; j < data.asks.length; j++) {
-                     if (asksAfterUpdate[i][0] === data.asks[j][0]) {
-                        asksAfterUpdate[i][1] = data.asks[j][1];
-                        if (Number(asksAfterUpdate[i][1]) === 0) {
+                  for (const ask of data.asks || []) {
+                     if (asksAfterUpdate[i]?.[0] === ask?.[0]) {
+                        asksAfterUpdate[i][1] = ask[1];
+                        if (Number(asksAfterUpdate[i]?.[1]) === 0) {
                            asksAfterUpdate.splice(i, 1);
                         }
                         break;
@@ -68,12 +69,12 @@ export function Depth({ market }: { market: string }) {
                   }
                }
 
-               for (let j = 0; j < data.asks.length; j++) {
+               for (const element of data.asks) {
                   if (
-                     Number(data.asks[j][1]) !== 0 &&
-                     !asksAfterUpdate.map((x) => x[0]).includes(data.asks[j][0])
+                     Number(element[1]) !== 0 &&
+                     !asksAfterUpdate.map((x) => x[0]).includes(element[0])
                   ) {
-                     asksAfterUpdate.push(data.asks[j]);
+                     asksAfterUpdate.push(element);
                      break;
                   }
                }

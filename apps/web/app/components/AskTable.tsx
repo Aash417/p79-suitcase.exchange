@@ -34,12 +34,12 @@ function Ask({
    quantity,
    total,
    maxTotal,
-}: {
+}: Readonly<{
    price: string;
    quantity: string;
    total: number;
    maxTotal: number;
-}) {
+}>) {
    return (
       <div
          style={{
