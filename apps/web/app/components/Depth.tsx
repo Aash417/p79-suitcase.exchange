@@ -1,11 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-   getDepth,
-   getTicker,
-   getTrades
-} from '../../utils/httpClient';
+import { getDepth, getTicker, getTrades } from '../../utils/httpClient';
 import { SignalingManager } from '../../utils/SignalingManager';
 import { AskTable } from './AskTable';
 import { BidTable } from './BidTable';
@@ -27,11 +23,17 @@ export function Depth({ market }: { market: string }) {
 
                for (let i = 0; i < bidsAfterUpdate.length; i++) {
                   for (const element of data.bids) {
-                     if (bidsAfterUpdate[i] && bidsAfterUpdate[i][0] === element[0]) {
+                     if (
+                        bidsAfterUpdate[i] &&
+                        bidsAfterUpdate[i][0] === element[0]
+                     ) {
                         if (bidsAfterUpdate[i]) {
                            bidsAfterUpdate[i][1] = element[1];
                         }
-                        if (bidsAfterUpdate[i] && Number(bidsAfterUpdate[i][1]) === 0) {
+                        if (
+                           bidsAfterUpdate[i] &&
+                           Number(bidsAfterUpdate[i][1]) === 0
+                        ) {
                            bidsAfterUpdate.splice(i, 1);
                         }
                         break;

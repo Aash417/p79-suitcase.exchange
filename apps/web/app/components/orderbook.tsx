@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { SignalingManager } from '../utils/SignalingManager';
@@ -11,8 +11,7 @@ type Props = {
    depthdata: Depth;
 };
 
-export default function Orderbook({ market ,depthdata}: Readonly<Props>) {
-
+export default function Orderbook({ market, depthdata }: Readonly<Props>) {
    const [bids, setBids] = useState<[string, string][]>();
    const [asks, setAsks] = useState<[string, string][]>();
    const [price, setPrice] = useState<string>();
@@ -57,8 +56,8 @@ export default function Orderbook({ market ,depthdata}: Readonly<Props>) {
          params: [`depth.${market}`],
       });
 
-         setBids(depthdata.bids.reverse());
-         setAsks(depthdata.asks);
+      setBids(depthdata.bids.reverse());
+      setAsks(depthdata.asks);
 
       // getTicker(market).then((t) => setPrice(t.lastPrice));
       // getTrades(market).then((t) => setPrice(t[0].price));
@@ -94,4 +93,3 @@ function TableHeader() {
       </div>
    );
 }
-

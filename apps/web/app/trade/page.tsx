@@ -1,3 +1,4 @@
+import Appbar from '../components/appbar';
 import KlineChart from '../components/klineChart';
 import MarketBar from '../components/MarketBar';
 import Orderbook from '../components/orderbook';
@@ -13,7 +14,9 @@ export default async function Market() {
    return (
       <div className="h-screen w-full rounded-md m-2">
          {/* Header */}
-         <div className="h-10 w-[calc(100%-1rem)] bg-fuchsia-700 mb-2 rounded-md"></div>
+         <div className="h-10 w-[calc(100%-1rem)] bg-[#14151b] mb-2 rounded-md">
+            <Appbar />
+         </div>
 
          {/* Main content (subtract header height) */}
          <div className="flex gap-2 h-[calc(100%-4.2rem)] w-[calc(100%-1rem)]">

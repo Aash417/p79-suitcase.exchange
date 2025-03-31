@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 type Props = {
-   market: string
-}
+   market: string;
+};
 
 export default function SwapForm({ market }: Readonly<Props>) {
    const [amount, setAmount] = useState('');
@@ -193,4 +193,4 @@ function SellButton({
          <p className="text-center text-sm font-semibold text-redText">Sell</p>
       </div>
    );
-SwapForm
+}
