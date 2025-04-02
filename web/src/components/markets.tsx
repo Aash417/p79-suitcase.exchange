@@ -119,19 +119,6 @@ export default function Markets() {
             <div className="text-2xl font-bold mr-6 flex items-center">
                <span className="bg-red-600 p-1 rounded mr-2">🎒</span>Backpack
             </div>
-            <div className="flex space-x-6">
-               <span className="font-semibold">Spot</span>
-               <span className="text-gray-400">Futures</span>
-               <span className="text-gray-400">Lend</span>
-               <span className="text-gray-400 flex items-center">More
-
-                  {/* <ChevronDown size={16} className="ml-1" /> */}
-               </span>
-            </div>
-            <div className="ml-auto">
-               <button className="bg-green-600 text-white px-4 py-2 rounded mr-2">Sign up</button>
-               <button className="bg-blue-600 text-white px-4 py-2 rounded">Sign in</button>
-            </div>
          </div>
 
          <div className="mb-4">

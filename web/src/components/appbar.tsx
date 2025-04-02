@@ -29,10 +29,10 @@ export default function Appbar() {
                </Link>
             </div>
          </div>
-         <div className="flex">
+         {/* <div className="flex">
             <SuccessButton>Deposit</SuccessButton>
             <PrimaryButton>Withdraw</PrimaryButton>
-         </div>
+         </div> */}
       </div>
    );
 }

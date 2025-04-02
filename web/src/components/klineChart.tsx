@@ -45,8 +45,8 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
    return (
       <div
          ref={chartRef}
-         style={{ height: '80%', width: '80%' }}
-         className="m-5 p-0"
+         style={{ height: '80%', width: '90%' }}
+         className="m-5 p-0 relative h-full w-full"
       ></div>
    );
 }
