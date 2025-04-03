@@ -51,7 +51,6 @@ export default function LandingPage() {
                   </div>
 
                   <div className="lg:flex lg:items-center lg:justify-end lg:space-x-6 sm:ml-auto">
-
                      <Link
                         href="/markets"
                         title=""
