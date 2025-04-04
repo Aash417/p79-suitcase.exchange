@@ -1,0 +1,11 @@
+{
+   "scripts": {
+      "dev": "bun run --hot src/index.ts",
+      "format": "prettier --write ."
+   },
+   "dependencies": {
+      "@types/ws": "^8.18.1",
+      "redis": "^4.7.0",
+      "ws": "^8.18.1"
+   }
+}

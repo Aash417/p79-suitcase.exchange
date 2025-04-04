@@ -1,0 +1,179 @@
+lockfileVersion: '9.0'
+
+settings:
+   autoInstallPeers: true
+   excludeLinksFromLockfile: false
+
+importers:
+   .:
+      dependencies:
+         '@types/ws':
+            specifier: ^8.18.1
+            version: 8.18.1
+         redis:
+            specifier: ^4.7.0
+            version: 4.7.0
+         ws:
+            specifier: ^8.18.1
+            version: 8.18.1
+
+packages:
+   '@redis/bloom@1.2.0':
+      resolution:
+         {
+            integrity: sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==,
+         }
+      peerDependencies:
+         '@redis/client': ^1.0.0
+
+   '@redis/client@1.6.0':
+      resolution:
+         {
+            integrity: sha512-aR0uffYI700OEEH4gYnitAnv3vzVGXCFvYfdpu/CJKvk4pHfLPEy/JSZyrpQ+15WhXe1yJRXLtfQ84s4mEXnPg==,
+         }
+      engines: { node: '>=14' }
+
+   '@redis/graph@1.1.1':
+      resolution:
+         {
+            integrity: sha512-FEMTcTHZozZciLRl6GiiIB4zGm5z5F3F6a6FZCyrfxdKOhFlGkiAqlexWMBzCi4DcRoyiOsuLfW+cjlGWyExOw==,
+         }
+      peerDependencies:
+         '@redis/client': ^1.0.0
+
+   '@redis/json@1.0.7':
+      resolution:
+         {
+            integrity: sha512-6UyXfjVaTBTJtKNG4/9Z8PSpKE6XgSyEb8iwaqDcy+uKrd/DGYHTWkUdnQDyzm727V7p21WUMhsqz5oy65kPcQ==,
+         }
+      peerDependencies:
+         '@redis/client': ^1.0.0
+
+   '@redis/search@1.2.0':
+      resolution:
+         {
+            integrity: sha512-tYoDBbtqOVigEDMAcTGsRlMycIIjwMCgD8eR2t0NANeQmgK/lvxNAvYyb6bZDD4frHRhIHkJu2TBRvB0ERkOmw==,
+         }
+      peerDependencies:
+         '@redis/client': ^1.0.0
+
+   '@redis/time-series@1.1.0':
+      resolution:
+         {
+            integrity: sha512-c1Q99M5ljsIuc4YdaCwfUEXsofakb9c8+Zse2qxTadu8TalLXuAESzLvFAvNVbkmSlvlzIQOLpBCmWI9wTOt+g==,
+         }
+      peerDependencies:
+         '@redis/client': ^1.0.0
+
+   '@types/node@22.14.0':
+      resolution:
+         {
+            integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==,
+         }
+
+   '@types/ws@8.18.1':
+      resolution:
+         {
+            integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==,
+         }
+
+   cluster-key-slot@1.1.2:
+      resolution:
+         {
+            integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==,
+         }
+      engines: { node: '>=0.10.0' }
+
+   generic-pool@3.9.0:
+      resolution:
+         {
+            integrity: sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==,
+         }
+      engines: { node: '>= 4' }
+
+   redis@4.7.0:
+      resolution:
+         {
+            integrity: sha512-zvmkHEAdGMn+hMRXuMBtu4Vo5P6rHQjLoHftu+lBqq8ZTA3RCVC/WzD790bkKKiNFp7d5/9PcSD19fJyyRvOdQ==,
+         }
+
+   undici-types@6.21.0:
+      resolution:
+         {
+            integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==,
+         }
+
+   ws@8.18.1:
+      resolution:
+         {
+            integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==,
+         }
+      engines: { node: '>=10.0.0' }
+      peerDependencies:
+         bufferutil: ^4.0.1
+         utf-8-validate: '>=5.0.2'
+      peerDependenciesMeta:
+         bufferutil:
+            optional: true
+         utf-8-validate:
+            optional: true
+
+   yallist@4.0.0:
+      resolution:
+         {
+            integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==,
+         }
+
+snapshots:
+   '@redis/bloom@1.2.0(@redis/client@1.6.0)':
+      dependencies:
+         '@redis/client': 1.6.0
+
+   '@redis/client@1.6.0':
+      dependencies:
+         cluster-key-slot: 1.1.2
+         generic-pool: 3.9.0
+         yallist: 4.0.0
+
+   '@redis/graph@1.1.1(@redis/client@1.6.0)':
+      dependencies:
+         '@redis/client': 1.6.0
+
+   '@redis/json@1.0.7(@redis/client@1.6.0)':
+      dependencies:
+         '@redis/client': 1.6.0
+
+   '@redis/search@1.2.0(@redis/client@1.6.0)':
+      dependencies:
+         '@redis/client': 1.6.0
+
+   '@redis/time-series@1.1.0(@redis/client@1.6.0)':
+      dependencies:
+         '@redis/client': 1.6.0
+
+   '@types/node@22.14.0':
+      dependencies:
+         undici-types: 6.21.0
+
+   '@types/ws@8.18.1':
+      dependencies:
+         '@types/node': 22.14.0
+
+   cluster-key-slot@1.1.2: {}
+
+   generic-pool@3.9.0: {}
+
+   redis@4.7.0:
+      dependencies:
+         '@redis/bloom': 1.2.0(@redis/client@1.6.0)
+         '@redis/client': 1.6.0
+         '@redis/graph': 1.1.1(@redis/client@1.6.0)
+         '@redis/json': 1.0.7(@redis/client@1.6.0)
+         '@redis/search': 1.2.0(@redis/client@1.6.0)
+         '@redis/time-series': 1.1.0(@redis/client@1.6.0)
+
+   undici-types@6.21.0: {}
+
+   ws@8.18.1: {}
+
+   yallist@4.0.0: {}
