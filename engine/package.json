@@ -1,0 +1,19 @@
+{
+   "name": "engine",
+   "version": "1.0.0",
+   "main": "src/index.ts",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "dev": "bun run --hot src/index.ts",
+      "format": "prettier --write ."
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "description": "",
+   "dependencies": {
+      "@types/bun": "^1.2.8",
+      "@types/node": "^22.14.0",
+      "redis": "^4.7.0"
+   }
+}
