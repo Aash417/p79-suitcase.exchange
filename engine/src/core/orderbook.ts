@@ -38,11 +38,33 @@ export class Orderbook {
 
    addOrder(order: Order) {
       if (order.side === 'buy') {
+         const { executedQty, fills } = this.matchBid(order);
+         order.filled = executedQty;
+         if (executedQty === order.quantity) {
+            return {
+               executedQty,
+               fills,
+            };
+         }
          this.bids.push(order);
-         this.bids.sort((a, b) => b.price - a.price);
+         return {
+            executedQty,
+            fills,
+         };
       } else {
+         const { executedQty, fills } = this.matchAsk(order);
+         order.filled = executedQty;
+         if (executedQty === order.quantity) {
+            return {
+               executedQty,
+               fills,
+            };
+         }
          this.asks.push(order);
-         this.asks.sort((a, b) => a.price - b.price);
+         return {
+            executedQty,
+            fills,
+         };
       }
    }
 
