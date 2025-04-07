@@ -139,7 +139,7 @@ export class Orderbook {
       };
    }
 
-   cancleBid(order: Order) {
+   cancelBid(order: Order) {
       for (let i = 0; i < this.bids.length; i++) {
          if (this.bids[i].orderId === order.orderId) {
             this.bids.splice(i, 1);
@@ -148,7 +148,7 @@ export class Orderbook {
       }
    }
 
-   cancleAsk(order: Order) {
+   cancelAsk(order: Order) {
       for (let i = 0; i < this.asks.length; i++) {
          if (this.asks[i].orderId === order.orderId) {
             this.asks.splice(i, 1);
