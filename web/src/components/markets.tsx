@@ -117,7 +117,7 @@ export default function Markets() {
       <div className="w-full bg-black text-white p-4 rounded-lg">
          <div className="flex items-center mb-6">
             <div className="text-2xl font-bold mr-6 flex items-center">
-               <span className="bg-red-600 p-1 rounded mr-2">🎒</span>Backpack
+               <span className="bg-red-600 p-1 rounded mr-2">💼</span>Suitcase
             </div>
          </div>
 

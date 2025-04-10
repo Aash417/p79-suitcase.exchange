@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { env } from '../env';
-import { RedisManager } from '../redis-manager';
+import { env } from '../utils/env';
+import { RedisManager } from '../utils/redis-manager';
 import {
    CANCEL_ORDER,
    CREATE_ORDER,
@@ -13,7 +13,7 @@ import {
    ORDER_UPDATE,
    TRADE_ADDED,
    UserBalance,
-} from '../types';
+} from '../utils/types';
 import { Orderbook } from './orderbook';
 
 export const BASE_CURRENCY = 'INR';
@@ -24,32 +24,36 @@ export class Engine {
 
    constructor() {
       // Initialize the engine
-      let snapshot: string;
+      let snapshot: string = '';
       try {
          if (env.WITH_SNAPSHOT) {
             snapshot = readFileSync('./snapshot.json', 'utf8');
          }
-      } catch (error) {
-         console.log('Error reading snapshot file');
-      }
 
-      if (snapshot) {
-         const parsedSnapshot = JSON.parse(snapshot);
-         this.balances = new Map<string, UserBalance>(
-            Object.entries(parsedSnapshot.balances),
-         );
-         this.orderbooks = parsedSnapshot.orderbooks.map((orderbook: any) => {
-            return new Orderbook(
-               orderbook.lastTradeId,
-               orderbook.currentPrice,
-               orderbook.bids,
-               orderbook.asks,
-               orderbook.baseAsset,
+         if (snapshot) {
+            const parsedSnapshot = JSON.parse(snapshot);
+            this.balances = new Map<string, UserBalance>(
+               Object.entries(parsedSnapshot.balances)
             );
-         });
-      } else {
-         this.orderbooks = [new Orderbook('USDC', [], [], 0, 0)];
-         this.setBaseBalance();
+            this.orderbooks = parsedSnapshot.orderbooks.map(
+               (orderbook: any) => {
+                  return new Orderbook(
+                     orderbook.lastTradeId,
+                     orderbook.currentPrice,
+                     orderbook.bids,
+                     orderbook.asks,
+                     orderbook.baseAsset
+                  );
+               }
+            );
+            console.log(this.orderbooks);
+         } else {
+            this.orderbooks = [new Orderbook('USDC', [], [], 0, 0)];
+            this.setBaseBalance();
+         }
+      } catch (error) {
+         console.log('Error in engine constructor');
+         console.log(error);
       }
    }
 
@@ -79,7 +83,7 @@ export class Engine {
                   message.data.price,
                   message.data.quantity,
                   message.data.side,
-                  message.data.userId,
+                  message.data.userId
                );
                RedisManager.getInstance().sendToApi(clientId, {
                   type: 'ORDER_PLACED',
@@ -106,7 +110,7 @@ export class Engine {
                const orderId = message.data.orderId;
                const cancelMarket = message.data.market;
                const cancelOrderbook = this.orderbooks.find(
-                  (o) => o.ticker() === cancelMarket,
+                  (o) => o.ticker() === cancelMarket
                );
                const quoteAsset = cancelMarket.split('_')[1];
                if (!cancelOrderbook) {
@@ -164,13 +168,13 @@ export class Engine {
          case GET_OPEN_ORDERS:
             try {
                const openOrderbook = this.orderbooks.find(
-                  (o) => o.ticker() === message.data.market,
+                  (o) => o.ticker() === message.data.market
                );
                if (!openOrderbook) {
                   throw new Error('No orderbook found');
                }
                const openOrders = openOrderbook.getOpenOrders(
-                  message.data.userId,
+                  message.data.userId
                );
 
                RedisManager.getInstance().sendToApi(clientId, {
@@ -190,7 +194,7 @@ export class Engine {
             try {
                const market = message.data.market;
                const orderbook = this.orderbooks.find(
-                  (o) => o.ticker() === market,
+                  (o) => o.ticker() === market
                );
                if (!orderbook) {
                   throw new Error('No orderbook found');
@@ -223,9 +227,10 @@ export class Engine {
       price: string,
       quantity: string,
       side: 'buy' | 'sell',
-      userId: string,
+      userId: string
    ) {
       // Create an order
+      console.log('iniside create order');
 
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       const baseAsset = market.split('_')[0];
@@ -240,7 +245,7 @@ export class Engine {
          userId,
          quoteAsset,
          price,
-         quantity,
+         quantity
       );
 
       const order = {
@@ -259,7 +264,7 @@ export class Engine {
          quoteAsset,
          side,
          fills,
-         executedQty,
+         executedQty
       );
       this.createDbTrades(fills, market, userId);
       this.updateDbOrders(order, executedQty, fills, market);
@@ -273,7 +278,7 @@ export class Engine {
       order: Order,
       executedQty: number,
       fills: Fill[],
-      market: string,
+      market: string
    ) {
       // Update an order in the database
       RedisManager.getInstance().pushMessage({
@@ -359,7 +364,7 @@ export class Engine {
       fills: Fill[],
       price: string,
       side: 'buy' | 'sell',
-      market: string,
+      market: string
    ) {
       // Publish the updated depth to the WebSocket
 
@@ -370,7 +375,7 @@ export class Engine {
       const depth = orderbook.getDepth();
       if (side === 'buy') {
          const updatedAsks = depth?.asks.filter((x) =>
-            fills.map((f) => f.price).includes(x[0].toString()),
+            fills.map((f) => f.price).includes(x[0].toString())
          );
          const updatedBid = depth?.bids.find((x) => x[0] === price);
          console.log('publish ws depth updates');
@@ -385,7 +390,7 @@ export class Engine {
       }
       if (side === 'sell') {
          const updatedBids = depth?.bids.filter((x) =>
-            fills.map((f) => f.price).includes(x[0].toString()),
+            fills.map((f) => f.price).includes(x[0].toString())
          );
          const updatedAsk = depth?.asks.find((x) => x[0] === price);
          console.log('publish ws depth updates');
@@ -406,7 +411,7 @@ export class Engine {
       quoteAsset: string,
       side: 'buy' | 'sell',
       fills: Fill[],
-      executedQty: number,
+      executedQty: number
    ) {
       // Update the balance of a user
       if (side === 'buy') {
@@ -467,7 +472,7 @@ export class Engine {
       userId: string,
       asset: string,
       price: string,
-      quantity: string,
+      quantity: string
    ) {
       // Check and lock funds for an order
 

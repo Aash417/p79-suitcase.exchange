@@ -8,6 +8,7 @@ async function main() {
    await redisClient.connect();
 
    console.log('connected to redis');
+   console.log('engine running');
 
    while (true) {
       const response = await redisClient.rPop('messages' as string);

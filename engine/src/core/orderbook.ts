@@ -1,4 +1,4 @@
-import { Fill, Order } from '../types';
+import { Fill, Order } from '../utils/types';
 
 export class Orderbook {
    bids: Order[];
@@ -13,7 +13,7 @@ export class Orderbook {
       bids: Order[],
       asks: Order[],
       currentPrice: number,
-      lastTradeId: number,
+      lastTradeId: number
    ) {
       this.bids = bids;
       this.asks = asks;
@@ -76,7 +76,7 @@ export class Orderbook {
          if (ask.price <= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               ask.quantity,
+               ask.quantity
             );
 
             executedQty += fillQty;
@@ -112,7 +112,7 @@ export class Orderbook {
          if (bid.price >= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               bid.quantity,
+               bid.quantity
             );
 
             executedQty += fillQty;
@@ -168,7 +168,6 @@ export class Orderbook {
    getDepth() {
       const bids: [string, string][] = [];
       const asks: [string, string][] = [];
-
       const bidsObj: { [key: string]: number } = {};
       const asksObj: { [key: string]: number } = {};
 
