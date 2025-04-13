@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { env } from '../utils/env';
 import { RedisManager } from '../utils/redis-manager';
 import {
+   BASE_CURRENCY,
    CANCEL_ORDER,
    CREATE_ORDER,
    Fill,
@@ -16,8 +17,6 @@ import {
 } from '../utils/types';
 import { Orderbook } from './orderbook';
 
-export const BASE_CURRENCY = 'INR';
-
 export class Engine {
    private balances: Map<string, UserBalance> = new Map();
    private orderbooks: Orderbook[] = [];
@@ -29,28 +28,35 @@ export class Engine {
          if (env.WITH_SNAPSHOT) {
             snapshot = readFileSync('./snapshot.json', 'utf8');
          }
-
          if (snapshot) {
             const parsedSnapshot = JSON.parse(snapshot);
-            this.balances = new Map<string, UserBalance>(
-               Object.entries(parsedSnapshot.balances)
-            );
+            const corrected: [string, UserBalance][] = [];
+            for (const obj of parsedSnapshot.balances as any[]) {
+               for (const [userId, balance] of Object.entries(obj)) {
+                  corrected.push([userId, balance as UserBalance]);
+               }
+            }
+            this.balances = new Map(corrected);
+
             this.orderbooks = parsedSnapshot.orderbooks.map(
-               (orderbook: any) => {
+               (orderbook: Orderbook) => {
                   return new Orderbook(
-                     orderbook.lastTradeId,
-                     orderbook.currentPrice,
+                     orderbook.baseAsset,
                      orderbook.bids,
                      orderbook.asks,
-                     orderbook.baseAsset
+                     orderbook.currentPrice,
+                     orderbook.lastTradeId
                   );
                }
             );
-            console.log(this.orderbooks);
          } else {
-            this.orderbooks = [new Orderbook('USDC', [], [], 0, 0)];
+            this.orderbooks = [new Orderbook('SOL', [], [], 0, 0)];
             this.setBaseBalance();
          }
+
+         // setInterval(() => {
+         //    this.saveSnapshot();
+         // }, 1000 * 60 * 1);
       } catch (error) {
          console.log('Error in engine constructor');
          console.log(error);
@@ -64,7 +70,6 @@ export class Engine {
       };
 
       writeFileSync('./snapshot.json', JSON.stringify(savedSnapshot), 'utf8');
-      console.log('Snapshot saved');
    }
 
    process({
@@ -243,7 +248,6 @@ export class Engine {
          quoteAsset,
          side,
          userId,
-         quoteAsset,
          price,
          quantity
       );
@@ -470,42 +474,37 @@ export class Engine {
       quoteAsset: string,
       side: 'buy' | 'sell',
       userId: string,
-      asset: string,
       price: string,
       quantity: string
    ) {
-      // Check and lock funds for an order
+      // Check and lock funds for the order
+      const userBalance = this.balances?.get(userId);
+      if (!userBalance) {
+         throw new Error('User not found');
+      }
 
       if (side === 'buy') {
-         if (
-            (this.balances.get(userId)?.[quoteAsset]?.available || 0) <
-            Number(quantity) * Number(price)
-         ) {
+         const locked = userBalance[quoteAsset]?.locked || 0;
+         const available = userBalance[quoteAsset].available || 0;
+
+         const totalPrice = Number(quantity) * Number(price);
+
+         if (available < totalPrice) {
             throw new Error('Insufficient funds');
          }
-         //@ts-ignore
-         this.balances.get(userId)[quoteAsset].available =
-            this.balances.get(userId)?.[quoteAsset].available -
-            Number(quantity) * Number(price);
 
-         //@ts-ignore
-         this.balances.get(userId)[quoteAsset].locked =
-            this.balances.get(userId)?.[quoteAsset].locked +
-            Number(quantity) * Number(price);
+         userBalance[quoteAsset].available = available - totalPrice;
+         userBalance[quoteAsset].locked = locked + totalPrice;
       } else {
-         if (
-            (this.balances.get(userId)?.[baseAsset]?.available || 0) <
-            Number(quantity)
-         ) {
+         const locked = userBalance[baseAsset].locked || 0;
+         const available = userBalance[baseAsset].available || 0;
+
+         if (available < Number(quantity)) {
             throw new Error('Insufficient funds');
          }
-         //@ts-ignore
-         this.balances.get(userId)[baseAsset].available =
-            this.balances.get(userId)?.[baseAsset].available - Number(quantity);
 
-         //@ts-ignore
-         this.balances.get(userId)[baseAsset].locked =
-            this.balances.get(userId)?.[baseAsset].locked + Number(quantity);
+         userBalance[baseAsset].available = available - Number(quantity);
+         userBalance[baseAsset].locked = locked + Number(quantity);
       }
    }
 

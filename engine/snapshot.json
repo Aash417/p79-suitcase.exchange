@@ -1,7 +1,7 @@
 {
    "orderbooks": [
       {
-         "baseAsset": "TATA",
+         "baseAsset": "SOL",
          "bids": [
             {
                "price": 1000.5,
@@ -139,44 +139,41 @@
       }
    ],
    "balances": [
-      [
-         "1",
-         {
-            "INR": {
-               "available": 9999627815,
-               "locked": 268377.9999999999
+      {
+         "1": {
+            "USDC": {
+               "available": 1000000000,
+               "locked": 0
             },
-            "TATA": {
-               "available": 100000067,
+            "SOL": {
+               "available": 50000,
                "locked": 0
             }
          }
-      ],
-      [
-         "2",
-         {
-            "INR": {
-               "available": 100000000,
+      },
+      {
+         "2": {
+            "USDC": {
+               "available": 1000000000,
                "locked": 0
             },
-            "TATA": {
-               "available": 100000000000,
+            "SOL": {
+               "available": 50000,
                "locked": 0
             }
          }
-      ],
-      [
-         "5",
-         {
-            "INR": {
-               "available": 102218.29999999999,
-               "locked": 101588.6999999999
+      },
+      {
+         "47854": {
+            "USDC": {
+               "available": 1000000000,
+               "locked": 0
             },
-            "TATA": {
-               "available": 85884,
-               "locked": 14049
+            "SOL": {
+               "available": 50000,
+               "locked": 0
             }
          }
-      ]
+      }
    ]
 }

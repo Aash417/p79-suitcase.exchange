@@ -1,10 +1,10 @@
-import { Fill, Order } from '../utils/types';
+import { BASE_CURRENCY, Fill, Order } from '../utils/types';
 
 export class Orderbook {
    bids: Order[];
    asks: Order[];
    baseAsset: string;
-   quoteAsset: string;
+   quoteAsset: string = BASE_CURRENCY;
    lastTradeId: number;
    currentPrice: number;
 
@@ -13,7 +13,7 @@ export class Orderbook {
       bids: Order[],
       asks: Order[],
       currentPrice: number,
-      lastTradeId: number
+      lastTradeId: number,
    ) {
       this.bids = bids;
       this.asks = asks;
@@ -23,7 +23,8 @@ export class Orderbook {
    }
 
    ticker() {
-      return `${this.baseAsset}-${this.quoteAsset}`;
+      console.log(`Ticker: ${this.baseAsset}_${this.quoteAsset}`);
+      return `${this.baseAsset}_${this.quoteAsset}`;
    }
 
    getSnapshot() {
@@ -76,7 +77,7 @@ export class Orderbook {
          if (ask.price <= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               ask.quantity
+               ask.quantity,
             );
 
             executedQty += fillQty;
@@ -112,7 +113,7 @@ export class Orderbook {
          if (bid.price >= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               bid.quantity
+               bid.quantity,
             );
 
             executedQty += fillQty;

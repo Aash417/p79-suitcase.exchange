@@ -1,7 +1,7 @@
 import { Ticker } from './types';
 
-// export const BASE_URL = "wss://ws.backpack.exchange/"
-export const BASE_URL = 'wss://ws.backpack.exchange/';
+export const BASE_URL = 'ws://localhost:3003/';
+// export const BASE_URL = 'wss://ws.backpack.exchange/';
 
 export class SignalingManager {
    private readonly ws: WebSocket;
@@ -91,7 +91,7 @@ export class SignalingManager {
    async deRegisterCallback(type: string, id: string) {
       if (this.callbacks[type]) {
          const index = this.callbacks[type].findIndex(
-            (callback) => callback.id === id,
+            (callback) => callback.id === id
          );
          if (index !== -1) {
             this.callbacks[type].splice(index, 1);

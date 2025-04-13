@@ -1,11 +1,11 @@
 // engineInspector.ts
 
-import { Orderbook } from "../core/orderbook";
-import { UserBalance } from "./types";
+import { Orderbook } from '../core/orderbook';
+import { UserBalance } from './types';
 
 export function printUserBalance(
    balances: Map<string, UserBalance>,
-   userId: string
+   userId: string,
 ) {
    const bal = balances.get(userId);
    console.log(`\n📘 Balance for ${userId}:`);
@@ -22,7 +22,7 @@ export function printAllUserBalances(balances: Map<string, UserBalance>) {
       console.log(`\n🧑 User: ${userId}`);
       for (const [symbol, { available, locked }] of Object.entries(bal)) {
          console.log(
-            `- ${symbol}: available = ${available}, locked = ${locked}`
+            `- ${symbol}: available = ${available}, locked = ${locked}`,
          );
       }
    }
@@ -38,7 +38,7 @@ export function printAllOrderbooks(orderbooks: Map<string, Orderbook>) {
 // Optional helper to call all in one go
 export function printEngineState(
    balances: Map<string, UserBalance>,
-   orderbooks: Map<string, Orderbook>
+   orderbooks: Map<string, Orderbook>,
 ) {
    printAllUserBalances(balances);
    printAllOrderbooks(orderbooks);

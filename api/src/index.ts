@@ -7,7 +7,7 @@ import tickerRouter from './routes/ticker';
 const app = new Hono();
 
 app.route('/api/v1/depth', depthRouter);
-app.route('/api/v1/kline', klineRouter);
+app.route('/api/v1/klines', klineRouter);
 app.route('/api/v1/order', orderRouter);
 app.route('/api/v1/ticker', tickerRouter);
 

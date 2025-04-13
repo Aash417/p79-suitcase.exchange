@@ -1,8 +1,11 @@
 import { Depth, KLine } from './types';
 
+const BACKEND_URL = 'http://localhost:3001/api/v1';
+// const BACKEND_URL = 'https://api.backpack.exchange/api/v1';
+
 export async function getKlines(market: string): Promise<KLine[]> {
    const kline = await fetch(
-      `https://api.backpack.exchange/api/v1/klines?symbol=${market}&interval=1d&startTime=1714865400`,
+      `${BACKEND_URL}/klines?symbol=${market}&interval=1d&startTime=1714865400`
    );
    const klineData: KLine[] = await kline.json();
 
@@ -12,9 +15,7 @@ export async function getKlines(market: string): Promise<KLine[]> {
 //api.backpack.exchange/api/v1/klines?symbol=BTC_USDC&interval=1d&startTime=1714865400
 
 export async function getDepth(market: string): Promise<Depth> {
-   const depth = await fetch(
-      `https://api.backpack.exchange/api/v1/depth?symbol=${market}`,
-   );
+   const depth = await fetch(`${BACKEND_URL}/depth?symbol=${market}`);
 
    return await depth.json();
 }
