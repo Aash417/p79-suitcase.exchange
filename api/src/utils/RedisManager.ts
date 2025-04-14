@@ -21,12 +21,11 @@ export class RedisManager {
       return this.instance;
    }
 
-   public sendAndAwait(message: MessageToEngine, timeoutMs: number = 10000) {
+   public sendAndAwait(message: MessageToEngine, timeoutMs: number = 5000) {
       return new Promise<MessageFromOrderbook>((resolve, reject) => {
          const id = this.getRandomClientId();
          let timeout: NodeJS.Timeout;
 
-         // Set up the timeout
          timeout = setTimeout(() => {
             this.client.unsubscribe(id); // Ensure we unsubscribe to avoid resource leaks
             reject(
@@ -34,7 +33,6 @@ export class RedisManager {
             );
          }, timeoutMs);
 
-         // Subscribe to the Redis channel
          this.client.subscribe(id, (message) => {
             clearTimeout(timeout); // Clear the timeout if a response is received
             this.client.unsubscribe(id);

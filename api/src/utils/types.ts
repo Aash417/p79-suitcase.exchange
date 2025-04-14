@@ -23,10 +23,10 @@ export type MessageFromOrderbook =
            executedQty: number;
            fills: [
               {
-                 price: string;
+                 price: number;
                  qty: number;
                  tradeId: number;
-              },
+              }
            ];
         };
      }
@@ -43,8 +43,8 @@ export type MessageFromOrderbook =
         payload: {
            orderId: string;
            executedQty: number;
-           price: string;
-           quantity: string;
+           price: number;
+           quantity: number;
            side: 'buy' | 'sell';
            userId: string;
         }[];
@@ -55,8 +55,8 @@ export type MessageToEngine =
         type: typeof CREATE_ORDER;
         data: {
            market: string;
-           price: string;
-           quantity: string;
+           price: number;
+           quantity: number;
            side: 'buy' | 'sell';
            userId: string;
         };
@@ -71,7 +71,7 @@ export type MessageToEngine =
    | {
         type: typeof ON_RAMP;
         data: {
-           amount: string;
+           amount: number;
            userId: string;
            txnId: string;
         };
@@ -91,11 +91,15 @@ export type MessageToEngine =
      };
 
 export const postOrderSchema = z.object({
-   market: z.string().min(1).max(10),
-   price: z.string().min(1),
-   quantity: z.string().min(1),
+   market: z.string().min(3, 'Market is required'),
+   price: z
+      .string()
+      .regex(/^[1-9]\d*$/, 'Price must be a positive integer (paise)'),
+   quantity: z
+      .string()
+      .regex(/^[1-9]\d*$/, 'Quantity must be a positive integer'),
    side: z.enum(['buy', 'sell']),
-   userId: z.string().min(1).max(10),
+   userId: z.string().min(1, 'User ID is required'),
 });
 
 export const deleteOrderSchema = z.object({

@@ -69,7 +69,6 @@ export class Engine {
          orderbooks: this.orderbooks.map((o) => o.getSnapshot()),
          balances: Array.from(this.balances.entries()),
       };
-
       writeFileSync('./snapshot.json', JSON.stringify(savedSnapshot), 'utf8');
    }
 
@@ -81,6 +80,8 @@ export class Engine {
       clientId: string;
    }) {
       // Process the message
+      console.log('⛔⛔⛔⛔⛔processing message: ', message);
+
       switch (message.type) {
          case CREATE_ORDER:
             try {
@@ -223,11 +224,6 @@ export class Engine {
       }
    }
 
-   addOrderbook(orderbook: Orderbook) {
-      // Add an orderbook to the engine
-      this.orderbooks.push(orderbook);
-   }
-
    createOrder(
       market: string,
       price: number,
@@ -236,12 +232,11 @@ export class Engine {
       userId: string
    ) {
       // Create an order
-      console.log('inside create order');
+      console.log('Started creating order');
 
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       const baseAsset = market.split('_')[0];
       const quoteAsset = market.split('_')[1];
-
       if (!orderbook) throw new Error('No orderbook found');
 
       this.checkAndLockFunds(
@@ -257,13 +252,11 @@ export class Engine {
          userId,
          orderId: `${userId}-${Date.now()}`,
          side,
-         price: parseFloat(price),
-         quantity: parseFloat(quantity),
+         price,
+         quantity,
          filled: 0,
       };
       const { fills, executedQty } = orderbook.addOrder(order);
-
-      console.log(fills, executedQty);
 
       this.updateBalance(
          userId,
@@ -281,6 +274,76 @@ export class Engine {
       return { executedQty, fills, orderId: order.orderId };
    }
 
+   checkAndLockFunds(
+      baseAsset: string,
+      quoteAsset: string,
+      side: 'buy' | 'sell',
+      userId: string,
+      price: number,
+      quantity: number
+   ) {
+      // Check and lock funds for the order
+      console.log('Started checking and locking funds');
+
+      const userBalance = this.balances?.get(userId);
+      if (!userBalance) {
+         throw new Error('User not found');
+      }
+
+      if (side === 'buy') {
+         const locked = userBalance[quoteAsset]?.locked || 0;
+         const available = userBalance[quoteAsset].available || 0;
+
+         const totalPrice = price * quantity;
+
+         if (available < totalPrice) {
+            throw new Error('Insufficient funds');
+         }
+
+         userBalance[quoteAsset].available = available - totalPrice;
+         userBalance[quoteAsset].locked = locked + totalPrice;
+      } else {
+         const locked = userBalance[baseAsset].locked || 0;
+         const available = userBalance[baseAsset].available || 0;
+
+         if (available < Number(quantity)) {
+            throw new Error('Insufficient funds');
+         }
+
+         userBalance[baseAsset].available = available - Number(quantity);
+         userBalance[baseAsset].locked = locked + Number(quantity);
+      }
+   }
+
+   updateBalance(
+      userId: string,
+      baseAsset: string,
+      quoteAsset: string,
+      side: 'buy' | 'sell',
+      fills: Fill[],
+      executedQty: number
+   ) {
+      console.log('Started updating users balance');
+      // Update the balance of a user
+      for (const fill of fills) {
+         const buyerId = side === 'buy' ? userId : fill.otherUserId;
+         const sellerId = side === 'sell' ? userId : fill.otherUserId;
+
+         const buyer = this.balances.get(buyerId)!;
+         const seller = this.balances.get(sellerId)!;
+
+         const amount = fill.qty * fill.price;
+
+         // Quote asset updates (BTC)
+         buyer[quoteAsset].locked -= amount;
+         seller[quoteAsset].available += amount;
+
+         // Base asset updates (SOL)
+         seller[baseAsset].locked -= fill.qty;
+         buyer[baseAsset].available += fill.qty;
+      }
+   }
+
    updateDbOrders(
       order: Order,
       executedQty: number,
@@ -288,6 +351,8 @@ export class Engine {
       market: string
    ) {
       // Update an order in the database
+      console.log('Started Updating order in db');
+
       RedisManager.getInstance().pushMessage({
          type: ORDER_UPDATE,
          data: {
@@ -313,6 +378,8 @@ export class Engine {
 
    createDbTrades(fills: Fill[], userId: string, market: string) {
       // Create a trade in the database
+      console.log('Started creating trade in db');
+
       fills.forEach((fill) => {
          RedisManager.getInstance().pushMessage({
             type: TRADE_ADDED,
@@ -331,6 +398,7 @@ export class Engine {
 
    publishWsTrades(fills: Fill[], userId: string, market: string) {
       // Publish a trade to the WebSocket
+      console.log('started publishing ws trades');
 
       fills.forEach((fill) => {
          RedisManager.getInstance().publishMessage(`trade@${market}`, {
@@ -349,6 +417,8 @@ export class Engine {
 
    sendUpdatedDepthAt(price: string, market: string) {
       // Send the updated depth at a specific time
+      console.log('started sending updated depth at');
+
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       if (!orderbook) {
          return;
@@ -374,6 +444,7 @@ export class Engine {
       market: string
    ) {
       // Publish the updated depth to the WebSocket
+      console.log('started publishing ws depth updates');
 
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       if (!orderbook) {
@@ -412,75 +483,9 @@ export class Engine {
       }
    }
 
-   updateBalance(
-      userId: string,
-      baseAsset: string,
-      quoteAsset: string,
-      side: 'buy' | 'sell',
-      fills: Fill[],
-      executedQty: number
-   ) {
-      // Update the balance of a user
-      for (const fill of fills) {
-         const buyerId = side === 'buy' ? userId : fill.otherUserId;
-         const sellerId = side === 'sell' ? userId : fill.otherUserId;
-
-         const buyer = this.balances.get(buyerId)!;
-         const seller = this.balances.get(sellerId)!;
-
-         const amount = fill.qty * fill.price;
-
-         // Quote asset updates (BTC)
-         buyer[quoteAsset].locked -= amount;
-         seller[quoteAsset].available += amount;
-
-         // Base asset updates (SOL)
-         seller[baseAsset].locked -= fill.qty;
-         buyer[baseAsset].available += fill.qty;
-      }
-   }
-
-   checkAndLockFunds(
-      baseAsset: string,
-      quoteAsset: string,
-      side: 'buy' | 'sell',
-      userId: string,
-      price: number,
-      quantity: number
-   ) {
-      // Check and lock funds for the order
-      const userBalance = this.balances?.get(userId);
-      if (!userBalance) {
-         throw new Error('User not found');
-      }
-
-      if (side === 'buy') {
-         const locked = userBalance[quoteAsset]?.locked || 0;
-         const available = userBalance[quoteAsset].available || 0;
-
-         const totalPrice = price * quantity;
-
-         if (available < totalPrice) {
-            throw new Error('Insufficient funds');
-         }
-
-         userBalance[quoteAsset].available = available - totalPrice;
-         userBalance[quoteAsset].locked = locked + totalPrice;
-      } else {
-         const locked = userBalance[baseAsset].locked || 0;
-         const available = userBalance[baseAsset].available || 0;
-
-         if (available < Number(quantity)) {
-            throw new Error('Insufficient funds');
-         }
-
-         userBalance[baseAsset].available = available - Number(quantity);
-         userBalance[baseAsset].locked = locked + Number(quantity);
-      }
-   }
-
    onRamp(userId: string, amount: number) {
       // Handle on-ramp transactions
+      console.log('Started on-ramping');
 
       const userBalance = this.balances.get(userId);
 
@@ -497,6 +502,9 @@ export class Engine {
    }
 
    setBaseBalance() {
+      console.log('started setting base balance');
+      // Set the base balance for the users
+
       this.balances.set('1', {
          [BASE_CURRENCY]: {
             available: 10000000,
@@ -529,5 +537,10 @@ export class Engine {
             locked: 0,
          },
       });
+   }
+
+   addOrderbook(orderbook: Orderbook) {
+      // Add an orderbook to the engine
+      this.orderbooks.push(orderbook);
    }
 }

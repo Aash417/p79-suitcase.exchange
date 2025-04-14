@@ -11,11 +11,12 @@ export class Orderbook {
    ) {}
 
    ticker() {
-      console.log(`Ticker: ${this.baseAsset}_${this.quoteAsset}`);
+      console.log(`Stated ticker : ${this.baseAsset}_${this.quoteAsset}`);
       return `${this.baseAsset}_${this.quoteAsset}`;
    }
 
    getSnapshot() {
+      console.log('getting snapshot');
       return {
          bids: this.bids,
          asks: this.asks,
@@ -26,6 +27,7 @@ export class Orderbook {
    }
 
    addOrder(order: Order) {
+      console.log('Stated addOrder');
       const isBuy = order.side === 'buy';
       const { executedQty, fills } = isBuy
          ? this.matchBid(order)
@@ -51,6 +53,7 @@ export class Orderbook {
    }
 
    matchBid(order: Order) {
+      console.log('Stated matchBid');
       const fills: Fill[] = [];
       let executedQty = 0;
 
@@ -64,9 +67,9 @@ export class Orderbook {
             ask.filled += fillQty;
 
             fills.push({
-               price: ask.price.toString(),
+               price: ask.price,
                qty: fillQty,
-               tradeId: this.lastTradeId++,
+               tradeId: ++this.lastTradeId,
                otherUserId: ask.userId,
                markerOrderId: ask.orderId,
             });
@@ -80,6 +83,7 @@ export class Orderbook {
    }
 
    matchAsk(order: Order) {
+      console.log('Stated matchAsk');
       const fills: Fill[] = [];
       let executedQty = 0;
 
@@ -109,6 +113,7 @@ export class Orderbook {
    }
 
    cancelBid(order: Order) {
+      console.log('Stated cancelBid');
       for (let i = 0; i < this.bids.length; i++) {
          if (this.bids[i].orderId === order.orderId) {
             this.bids.splice(i, 1);
@@ -118,6 +123,7 @@ export class Orderbook {
    }
 
    cancelAsk(order: Order) {
+      console.log('Stated cancelAsk');
       for (let i = 0; i < this.asks.length; i++) {
          if (this.asks[i].orderId === order.orderId) {
             this.asks.splice(i, 1);
@@ -127,6 +133,7 @@ export class Orderbook {
    }
 
    getDepth() {
+      console.log('Stated getDepth');
       const bids: [string, string][] = [];
       const asks: [string, string][] = [];
       const bidsObj: { [key: string]: number } = {};
@@ -159,6 +166,7 @@ export class Orderbook {
    }
 
    getOpenOrders(userId: string) {
+      console.log('Stated getOpenOrders');
       const asks = this.asks.filter((x) => x.userId === userId);
       const bids = this.bids.filter((x) => x.userId === userId);
       return [...asks, ...bids];
