@@ -30,13 +30,14 @@ export class Engine {
          }
          if (snapshot) {
             const parsedSnapshot = JSON.parse(snapshot);
-            const corrected: [string, UserBalance][] = [];
+            const balanceBook: [string, UserBalance][] = [];
+
             for (const obj of parsedSnapshot.balances as any[]) {
                for (const [userId, balance] of Object.entries(obj)) {
-                  corrected.push([userId, balance as UserBalance]);
+                  balanceBook.push([userId, balance as UserBalance]);
                }
             }
-            this.balances = new Map(corrected);
+            this.balances = new Map(balanceBook);
 
             this.orderbooks = parsedSnapshot.orderbooks.map(
                (orderbook: Orderbook) => {
@@ -229,13 +230,13 @@ export class Engine {
 
    createOrder(
       market: string,
-      price: string,
-      quantity: string,
+      price: number,
+      quantity: number,
       side: 'buy' | 'sell',
       userId: string
    ) {
       // Create an order
-      console.log('iniside create order');
+      console.log('inside create order');
 
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       const baseAsset = market.split('_')[0];
@@ -253,14 +254,16 @@ export class Engine {
       );
 
       const order = {
+         userId,
+         orderId: `${userId}-${Date.now()}`,
+         side,
          price: parseFloat(price),
          quantity: parseFloat(quantity),
-         orderId: `${userId}-${Date.now()}`,
          filled: 0,
-         side,
-         userId,
       };
       const { fills, executedQty } = orderbook.addOrder(order);
+
+      console.log(fills, executedQty);
 
       this.updateBalance(
          userId,
@@ -270,10 +273,10 @@ export class Engine {
          fills,
          executedQty
       );
-      this.createDbTrades(fills, market, userId);
-      this.updateDbOrders(order, executedQty, fills, market);
-      this.publishWsDepthUpdates(fills, price, side, market);
-      this.publishWsTrades(fills, userId, market);
+      // this.createDbTrades(fills, market, userId);
+      // this.updateDbOrders(order, executedQty, fills, market);
+      // this.publishWsDepthUpdates(fills, price, side, market);
+      // this.publishWsTrades(fills, userId, market);
 
       return { executedQty, fills, orderId: order.orderId };
    }
@@ -418,54 +421,22 @@ export class Engine {
       executedQty: number
    ) {
       // Update the balance of a user
-      if (side === 'buy') {
-         fills.forEach((fill) => {
-            // Update quote asset balance
-            //@ts-ignore
-            this.balances.get(fill.otherUserId)[quoteAsset].available =
-               this.balances.get(fill.otherUserId)?.[quoteAsset].available +
-               fill.qty * fill.price;
+      for (const fill of fills) {
+         const buyerId = side === 'buy' ? userId : fill.otherUserId;
+         const sellerId = side === 'sell' ? userId : fill.otherUserId;
 
-            //@ts-ignore
-            this.balances.get(userId)[quoteAsset].locked =
-               this.balances.get(userId)?.[quoteAsset].locked -
-               fill.qty * fill.price;
+         const buyer = this.balances.get(buyerId)!;
+         const seller = this.balances.get(sellerId)!;
 
-            // Update base asset balance
+         const amount = fill.qty * fill.price;
 
-            //@ts-ignore
-            this.balances.get(fill.otherUserId)[baseAsset].locked =
-               this.balances.get(fill.otherUserId)?.[baseAsset].locked -
-               fill.qty;
+         // Quote asset updates (BTC)
+         buyer[quoteAsset].locked -= amount;
+         seller[quoteAsset].available += amount;
 
-            //@ts-ignore
-            this.balances.get(userId)[baseAsset].available =
-               this.balances.get(userId)?.[baseAsset].available + fill.qty;
-         });
-      } else {
-         fills.forEach((fill) => {
-            // Update quote asset balance
-            //@ts-ignore
-            this.balances.get(fill.otherUserId)[quoteAsset].locked =
-               this.balances.get(fill.otherUserId)?.[quoteAsset].locked -
-               fill.qty * fill.price;
-
-            //@ts-ignore
-            this.balances.get(userId)[quoteAsset].available =
-               this.balances.get(userId)?.[quoteAsset].available +
-               fill.qty * fill.price;
-
-            // Update base asset balance
-
-            //@ts-ignore
-            this.balances.get(fill.otherUserId)[baseAsset].available =
-               this.balances.get(fill.otherUserId)?.[baseAsset].available +
-               fill.qty;
-
-            //@ts-ignore
-            this.balances.get(userId)[baseAsset].locked =
-               this.balances.get(userId)?.[baseAsset].locked - fill.qty;
-         });
+         // Base asset updates (SOL)
+         seller[baseAsset].locked -= fill.qty;
+         buyer[baseAsset].available += fill.qty;
       }
    }
 
@@ -474,8 +445,8 @@ export class Engine {
       quoteAsset: string,
       side: 'buy' | 'sell',
       userId: string,
-      price: string,
-      quantity: string
+      price: number,
+      quantity: number
    ) {
       // Check and lock funds for the order
       const userBalance = this.balances?.get(userId);
@@ -487,7 +458,7 @@ export class Engine {
          const locked = userBalance[quoteAsset]?.locked || 0;
          const available = userBalance[quoteAsset].available || 0;
 
-         const totalPrice = Number(quantity) * Number(price);
+         const totalPrice = price * quantity;
 
          if (available < totalPrice) {
             throw new Error('Insufficient funds');

@@ -1,26 +1,14 @@
 import { BASE_CURRENCY, Fill, Order } from '../utils/types';
 
 export class Orderbook {
-   bids: Order[];
-   asks: Order[];
-   baseAsset: string;
    quoteAsset: string = BASE_CURRENCY;
-   lastTradeId: number;
-   currentPrice: number;
-
    constructor(
-      baseAsset: string,
-      bids: Order[],
-      asks: Order[],
-      currentPrice: number,
-      lastTradeId: number,
-   ) {
-      this.bids = bids;
-      this.asks = asks;
-      this.baseAsset = baseAsset;
-      this.currentPrice = currentPrice;
-      this.lastTradeId = lastTradeId;
-   }
+      public baseAsset: string,
+      public bids: Order[],
+      public asks: Order[],
+      public currentPrice: number,
+      public lastTradeId: number
+   ) {}
 
    ticker() {
       console.log(`Ticker: ${this.baseAsset}_${this.quoteAsset}`);
@@ -38,34 +26,27 @@ export class Orderbook {
    }
 
    addOrder(order: Order) {
+      const isBuy = order.side === 'buy';
+      const { executedQty, fills } = isBuy
+         ? this.matchBid(order)
+         : this.matchAsk(order);
+
+      order.filled = executedQty;
+
+      if (executedQty < order.quantity) {
+         this.insertAndSort(order);
+      }
+
+      return { executedQty, fills };
+   }
+
+   insertAndSort(order: Order) {
       if (order.side === 'buy') {
-         const { executedQty, fills } = this.matchBid(order);
-         order.filled = executedQty;
-         if (executedQty === order.quantity) {
-            return {
-               executedQty,
-               fills,
-            };
-         }
          this.bids.push(order);
-         return {
-            executedQty,
-            fills,
-         };
+         this.bids.sort((a, b) => b.price - a.price); // high → low
       } else {
-         const { executedQty, fills } = this.matchAsk(order);
-         order.filled = executedQty;
-         if (executedQty === order.quantity) {
-            return {
-               executedQty,
-               fills,
-            };
-         }
          this.asks.push(order);
-         return {
-            executedQty,
-            fills,
-         };
+         this.asks.sort((a, b) => a.price - b.price); // low → high
       }
    }
 
@@ -77,9 +58,8 @@ export class Orderbook {
          if (ask.price <= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               ask.quantity,
+               ask.quantity
             );
-
             executedQty += fillQty;
             ask.filled += fillQty;
 
@@ -93,16 +73,10 @@ export class Orderbook {
          }
       }
 
-      for (let i = 0; i < this.asks.length; i++) {
-         if (this.asks[i].filled === this.asks[i].quantity) {
-            this.asks.splice(i, 1);
-         }
-      }
+      //  remove fully filled asks
+      this.asks = this.asks.filter((a) => a.filled < a.quantity);
 
-      return {
-         fills,
-         executedQty,
-      };
+      return { fills, executedQty };
    }
 
    matchAsk(order: Order) {
@@ -113,9 +87,8 @@ export class Orderbook {
          if (bid.price >= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               bid.quantity,
+               bid.quantity
             );
-
             executedQty += fillQty;
             bid.filled += fillQty;
 
@@ -129,15 +102,10 @@ export class Orderbook {
          }
       }
 
-      for (let i = 0; i < this.bids.length; i++) {
-         if (this.bids[i].filled === this.bids[i].quantity) {
-            this.bids.splice(i, 1);
-         }
-      }
-      return {
-         fills,
-         executedQty,
-      };
+      // Remove fully filled bids
+      this.bids = this.bids.filter((b) => b.filled < b.quantity);
+
+      return { fills, executedQty };
    }
 
    cancelBid(order: Order) {
@@ -156,14 +124,6 @@ export class Orderbook {
             break;
          }
       }
-   }
-
-   getBestBid() {
-      return this.bids[0];
-   }
-
-   getBestAsk() {
-      return this.asks[0];
    }
 
    getDepth() {

@@ -15,7 +15,7 @@ export interface Order {
 }
 
 export interface Fill {
-   price: string;
+   price: number;
    qty: number;
    tradeId: number;
    otherUserId: string;
@@ -46,7 +46,7 @@ export type MessageToApi =
            orderId: string;
            executedQty: number;
            fills: {
-              price: string;
+              price: number;
               qty: number;
               tradeId: number;
            }[];
@@ -70,8 +70,8 @@ export type MessageFromApi =
         type: typeof CREATE_ORDER;
         data: {
            market: string;
-           price: string;
-           quantity: string;
+           price: number;
+           quantity: number;
            side: 'buy' | 'sell';
            userId: string;
         };
@@ -153,9 +153,9 @@ export type DbMessage =
         data: {
            id: string;
            isBuyerMaker: boolean;
-           price: string;
-           quantity: string;
-           quoteQuantity: string;
+           price: number;
+           quantity: number;
+           quoteQuantity: number;
            timestamp: number;
            market: string;
         };
@@ -166,8 +166,8 @@ export type DbMessage =
            orderId: string;
            executedQty: number;
            market?: string;
-           price?: string;
-           quantity?: string;
+           price?: number;
+           quantity?: number;
            side?: 'buy' | 'sell';
         };
      };
