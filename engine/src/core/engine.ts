@@ -258,7 +258,7 @@ export class Engine {
       };
       const { fills, executedQty } = orderbook.addOrder(order);
 
-      this.updateBalance(
+      this.updateUserBalance(
          userId,
          baseAsset,
          quoteAsset,
@@ -268,7 +268,8 @@ export class Engine {
       );
       // this.createDbTrades(fills, market, userId);
       // this.updateDbOrders(order, executedQty, fills, market);
-      // this.publishWsDepthUpdates(fills, price, side, market);
+
+      this.publishWsDepthUpdates(fills, price, side, market);
       // this.publishWsTrades(fills, userId, market);
 
       return { executedQty, fills, orderId: order.orderId };
@@ -315,7 +316,7 @@ export class Engine {
       }
    }
 
-   updateBalance(
+   updateUserBalance(
       userId: string,
       baseAsset: string,
       quoteAsset: string,
@@ -344,6 +345,25 @@ export class Engine {
       }
    }
 
+   createDbTrades(fills: Fill[], userId: string, market: string) {
+      // Create a trade in the database
+      console.log('Started creating trade in db');
+      fills.forEach((fill) => {
+         RedisManager.getInstance().pushMessage({
+            type: TRADE_ADDED,
+            data: {
+               market,
+               id: fill.tradeId.toString(),
+               isBuyerMaker: fill.otherUserId === userId,
+               price: fill.price,
+               quantity: fill.qty,
+               quoteQuantity: fill.qty * fill.price,
+               timestamp: Date.now(),
+            },
+         });
+      });
+   }
+
    updateDbOrders(
       order: Order,
       executedQty: number,
@@ -352,15 +372,14 @@ export class Engine {
    ) {
       // Update an order in the database
       console.log('Started Updating order in db');
-
       RedisManager.getInstance().pushMessage({
          type: ORDER_UPDATE,
          data: {
             orderId: order.orderId,
             executedQty: executedQty,
             market: market,
-            price: order.price.toString(),
-            quantity: order.quantity.toString(),
+            price: order.price,
+            quantity: order.quantity,
             side: order.side,
          },
       });
@@ -371,26 +390,6 @@ export class Engine {
             data: {
                orderId: fill.markerOrderId,
                executedQty: fill.qty,
-            },
-         });
-      });
-   }
-
-   createDbTrades(fills: Fill[], userId: string, market: string) {
-      // Create a trade in the database
-      console.log('Started creating trade in db');
-
-      fills.forEach((fill) => {
-         RedisManager.getInstance().pushMessage({
-            type: TRADE_ADDED,
-            data: {
-               market,
-               id: fill.tradeId.toString(),
-               isBuyerMaker: fill.otherUserId === userId,
-               price: fill.price,
-               quantity: fill.qty.toString(),
-               quoteQuantity: (fill.qty * Number(fill.price)).toString(),
-               timestamp: Date.now(),
             },
          });
       });
@@ -415,6 +414,51 @@ export class Engine {
       });
    }
 
+   publishWsDepthUpdates(
+      fills: Fill[],
+      price: number,
+      side: 'buy' | 'sell',
+      market: string
+   ) {
+      console.log('Started publishing ws depth updates');
+
+      const orderbook = this.orderbooks.find((o) => o.ticker() === market);
+      if (!orderbook) return;
+
+      const depth = orderbook.getDepth();
+      console.log('depth :', depth);
+
+      const fillPrices = new Set(fills.map((f) => Number(f.price).toFixed(2)));
+      console.log('fillPrices :', fillPrices);
+
+      const updatedBids = depth.bids.filter(([p]) => fillPrices.has(p));
+      console.log('updatedBids :', updatedBids);
+      const updatedAsks = depth.asks.filter(([p]) => fillPrices.has(p));
+      console.log('updatedAsks :', updatedAsks);
+
+      const matchedBid = depth.bids.find(([p]) => p === price.toFixed(2));
+      const matchedAsk = depth.asks.find(([p]) => p === price.toFixed(2));
+
+      const data =
+         side === 'buy'
+            ? {
+                 a: updatedAsks,
+                 b: matchedBid ? [matchedBid] : [],
+              }
+            : {
+                 a: matchedAsk ? [matchedAsk] : [],
+                 b: updatedBids,
+              };
+
+      RedisManager.getInstance().publishMessage(`depth@${market}`, {
+         stream: `depth@${market}`,
+         data: {
+            ...data,
+            e: 'depth',
+         },
+      });
+   }
+
    sendUpdatedDepthAt(price: string, market: string) {
       // Send the updated depth at a specific time
       console.log('started sending updated depth at');
@@ -435,52 +479,6 @@ export class Engine {
             e: 'depth',
          },
       });
-   }
-
-   publishWsDepthUpdates(
-      fills: Fill[],
-      price: string,
-      side: 'buy' | 'sell',
-      market: string
-   ) {
-      // Publish the updated depth to the WebSocket
-      console.log('started publishing ws depth updates');
-
-      const orderbook = this.orderbooks.find((o) => o.ticker() === market);
-      if (!orderbook) {
-         return;
-      }
-      const depth = orderbook.getDepth();
-      if (side === 'buy') {
-         const updatedAsks = depth?.asks.filter((x) =>
-            fills.map((f) => f.price).includes(x[0].toString())
-         );
-         const updatedBid = depth?.bids.find((x) => x[0] === price);
-         console.log('publish ws depth updates');
-         RedisManager.getInstance().publishMessage(`depth@${market}`, {
-            stream: `depth@${market}`,
-            data: {
-               a: updatedAsks,
-               b: updatedBid ? [updatedBid] : [],
-               e: 'depth',
-            },
-         });
-      }
-      if (side === 'sell') {
-         const updatedBids = depth?.bids.filter((x) =>
-            fills.map((f) => f.price).includes(x[0].toString())
-         );
-         const updatedAsk = depth?.asks.find((x) => x[0] === price);
-         console.log('publish ws depth updates');
-         RedisManager.getInstance().publishMessage(`depth@${market}`, {
-            stream: `depth@${market}`,
-            data: {
-               a: updatedAsk ? [updatedAsk] : [],
-               b: updatedBids,
-               e: 'depth',
-            },
-         });
-      }
    }
 
    onRamp(userId: string, amount: number) {

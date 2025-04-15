@@ -136,7 +136,7 @@ export type TradeAddedMessage = {
       e: 'trade';
       t: number;
       m: boolean;
-      p: string;
+      p: number;
       q: string;
       s: string; // symbol
    };

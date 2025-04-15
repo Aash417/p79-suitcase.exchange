@@ -7,7 +7,7 @@ export class Orderbook {
       public bids: Order[],
       public asks: Order[],
       public currentPrice: number,
-      public lastTradeId: number
+      public lastTradeId: number,
    ) {}
 
    ticker() {
@@ -61,7 +61,7 @@ export class Orderbook {
          if (ask.price <= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               ask.quantity
+               ask.quantity,
             );
             executedQty += fillQty;
             ask.filled += fillQty;
@@ -91,13 +91,13 @@ export class Orderbook {
          if (bid.price >= order.price && executedQty < order.quantity) {
             const fillQty = Math.min(
                order.quantity - executedQty,
-               bid.quantity
+               bid.quantity,
             );
             executedQty += fillQty;
             bid.filled += fillQty;
 
             fills.push({
-               price: bid.price.toString(),
+               price: bid.price,
                qty: fillQty,
                tradeId: this.lastTradeId++,
                otherUserId: bid.userId,
@@ -110,6 +110,46 @@ export class Orderbook {
       this.bids = this.bids.filter((b) => b.filled < b.quantity);
 
       return { fills, executedQty };
+   }
+
+   getDepth() {
+      const bidsMap: Record<number, number> = {};
+      const asksMap: Record<number, number> = {};
+
+      // Aggregate quantities for bids (buy orders)
+      for (const bid of this.bids) {
+         bidsMap[bid.price] = (bidsMap[bid.price] || 0) + bid.quantity;
+      }
+
+      // Aggregate quantities for asks (sell orders)
+      for (const ask of this.asks) {
+         asksMap[ask.price] = (asksMap[ask.price] || 0) + ask.quantity;
+      }
+
+      // Process bids: convert price to rupees, sort descending (highest bid first)
+      const bids: [string, string][] = Object.entries(bidsMap)
+         .sort((a, b) => Number(b[0]) - Number(a[0])) // Sort by original paisa value
+         .map(([price, qty]) => [
+            (Number(price) / 100).toFixed(2), // Convert paisa → rupees (e.g., 100050 → "1000.50")
+            String(qty), // Keep quantity as-is (but format to 2 decimals)
+         ]);
+
+      // Process asks: convert price to rupees, sort ascending (lowest ask first)
+      const asks: [string, string][] = Object.entries(asksMap)
+         .sort((a, b) => Number(a[0]) - Number(b[0])) // Sort by original paisa value
+         .map(([price, qty]) => [
+            (Number(price) / 100).toFixed(2), // Convert paisa → rupees (e.g., 100040 → "1000.40")
+            String(qty), // Keep quantity as-is (but format to 2 decimals)
+         ]);
+
+      return { bids, asks };
+   }
+
+   getOpenOrders(userId: string) {
+      console.log('Stated getOpenOrders');
+      const asks = this.asks.filter((x) => x.userId === userId);
+      const bids = this.bids.filter((x) => x.userId === userId);
+      return [...asks, ...bids];
    }
 
    cancelBid(order: Order) {
@@ -130,45 +170,5 @@ export class Orderbook {
             break;
          }
       }
-   }
-
-   getDepth() {
-      console.log('Stated getDepth');
-      const bids: [string, string][] = [];
-      const asks: [string, string][] = [];
-      const bidsObj: { [key: string]: number } = {};
-      const asksObj: { [key: string]: number } = {};
-
-      for (const bid of this.bids) {
-         if (!bidsObj[bid.price]) {
-            bidsObj[bid.price] = 0;
-         }
-         bidsObj[bid.price] += bid.quantity;
-      }
-
-      for (const ask of this.asks) {
-         if (!asksObj[ask.price]) {
-            asksObj[ask.price] = 0;
-         }
-         asksObj[ask.price] += ask.quantity;
-      }
-
-      for (const price in bidsObj) {
-         bids.push([price, bidsObj[price].toString()]);
-      }
-      for (const price in asksObj) {
-         asks.push([price, asksObj[price].toString()]);
-      }
-      return {
-         bids,
-         asks,
-      };
-   }
-
-   getOpenOrders(userId: string) {
-      console.log('Stated getOpenOrders');
-      const asks = this.asks.filter((x) => x.userId === userId);
-      const bids = this.bids.filter((x) => x.userId === userId);
-      return [...asks, ...bids];
    }
 }
