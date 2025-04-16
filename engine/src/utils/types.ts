@@ -1,5 +1,5 @@
 export interface UserBalance {
-   [key: string]: {
+   [asset: string]: {
       available: number;
       locked: number;
    };
@@ -23,7 +23,6 @@ export interface Fill {
 }
 
 export const BASE_CURRENCY = 'USDC';
-
 export const CREATE_ORDER = 'CREATE_ORDER';
 export const CANCEL_ORDER = 'CANCEL_ORDER';
 export const ON_RAMP = 'ON_RAMP';
@@ -32,78 +31,83 @@ export const GET_DEPTH = 'GET_DEPTH';
 export const TRADE_ADDED = 'TRADE_ADDED';
 export const ORDER_UPDATE = 'ORDER_UPDATE';
 
-export type MessageToApi =
-   | {
-        type: 'DEPTH';
-        payload: {
-           bids: [string, string][];
-           asks: [string, string][];
-        };
-     }
-   | {
-        type: 'ORDER_PLACED';
-        payload: {
-           orderId: string;
-           executedQty: number;
-           fills: {
-              price: number;
-              qty: number;
-              tradeId: number;
-           }[];
-        };
-     }
-   | {
-        type: 'ORDER_CANCELLED';
-        payload: {
-           orderId: string;
-           executedQty: number;
-           remainingQty: number;
-        };
-     }
-   | {
-        type: 'OPEN_ORDERS';
-        payload: Order[];
-     };
+export type Depth = {
+   type: 'DEPTH';
+   payload: {
+      bids: [string, string][];
+      asks: [string, string][];
+   };
+};
+export type OrderPlaced = {
+   type: 'ORDER_PLACED';
+   payload: {
+      orderId: number;
+      executedQty: number;
+      fills: {
+         price: number;
+         qty: number;
+         tradeId: number;
+      }[];
+   };
+};
+export type OrderCancelled = {
+   type: 'ORDER_CANCELLED';
+   payload: {
+      orderId: string;
+      executedQty: number;
+      remainingQty: number;
+   };
+};
+export type OpenOrders = {
+   type: 'OPEN_ORDERS';
+   payload: Order[];
+};
+export type MessageToApi = Depth | OrderPlaced | OrderCancelled | OpenOrders;
 
+export type Create_order = {
+   type: typeof CREATE_ORDER;
+   data: {
+      market: string;
+      price: number;
+      quantity: number;
+      side: 'buy' | 'sell';
+      userId: string;
+   };
+};
+export type Cancel_order = {
+   type: typeof CANCEL_ORDER;
+   data: {
+      orderId: string;
+      market: string;
+   };
+};
+export type On_Ramp = {
+   type: typeof ON_RAMP;
+   data: {
+      amount: string;
+      userId: string;
+      txnId: string;
+   };
+};
+export type GET_DEPTH = {
+   type: typeof GET_DEPTH;
+   data: {
+      market: string;
+   };
+};
+export type GET_OPEN_ORDERS = {
+   type: typeof GET_OPEN_ORDERS;
+   data: {
+      userId: string;
+      market: string;
+   };
+};
 export type MessageFromApi =
-   | {
-        type: typeof CREATE_ORDER;
-        data: {
-           market: string;
-           price: number;
-           quantity: number;
-           side: 'buy' | 'sell';
-           userId: string;
-        };
-     }
-   | {
-        type: typeof CANCEL_ORDER;
-        data: {
-           orderId: string;
-           market: string;
-        };
-     }
-   | {
-        type: typeof ON_RAMP;
-        data: {
-           amount: string;
-           userId: string;
-           txnId: string;
-        };
-     }
-   | {
-        type: typeof GET_DEPTH;
-        data: {
-           market: string;
-        };
-     }
-   | {
-        type: typeof GET_OPEN_ORDERS;
-        data: {
-           userId: string;
-           market: string;
-        };
-     };
+   | Create_order
+   | Cancel_order
+   | On_Ramp
+   | GET_DEPTH
+   | GET_OPEN_ORDERS;
 
 //TODO: Can we share the types between the ws layer and the engine?
 

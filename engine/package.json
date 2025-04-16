@@ -12,8 +12,10 @@
    "license": "ISC",
    "description": "",
    "dependencies": {
-      "@types/bun": "^1.2.8",
-      "@types/node": "^22.14.0",
       "redis": "^4.7.0"
+   },
+   "devDependencies": {
+      "@types/bun": "^1.2.9",
+      "@types/node": "^22.14.1"
    }
 }
