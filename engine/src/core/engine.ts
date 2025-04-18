@@ -8,7 +8,7 @@ import {
 import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
 import { OrderService } from './order-service';
-import { OrderBookService } from './orderbook-matching-service';
+import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
 import { SnapshotService } from './snapshot-service';
 
@@ -20,7 +20,6 @@ export class Engine {
    private orderbooks: OrderBookService[] = [];
 
    constructor() {
-      this.snapshotService = new SnapshotService();
       this.balanceService = new BalanceService();
       this.orderService = new OrderService(this.balanceService);
       this.orderbooks = [new OrderBookService('SOL')];
@@ -28,23 +27,27 @@ export class Engine {
          this.balanceService,
          this.orderbooks
       );
+      this.snapshotService = new SnapshotService(
+         this.orderbooks,
+         this.balanceService
+      );
       this.marketDataService = new MarketDataService(this.orderbooks);
 
-      this.initializeFromSnapshot();
+      if (!this.snapshotService.load()) this.initializeFresh();
    }
 
    process({
-      message,
       clientId,
+      message,
    }: {
-      message: MessageFromApi;
       clientId: string;
+      message: MessageFromApi;
    }) {
       console.log('started processing message');
       try {
          switch (message.type) {
             case CREATE_ORDER:
-               this.orderService.createOrder(message, clientId);
+               this.orderService.createOrder(message.data, clientId);
                break;
             case CANCEL_ORDER:
                this.orderService.cancelOrder(message.data, clientId);
@@ -61,24 +64,6 @@ export class Engine {
          }
       } catch (error) {
          RedisPublisher.getInstance().sendError(clientId, message.type, error);
-      }
-   }
-
-   private initializeFromSnapshot() {
-      try {
-         const loaded = this.snapshotService.load();
-
-         if (loaded) {
-            this.orderbooks = loaded.orderbooks;
-            this.balanceService.setBalances(loaded.balances);
-
-            console.log(this.balanceService);
-         } else {
-            this.initializeFresh();
-         }
-      } catch (error) {
-         console.error('Snapshot load failed, starting fresh', error);
-         this.initializeFresh();
       }
    }
 

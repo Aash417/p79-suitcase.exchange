@@ -1,57 +1,74 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { SNAPSHOT_PATH } from '../utils/constants';
 import { Order, UserBalance } from '../utils/types';
 import { BalanceService } from './balance-service';
-import { OrderBookService } from './orderbook-matching-service';
+import { OrderBookService } from './orderbook-service';
 
 type Snapshot = {
-   orderbooks: OrderBookSnapshot[];
-   balances: [string, UserBalance][]; // Map-like serialization
-};
-
-type OrderBookSnapshot = {
-   baseAsset: string;
-   bids: Order[];
-   asks: Order[];
-   lastTradeId: number;
+   orderbooks: {
+      baseAsset: string;
+      bids: Order[];
+      asks: Order[];
+      lastTradeId: number;
+   }[];
+   balances: [string, UserBalance][];
 };
 
 export class SnapshotService {
-   private SNAPSHOT_PATH = './snapshot.json';
+   constructor(
+      private orderbooks: OrderBookService[],
+      private balanceService: BalanceService
+   ) {}
 
-   private orderbooks: OrderBookService[];
-   private balanceService: BalanceService;
-
-   // Load state from disk
-   load() {
+   save() {
       try {
-         const data = readFileSync(this.SNAPSHOT_PATH, 'utf-8');
-         const parsed = JSON.parse(data) as Snapshot;
-
-         return {
-            orderbooks: parsed.orderbooks.map(
-               (ob) =>
-                  new OrderBookService(ob.baseAsset, ob.bids, ob.asks, ob.lastTradeId)
-            ),
-            balances: new Map(parsed.balances),
+         const snapshot: Snapshot = {
+            orderbooks: this.orderbooks.map((ob) => ({
+               baseAsset: ob.baseAsset,
+               bids: this.getOrdersFromMap(ob.getBidsMap()), // Convert Map<price, Order[]> => Order[]
+               asks: this.getOrdersFromMap(ob.getAsksMap()),
+               lastTradeId: ob.lastTradeId,
+            })),
+            balances: Array.from(this.balanceService.getBalances().entries()),
          };
+
+         writeFileSync('./new.json', JSON.stringify(snapshot, null, 2));
+         return true;
       } catch (error) {
-         console.error('Failed to load snapshot', error);
+         console.error('Snapshot save failed:', error);
          return false;
       }
    }
 
-   // Save current state to disk
-   save() {
-      const snapshot: Snapshot = {
-         orderbooks: this.orderbooks.map((ob) => ({
-            baseAsset: ob.baseAsset,
-            bids: ob.getBids(),
-            asks: ob.getAsks(),
-            lastTradeId: ob.lastTradeId,
-         })),
-         balances: Array.from(this.balanceService.getBalances()),
-      };
+   load() {
+      try {
+         const data = readFileSync(SNAPSHOT_PATH, 'utf-8');
+         const snapshot = JSON.parse(data) as Snapshot;
 
-      writeFileSync(this.snapshotPath, JSON.stringify(snapshot), 'utf8');
+         for (const obData of snapshot.orderbooks) {
+            const orderbook = this.orderbooks.find(
+               (ob) => ob.baseAsset === obData.baseAsset
+            );
+            if (orderbook) {
+               orderbook.initialize(
+                  obData.bids,
+                  obData.asks,
+                  obData.lastTradeId
+               );
+            }
+         }
+
+         this.balanceService.setBalances(new Map(snapshot.balances));
+
+         console.log('Snapshot loaded successfully');
+         return true;
+      } catch (error) {
+         console.error('Snapshot load failed:', error);
+         return false;
+      }
+   }
+
+   private getOrdersFromMap(priceMap: Map<number, Order[]>): Order[] {
+      return Array.from(priceMap.values()).flat();
    }
 }

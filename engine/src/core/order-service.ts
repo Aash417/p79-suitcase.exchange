@@ -1,6 +1,6 @@
 import { Create_order } from '../utils/types';
 import { BalanceService } from './balance-service';
-import { OrderBookService } from './orderbook-matching-service';
+import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
 
 export class OrderService {
@@ -9,8 +9,8 @@ export class OrderService {
       private orderbooks: OrderBookService[] = []
    ) {}
 
-   createOrder(order: Create_order, clientId: string) {
-      const { market, price, quantity, side, userId } = order.data;
+   createOrder(order: Create_order['data'], clientId: string) {
+      const { market, price, quantity, side, userId } = order;
       const orderbook = this.getOrderBook(market);
 
       // 1. Lock funds (in paisa)
@@ -27,7 +27,7 @@ export class OrderService {
       });
 
       // 3. Update balances
-      this.balanceService.updateAfterTrade(
+      this.balanceService.updateBalanceAfterTrade(
          placedOrder.fills,
          market,
          side,

@@ -1,8 +1,10 @@
+import { QUOTE_ASSET } from '../utils/constants';
 import { Fill, Order } from '../utils/types';
 
 export class OrderBookService {
    private bids = new Map<number, Order[]>(); // price => orders (sorted high to low)
    private asks = new Map<number, Order[]>(); // price => orders (sorted low to high)
+   public readonly quoteAsset = QUOTE_ASSET; // Constant value
 
    constructor(
       public readonly baseAsset: string,
@@ -10,15 +12,16 @@ export class OrderBookService {
       initialAsks: Order[] = [],
       public lastTradeId: number = 125
    ) {
+      console.log('OrderBookService initialized');
+      console.log('initialBids:', initialBids);
       this.initializeBook(initialBids, initialAsks);
    }
 
-   // Public API
-
-   public ticker() {
-      return `${this.baseAsset}_USDC`;
+   ticker() {
+      return `${this.baseAsset}_${this.quoteAsset}`; // SOL_USDC
    }
-   public addOrder(order: Order) {
+
+   addOrder(order: Order) {
       const isBuy = order.side === 'buy';
       const { fills, executedQty } = isBuy
          ? this.matchBid(order)
@@ -34,11 +37,11 @@ export class OrderBookService {
       return { orderId: ++this.lastTradeId, fills, executedQty };
    }
 
-   public cancelOrder(orderId: string): boolean {
+   cancelOrder(orderId: string): boolean {
       return this.cancelBid(orderId) || this.cancelAsk(orderId);
    }
 
-   public getDepth(): { bids: [number, number][]; asks: [number, number][] } {
+   getDepth(): { bids: [number, number][]; asks: [number, number][] } {
       const aggregate = (map: Map<number, Order[]>) => {
          const result = new Map<number, number>();
          for (const [price, orders] of map) {
@@ -56,7 +59,6 @@ export class OrderBookService {
       };
    }
 
-   // Matching engine
    private matchBid(order: Order): { fills: Fill[]; executedQty: number } {
       const fills: Fill[] = [];
       let remainingQty = order.quantity;
@@ -115,7 +117,6 @@ export class OrderBookService {
       return { fills, executedQty: order.quantity - remainingQty };
    }
 
-   // Private helpers
    private insertOrder(order: Order) {
       const priceMap = order.side === 'buy' ? this.bids : this.asks;
       const ordersAtPrice = priceMap.get(order.price) || [];
@@ -159,5 +160,31 @@ export class OrderBookService {
    private initializeBook(initialBids: Order[], initialAsks: Order[]) {
       initialBids.forEach((order) => this.insertOrder(order));
       initialAsks.forEach((order) => this.insertOrder(order));
+   }
+
+   // For snapshot serialization
+   getBidsMap(): Map<number, Order[]> {
+      return new Map(this.bids); // Return a copy
+   }
+
+   getAsksMap(): Map<number, Order[]> {
+      return new Map(this.asks);
+   }
+
+   // For snapshot deserialization
+   initialize(bids: Order[], asks: Order[], lastTradeId: number) {
+      this.bids = this.groupOrders(bids);
+      this.asks = this.groupOrders(asks);
+      this.lastTradeId = lastTradeId;
+   }
+
+   private groupOrders(orders: Order[]): Map<number, Order[]> {
+      const map = new Map<number, Order[]>();
+      orders.forEach((order) => {
+         const priceLevel = map.get(order.price) || [];
+         priceLevel.push(order);
+         map.set(order.price, priceLevel);
+      });
+      return map;
    }
 }

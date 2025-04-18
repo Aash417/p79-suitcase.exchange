@@ -46,7 +46,7 @@ export class RedisPublisher {
                q: trade.quantity.toString(),
                s: trade.market,
             },
-         })
+         }),
       );
    }
 
@@ -60,7 +60,7 @@ export class RedisPublisher {
                a: depth.asks, // Formatted asks ([price, qty][])
                b: depth.bids, // Formatted bids ([price, qty][])
             },
-         })
+         }),
       );
    }
 

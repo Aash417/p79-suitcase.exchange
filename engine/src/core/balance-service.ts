@@ -1,4 +1,5 @@
-import { BASE_CURRENCY, Fill, UserBalance } from '../utils/types';
+import { QUOTE_ASSET } from '../utils/constants';
+import { Fill, UserBalance } from '../utils/types';
 
 export class BalanceService {
    private balances = new Map<string, UserBalance>();
@@ -10,18 +11,18 @@ export class BalanceService {
       quantity: number
    ) {
       const balance = this.getUserBalance(userId);
-      const asset = side === 'buy' ? BASE_CURRENCY : 'SOL'; // Adjust per market
+      const asset = side === 'buy' ? QUOTE_ASSET : 'SOL'; // Adjust per market
 
-      const totalPaisa = price * quantity;
-      if (balance[asset].available < totalPaisa) {
+      const totalAmount = price * quantity;
+      if (balance[asset].available < totalAmount) {
          throw new Error('Insufficient funds');
       }
 
-      balance[asset].available -= totalPaisa;
-      balance[asset].locked += totalPaisa;
+      balance[asset].available -= totalAmount;
+      balance[asset].locked += totalAmount;
    }
 
-   updateAfterTrade(
+   updateBalanceAfterTrade(
       fills: Fill[],
       market: string,
       side: 'buy' | 'sell',
@@ -42,8 +43,12 @@ export class BalanceService {
       });
    }
 
+   getBalances(): Map<string, UserBalance> {
+      return new Map(this.balances); // Return a copy
+   }
+
    setBalances(balances: Map<string, UserBalance>) {
-      this.balances = new Map(balances);
+      this.balances = new Map(balances); // Full overwrite
    }
 
    setDefaultBalances() {
@@ -51,14 +56,14 @@ export class BalanceService {
          [
             'user1',
             {
-               [BASE_CURRENCY]: { available: 100_0000, locked: 0 }, // 10,000.00 INR
+               [QUOTE_ASSET]: { available: 100_0000, locked: 0 }, // 10,000.00 INR
                SOL: { available: 50, locked: 0 }, // 50 SOL
             },
          ],
          [
             'user2',
             {
-               [BASE_CURRENCY]: { available: 50_0000, locked: 0 }, // 5,000.00 INR
+               [QUOTE_ASSET]: { available: 50_0000, locked: 0 }, // 5,000.00 INR
                SOL: { available: 25, locked: 0 },
             },
          ],
@@ -70,9 +75,10 @@ export class BalanceService {
    private getUserBalance(userId: string): UserBalance {
       if (!this.balances.has(userId)) {
          this.balances.set(userId, {
-            [BASE_CURRENCY]: { available: 0, locked: 0 },
+            [QUOTE_ASSET]: { available: 0, locked: 0 },
             SOL: { available: 0, locked: 0 },
          });
+         return this.balances.get(userId)!;
       }
       return this.balances.get(userId)!;
    }
