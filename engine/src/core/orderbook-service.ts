@@ -1,10 +1,10 @@
 import { QUOTE_ASSET } from '../utils/constants';
-import { Fill, Order } from '../utils/types';
+import { Fill, Order, ORDER_SIDE } from '../utils/types';
 
 export class OrderBookService {
    private bids = new Map<number, Order[]>(); // price => orders (sorted high to low)
    private asks = new Map<number, Order[]>(); // price => orders (sorted low to high)
-   public readonly quoteAsset = QUOTE_ASSET; // Constant value
+   public readonly quoteAsset = QUOTE_ASSET;
 
    constructor(
       public readonly baseAsset: string,
@@ -47,8 +47,9 @@ export class OrderBookService {
       return { orderId: ++this.lastTradeId, fills, executedQty };
    }
 
-   cancelOrder(orderId: string): boolean {
-      return this.cancelBid(orderId) || this.cancelAsk(orderId);
+   cancelOrder(orderId: string, side: ORDER_SIDE): boolean {
+      if (side === 'buy') return this.cancelBid(orderId);
+      else return this.cancelAsk(orderId);
    }
 
    getDepth(): { bids: [number, number][]; asks: [number, number][] } {
@@ -64,9 +65,50 @@ export class OrderBookService {
       };
 
       return {
-         bids: aggregate(this.bids).sort((a, b) => b[0] - a[0]), // High to low
-         asks: aggregate(this.asks).sort((a, b) => a[0] - b[0]), // Low to high
+         bids: aggregate(this.bids).sort((a, b) => b[0] - a[0]),
+         asks: aggregate(this.asks).sort((a, b) => a[0] - b[0]),
       };
+   }
+
+   findOrder(orderId: string): { order: Order; side: ORDER_SIDE } | undefined {
+      for (const ordersAtPrice of this.bids.values()) {
+         const order = ordersAtPrice.find((o) => o.orderId === orderId);
+         if (order) return { order, side: 'buy' };
+      }
+
+      for (const ordersAtPrice of this.asks.values()) {
+         const order = ordersAtPrice.find((o) => o.orderId === orderId);
+         if (order) return { order, side: 'sell' };
+      }
+
+      return undefined;
+   }
+
+   private cancelBid(orderId: string): boolean {
+      return this.removeOrderFromMap(this.bids, orderId);
+   }
+
+   private cancelAsk(orderId: string): boolean {
+      return this.removeOrderFromMap(this.asks, orderId);
+   }
+
+   private removeOrderFromMap(
+      priceMap: Map<number, Order[]>,
+      orderId: string,
+   ): boolean {
+      for (const [price, orders] of priceMap) {
+         const filteredOrders = orders.filter((o) => o.orderId !== orderId);
+
+         if (filteredOrders.length !== orders.length) {
+            if (filteredOrders.length > 0) {
+               priceMap.set(price, filteredOrders);
+            } else {
+               priceMap.delete(price); // Clean up empty price levels
+            }
+            return true;
+         }
+      }
+      return false;
    }
 
    private matchBid(order: Order): { fills: Fill[]; executedQty: number } {
@@ -135,29 +177,6 @@ export class OrderBookService {
       //  Insert order at price level
       ordersAtPrice.push(order);
       priceMap.set(order.price, ordersAtPrice);
-   }
-
-   private cancelBid(orderId: string): boolean {
-      return this.removeOrder(this.bids, orderId);
-   }
-
-   private cancelAsk(orderId: string): boolean {
-      return this.removeOrder(this.asks, orderId);
-   }
-
-   private removeOrder(
-      priceMap: Map<number, Order[]>,
-      orderId: string,
-   ): boolean {
-      for (const [price, orders] of priceMap) {
-         const filtered = orders.filter((o) => o.orderId !== orderId);
-         if (filtered.length !== orders.length) {
-            priceMap.set(price, filtered);
-            if (filtered.length === 0) priceMap.delete(price);
-            return true;
-         }
-      }
-      return false;
    }
 
    private createFill(order: Order, price: number, qty: number): Fill {

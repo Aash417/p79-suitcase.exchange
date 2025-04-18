@@ -84,12 +84,12 @@
                "userId": "5"
             },
             {
-               "price": 100060,
+               "price": 10000,
                "quantity": 1,
                "orderId": "fzqdtolofin2iq4wskojp",
                "filled": 0,
                "side": "buy",
-               "userId": "5"
+               "userId": "47854"
             }
          ],
          "asks": [
@@ -169,8 +169,8 @@
          "47854",
          {
             "USDC": {
-               "available": 1000000000,
-               "locked": 0
+               "available": 999900000,
+               "locked": 100000
             },
             "SOL": {
                "available": 50000,

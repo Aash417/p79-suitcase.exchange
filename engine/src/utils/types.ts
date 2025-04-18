@@ -1,3 +1,12 @@
+export const CREATE_ORDER = 'CREATE_ORDER';
+export const CANCEL_ORDER = 'CANCEL_ORDER';
+export const ON_RAMP = 'ON_RAMP';
+export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
+export const GET_DEPTH = 'GET_DEPTH';
+export const TRADE_ADDED = 'TRADE_ADDED';
+export const ORDER_UPDATE = 'ORDER_UPDATE';
+export type ORDER_SIDE = 'buy' | 'sell';
+
 export interface UserBalance {
    [asset: string]: {
       available: number;
@@ -10,7 +19,7 @@ export interface Order {
    quantity: number;
    orderId: string;
    filled: number;
-   side: 'buy' | 'sell';
+   side: ORDER_SIDE;
    userId: string;
 }
 
@@ -21,14 +30,6 @@ export interface Fill {
    otherUserId: string;
    markerOrderId: string;
 }
-
-export const CREATE_ORDER = 'CREATE_ORDER';
-export const CANCEL_ORDER = 'CANCEL_ORDER';
-export const ON_RAMP = 'ON_RAMP';
-export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
-export const GET_DEPTH = 'GET_DEPTH';
-export const TRADE_ADDED = 'TRADE_ADDED';
-export const ORDER_UPDATE = 'ORDER_UPDATE';
 
 export type Depth = {
    type: 'DEPTH';
@@ -69,7 +70,7 @@ export type Create_order = {
       market: string;
       price: number;
       quantity: number;
-      side: 'buy' | 'sell';
+      side: ORDER_SIDE;
       userId: string;
    };
 };
@@ -171,6 +172,6 @@ export type DbMessage =
            market?: string;
            price?: number;
            quantity?: number;
-           side?: 'buy' | 'sell';
+           side?: ORDER_SIDE;
         };
      };

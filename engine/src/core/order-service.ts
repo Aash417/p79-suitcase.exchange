@@ -1,4 +1,5 @@
-import { Create_order } from '../utils/types';
+import { QUOTE_ASSET } from '../utils/constants';
+import { Cancel_order, Create_order, Order } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
@@ -39,33 +40,37 @@ export class OrderService {
          type: 'ORDER_PLACED',
          payload: placedOrder,
       });
+
       // MarketDataPublisher.sendDepthUpdate(market, fills);
    }
 
-   cancelOrder(data: CancelData, clientId: string) {
+   cancelOrder(data: Cancel_order['data'], clientId: string) {
       const { orderId, market } = data;
+
+      // 1. Find orderbook and order
       const orderbook = this.getOrderBook(market);
       const order = orderbook.findOrder(orderId);
+      if (!order) throw new Error(`Order ${orderId} not found`);
 
-      if (order.side === 'buy') {
-         orderbook.cancelBid(order);
-         this.balanceService.unlockFunds(
-            order.userId,
-            'buy',
-            order.price,
-            order.quantity,
-         );
-      } else {
-         orderbook.cancelAsk(order);
-         this.balanceService.unlockFunds(
-            order.userId,
-            'sell',
-            order.price,
-            order.quantity,
-         );
-      }
+      // 2. Cancel in orderbook
+      const cancelled = orderbook.cancelOrder(orderId, order.side);
+      if (!cancelled) throw new Error(`Failed to cancel order ${orderId}`);
 
-      RedisPublisher.sendOrderCancelled(clientId, orderId);
+      // 3. Unlock funds
+      this.unlockFunds(order.order);
+
+      // 4. Notify client
+      RedisPublisher.getInstance().sendOrderCancelled(clientId, orderId);
+
+      // 5. Update market data
+      // this.marketDataService.publishOrderCancelled(market, order.price);
+   }
+
+   private async unlockFunds(order: Order): Promise<void> {
+      const asset = order.side === 'buy' ? QUOTE_ASSET : 'SOL';
+      const amount = order.price * order.quantity;
+
+      this.balanceService.unlockFunds(order.userId, asset, amount);
    }
 
    private getOrderBook(market: string) {

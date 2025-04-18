@@ -11,7 +11,7 @@ export class BalanceService {
       quantity: number,
    ) {
       const balance = this.getUserBalance(userId);
-      const asset = side === 'buy' ? QUOTE_ASSET : 'SOL'; // Adjust per market
+      const asset = side === 'buy' ? QUOTE_ASSET : 'SOL';
 
       const totalAmount = price * quantity;
       if (balance[asset].available < totalAmount) {
@@ -20,6 +20,24 @@ export class BalanceService {
 
       balance[asset].available -= totalAmount;
       balance[asset].locked += totalAmount;
+   }
+
+   unlockFunds(userId: string, asset: string, amount: number) {
+      try {
+         const userBalance = this.getUserBalance(userId);
+
+         if (userBalance[asset].locked < amount) {
+            throw new Error(`Insufficient locked ${asset} to unlock`);
+         }
+
+         userBalance[asset].locked -= amount;
+         userBalance[asset].available += amount;
+
+         console.log(`Unlocked ${amount} ${asset} for user ${userId}`);
+      } catch (error) {
+         console.error(`Failed to unlock funds: ${error.message}`);
+         throw error;
+      }
    }
 
    updateBalanceAfterTrade(
@@ -44,11 +62,11 @@ export class BalanceService {
    }
 
    getBalances(): Map<string, UserBalance> {
-      return new Map(this.balances); // Return a copy
+      return new Map(this.balances);
    }
 
    setBalances(balances: Map<string, UserBalance>) {
-      this.balances = new Map(balances); // Full overwrite
+      this.balances = new Map(balances);
    }
 
    setDefaultBalances() {
@@ -56,14 +74,14 @@ export class BalanceService {
          [
             'user1',
             {
-               [QUOTE_ASSET]: { available: 100_0000, locked: 0 }, // 10,000.00 INR
+               [QUOTE_ASSET]: { available: 100_0000, locked: 0 },
                SOL: { available: 50, locked: 0 }, // 50 SOL
             },
          ],
          [
             'user2',
             {
-               [QUOTE_ASSET]: { available: 50_0000, locked: 0 }, // 5,000.00 INR
+               [QUOTE_ASSET]: { available: 50_0000, locked: 0 },
                SOL: { available: 25, locked: 0 },
             },
          ],
@@ -74,11 +92,7 @@ export class BalanceService {
 
    private getUserBalance(userId: string): UserBalance {
       if (!this.balances.has(userId)) {
-         this.balances.set(userId, {
-            [QUOTE_ASSET]: { available: 0, locked: 0 },
-            SOL: { available: 0, locked: 0 },
-         });
-         return this.balances.get(userId)!;
+         throw new Error(`User ${userId} not found`);
       }
       return this.balances.get(userId)!;
    }
