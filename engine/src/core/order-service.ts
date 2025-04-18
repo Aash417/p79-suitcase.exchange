@@ -6,7 +6,7 @@ import { RedisPublisher } from './redis-publisher';
 export class OrderService {
    constructor(
       private balanceService: BalanceService,
-      private orderbooks: OrderBookService[] = []
+      private orderbooks: OrderBookService[] = [],
    ) {}
 
    createOrder(order: Create_order['data'], clientId: string) {
@@ -31,7 +31,7 @@ export class OrderService {
          placedOrder.fills,
          market,
          side,
-         userId
+         userId,
       );
 
       // 4. Publish events
@@ -53,7 +53,7 @@ export class OrderService {
             order.userId,
             'buy',
             order.price,
-            order.quantity
+            order.quantity,
          );
       } else {
          orderbook.cancelAsk(order);
@@ -61,7 +61,7 @@ export class OrderService {
             order.userId,
             'sell',
             order.price,
-            order.quantity
+            order.quantity,
          );
       }
 

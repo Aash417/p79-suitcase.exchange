@@ -8,13 +8,23 @@ export class OrderBookService {
 
    constructor(
       public readonly baseAsset: string,
-      initialBids: Order[] = [],
-      initialAsks: Order[] = [],
-      public lastTradeId: number = 125
-   ) {
-      console.log('OrderBookService initialized');
-      console.log('initialBids:', initialBids);
-      this.initializeBook(initialBids, initialAsks);
+
+      public lastTradeId: number = 125,
+   ) {}
+   // For snapshot deserialization
+   initialize(bids: Order[], asks: Order[], lastTradeId: number) {
+      this.bids = this.groupOrdersByPrice(bids, 'desc');
+      this.asks = this.groupOrdersByPrice(asks, 'asc');
+      this.lastTradeId = lastTradeId;
+   }
+
+   // For snapshot serialization
+   getBidsMap(): Map<number, Order[]> {
+      return new Map(this.bids); // Return a copy
+   }
+
+   getAsksMap(): Map<number, Order[]> {
+      return new Map(this.asks);
    }
 
    ticker() {
@@ -47,7 +57,7 @@ export class OrderBookService {
          for (const [price, orders] of map) {
             result.set(
                price,
-               orders.reduce((sum, o) => sum + o.quantity, 0)
+               orders.reduce((sum, o) => sum + o.quantity, 0),
             );
          }
          return Array.from(result.entries());
@@ -63,26 +73,29 @@ export class OrderBookService {
       const fills: Fill[] = [];
       let remainingQty = order.quantity;
 
-      const askPrices = Array.from(this.asks.keys()).sort((a, b) => a - b);
-      for (const askPrice of askPrices) {
+      // 1. Iterate asks from lowest to highest price (Map keys are already sorted)
+      for (const [askPrice, ordersAtPrice] of this.asks) {
+         // 2. Stop if no more possible matches
          if (askPrice > order.price || remainingQty <= 0) break;
 
-         const ordersAtPrice = this.asks.get(askPrice)!;
+         // 3. Match against all orders at this price level
          for (const ask of ordersAtPrice) {
             const fillQty = Math.min(remainingQty, ask.quantity);
             fills.push(this.createFill(ask, askPrice, fillQty));
             remainingQty -= fillQty;
             ask.quantity -= fillQty;
 
+            // 4. Early exit if order is fully filled
             if (remainingQty <= 0) break;
          }
 
-         // Clean up filled orders
-         this.asks.set(
-            askPrice,
-            ordersAtPrice.filter((ask) => ask.quantity > 0)
+         // 5. Clean up fully filled orders at this price level
+         const remainingOrders = ordersAtPrice.filter(
+            (ask) => ask.quantity > 0,
          );
-         if (this.asks.get(askPrice)?.length === 0) this.asks.delete(askPrice);
+         if (remainingOrders.length > 0)
+            this.asks.set(askPrice, remainingOrders);
+         else this.asks.delete(askPrice); // Remove empty price levels
       }
 
       return { fills, executedQty: order.quantity - remainingQty };
@@ -92,11 +105,9 @@ export class OrderBookService {
       const fills: Fill[] = [];
       let remainingQty = order.quantity;
 
-      const bidPrices = Array.from(this.bids.keys()).sort((a, b) => b - a); // High to low
-      for (const bidPrice of bidPrices) {
+      for (const [bidPrice, ordersAtPrice] of this.bids) {
          if (bidPrice < order.price || remainingQty <= 0) break;
 
-         const ordersAtPrice = this.bids.get(bidPrice)!;
          for (const bid of ordersAtPrice) {
             const fillQty = Math.min(remainingQty, bid.quantity);
             fills.push(this.createFill(bid, bidPrice, fillQty));
@@ -106,12 +117,12 @@ export class OrderBookService {
             if (remainingQty <= 0) break;
          }
 
-         // Clean up filled orders
-         this.bids.set(
-            bidPrice,
-            ordersAtPrice.filter((bid) => bid.quantity > 0)
+         const remainingOrders = ordersAtPrice.filter(
+            (bid) => bid.quantity > 0,
          );
-         if (this.bids.get(bidPrice)?.length === 0) this.bids.delete(bidPrice);
+         if (remainingOrders.length > 0)
+            this.bids.set(bidPrice, remainingOrders);
+         else this.bids.delete(bidPrice);
       }
 
       return { fills, executedQty: order.quantity - remainingQty };
@@ -120,6 +131,8 @@ export class OrderBookService {
    private insertOrder(order: Order) {
       const priceMap = order.side === 'buy' ? this.bids : this.asks;
       const ordersAtPrice = priceMap.get(order.price) || [];
+
+      //  Insert order at price level
       ordersAtPrice.push(order);
       priceMap.set(order.price, ordersAtPrice);
    }
@@ -134,7 +147,7 @@ export class OrderBookService {
 
    private removeOrder(
       priceMap: Map<number, Order[]>,
-      orderId: string
+      orderId: string,
    ): boolean {
       for (const [price, orders] of priceMap) {
          const filtered = orders.filter((o) => o.orderId !== orderId);
@@ -157,34 +170,30 @@ export class OrderBookService {
       };
    }
 
-   private initializeBook(initialBids: Order[], initialAsks: Order[]) {
-      initialBids.forEach((order) => this.insertOrder(order));
-      initialAsks.forEach((order) => this.insertOrder(order));
-   }
+   private groupOrdersByPrice(
+      orders: Order[],
+      sortOrder: 'asc' | 'desc',
+   ): Map<number, Order[]> {
+      const priceMap = new Map<number, Order[]>();
 
-   // For snapshot serialization
-   getBidsMap(): Map<number, Order[]> {
-      return new Map(this.bids); // Return a copy
-   }
-
-   getAsksMap(): Map<number, Order[]> {
-      return new Map(this.asks);
-   }
-
-   // For snapshot deserialization
-   initialize(bids: Order[], asks: Order[], lastTradeId: number) {
-      this.bids = this.groupOrders(bids);
-      this.asks = this.groupOrders(asks);
-      this.lastTradeId = lastTradeId;
-   }
-
-   private groupOrders(orders: Order[]): Map<number, Order[]> {
-      const map = new Map<number, Order[]>();
+      // Group orders by price
       orders.forEach((order) => {
-         const priceLevel = map.get(order.price) || [];
+         const priceLevel = priceMap.get(order.price) || [];
          priceLevel.push(order);
-         map.set(order.price, priceLevel);
+         priceMap.set(order.price, priceLevel);
       });
-      return map;
+
+      // Convert to sorted array of entries
+      const sortedEntries = Array.from(priceMap.entries()).sort((a, b) =>
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+      );
+
+      // Rebuild Map to preserve sort order (JavaScript Maps iterate in insertion order)
+      const sortedMap = new Map<number, Order[]>();
+      sortedEntries.forEach(([price, orders]) => {
+         sortedMap.set(price, orders);
+      });
+
+      return sortedMap;
    }
 }

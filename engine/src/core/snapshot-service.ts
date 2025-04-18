@@ -17,7 +17,7 @@ type Snapshot = {
 export class SnapshotService {
    constructor(
       private orderbooks: OrderBookService[],
-      private balanceService: BalanceService
+      private balanceService: BalanceService,
    ) {}
 
    save() {
@@ -47,13 +47,13 @@ export class SnapshotService {
 
          for (const obData of snapshot.orderbooks) {
             const orderbook = this.orderbooks.find(
-               (ob) => ob.baseAsset === obData.baseAsset
+               (ob) => ob.baseAsset === obData.baseAsset,
             );
             if (orderbook) {
                orderbook.initialize(
                   obData.bids,
                   obData.asks,
-                  obData.lastTradeId
+                  obData.lastTradeId,
                );
             }
          }

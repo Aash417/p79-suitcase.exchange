@@ -25,11 +25,11 @@ export class Engine {
       this.orderbooks = [new OrderBookService('SOL')];
       this.orderService = new OrderService(
          this.balanceService,
-         this.orderbooks
+         this.orderbooks,
       );
       this.snapshotService = new SnapshotService(
          this.orderbooks,
-         this.balanceService
+         this.balanceService,
       );
       this.marketDataService = new MarketDataService(this.orderbooks);
 
@@ -58,7 +58,7 @@ export class Engine {
             case ON_RAMP:
                this.balanceService.onRamp(
                   message.data.userId,
-                  message.data.amount
+                  message.data.amount,
                );
                break;
          }

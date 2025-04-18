@@ -8,7 +8,7 @@ export class BalanceService {
       userId: string,
       side: 'buy' | 'sell',
       price: number,
-      quantity: number
+      quantity: number,
    ) {
       const balance = this.getUserBalance(userId);
       const asset = side === 'buy' ? QUOTE_ASSET : 'SOL'; // Adjust per market
@@ -26,7 +26,7 @@ export class BalanceService {
       fills: Fill[],
       market: string,
       side: 'buy' | 'sell',
-      userId: string
+      userId: string,
    ) {
       const [baseAsset, quoteAsset] = market.split('_');
       fills.forEach((fill) => {
