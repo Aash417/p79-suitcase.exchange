@@ -1,24 +1,33 @@
 import { OrderBookService } from './orderbook-service';
+import { RedisPublisher } from './redis-publisher';
 
 export class MarketDataService {
    constructor(private orderbooks: OrderBookService[]) {}
 
    sendDepth(market: string, clientId: string) {
-      const orderbook = this.getOrderBook(market);
-      const depth = orderbook.getDepth();
+      const orderbook = this.orderbooks.find((ob) => ob.ticker() === market);
+      if (!orderbook) return;
 
-      // Convert paisa → rupees only here
-      const formattedBids = depth.bids.map(([price, qty]) => [
-         (price / 100).toFixed(2),
-         qty.toFixed(2),
-      ]);
+      const { bids, asks } = orderbook.getDepth();
+      const payload = {
+         bids: this.formatPaisaToRupeeLevels(bids),
+         asks: this.formatPaisaToRupeeLevels(asks),
+         timestamp: Date.now(),
+      };
 
-      console.log(formattedBids);
-
-      // RedisPublisher.sendDepth(clientId, formattedBids);
+      RedisPublisher.getInstance().sendDepth(clientId, payload);
    }
 
-   getOpenOrders(userId: string, market: string) {
-      return this.getOrderBook(market).getOpenOrders(userId);
+   // getOpenOrders(userId: string, market: string) {
+   //    return this.getOrderBook(market).getOpenOrders(userId);
+   // }
+
+   private formatPaisaToRupeeLevels(
+      levels: [number, number][],
+   ): [string, string][] {
+      return levels.map(([price, qty]) => [
+         (price / 100).toFixed(2), // Convert paisa to currency
+         qty.toFixed(2), // Format quantity
+      ]);
    }
 }

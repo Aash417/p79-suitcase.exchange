@@ -52,21 +52,13 @@ export class OrderBookService {
       else return this.cancelAsk(orderId);
    }
 
-   getDepth(): { bids: [number, number][]; asks: [number, number][] } {
-      const aggregate = (map: Map<number, Order[]>) => {
-         const result = new Map<number, number>();
-         for (const [price, orders] of map) {
-            result.set(
-               price,
-               orders.reduce((sum, o) => sum + o.quantity, 0),
-            );
-         }
-         return Array.from(result.entries());
-      };
-
+   getDepth(): {
+      bids: [number, number][]; // [priceInPaisa, quantity]
+      asks: [number, number][];
+   } {
       return {
-         bids: aggregate(this.bids).sort((a, b) => b[0] - a[0]),
-         asks: aggregate(this.asks).sort((a, b) => a[0] - b[0]),
+         bids: this.aggregatePriceLevels(this.bids, 'desc'),
+         asks: this.aggregatePriceLevels(this.asks, 'asc'),
       };
    }
 
@@ -82,6 +74,25 @@ export class OrderBookService {
       }
 
       return undefined;
+   }
+
+   private aggregatePriceLevels(
+      priceMap: Map<number, Order[]>,
+      sortOrder: 'asc' | 'desc',
+   ): [number, number][] {
+      // 1. Aggregate quantities per price level
+      const aggregated = new Map<number, number>();
+      for (const [price, orders] of priceMap) {
+         aggregated.set(
+            price,
+            orders.reduce((sum, o) => sum + o.quantity, 0),
+         );
+      }
+
+      // 2. Sort and return as array
+      return Array.from(aggregated.entries()).sort((a, b) =>
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+      );
    }
 
    private cancelBid(orderId: string): boolean {

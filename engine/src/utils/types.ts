@@ -36,6 +36,7 @@ export type Depth = {
    payload: {
       bids: [string, string][];
       asks: [string, string][];
+      timestamp: number;
    };
 };
 export type OrderPlaced = {

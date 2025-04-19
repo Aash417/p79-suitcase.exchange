@@ -1,5 +1,5 @@
 import { RedisClientType, createClient } from 'redis';
-import { On_Ramp, OrderPlaced } from '../utils/types';
+import { Depth, On_Ramp, OrderPlaced } from '../utils/types';
 
 type WsMessage = {
    stream: string;
@@ -24,7 +24,6 @@ export class RedisPublisher {
       this.client = createClient();
       this.client.connect();
    }
-
    // --- Singleton Access ---
    static getInstance(): RedisPublisher {
       if (!this.instance) {
@@ -117,6 +116,13 @@ export class RedisPublisher {
       this.sendToClient(clientId, {
          type: message,
          payload: error,
+      });
+   }
+
+   sendDepth(clientId: string, depth: Depth['payload']) {
+      this.sendToClient(clientId, {
+         type: 'DEPTH',
+         payload: depth,
       });
    }
 }
