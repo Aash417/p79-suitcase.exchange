@@ -1,5 +1,6 @@
 import { QUOTE_ASSET } from '../utils/constants';
-import { Fill, UserBalance } from '../utils/types';
+import { Fill, On_Ramp, UserBalance } from '../utils/types';
+import { RedisPublisher } from './redis-publisher';
 
 export class BalanceService {
    private balances = new Map<string, UserBalance>();
@@ -88,7 +89,36 @@ export class BalanceService {
       ]);
    }
 
-   onRamp(userId: string, amount: string) {}
+   onRamp(data: On_Ramp['data'], clientId: string) {
+      const { userId, amount, asset } = data;
+      try {
+         if (amount <= 0) throw new Error('Amount must be positive');
+         if (!Number.isInteger(amount))
+            throw new Error('Amount must be an integer');
+
+         // Get or create user balance
+         const userBalance = this.balances.get(userId) || {
+            [QUOTE_ASSET]: { available: 0, locked: 0 },
+         };
+
+         // Initialize asset if not exists
+         if (!userBalance[asset]) {
+            userBalance[asset] = { available: 0, locked: 0 };
+         }
+
+         userBalance[asset].available += amount;
+         this.balances.set(userId, userBalance);
+
+         RedisPublisher.getInstance().sendOnRampSuccess(data, clientId);
+
+         console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
+      } catch (error) {
+         console.error(`On-ramp failed: ${error.message}`);
+
+         RedisPublisher.getInstance().sendOnRampFailure(data, clientId);
+         throw error;
+      }
+   }
 
    private getUserBalance(userId: string): UserBalance {
       if (!this.balances.has(userId)) {

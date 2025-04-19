@@ -56,10 +56,7 @@ export class Engine {
                this.marketDataService.sendDepth(message.data.market, clientId);
                break;
             case ON_RAMP:
-               this.balanceService.onRamp(
-                  message.data.userId,
-                  message.data.amount,
-               );
+               this.balanceService.onRamp(message.data, clientId);
                break;
          }
       } catch (error) {

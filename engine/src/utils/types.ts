@@ -84,9 +84,9 @@ export type Cancel_order = {
 export type On_Ramp = {
    type: typeof ON_RAMP;
    data: {
-      amount: string;
       userId: string;
-      txnId: string;
+      asset: string;
+      amount: number;
    };
 };
 export type GET_DEPTH = {
@@ -108,8 +108,6 @@ export type MessageFromApi =
    | On_Ramp
    | GET_DEPTH
    | GET_OPEN_ORDERS;
-
-//TODO: Can we share the types between the ws layer and the engine?
 
 export type TickerUpdateMessage = {
    stream: string;

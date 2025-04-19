@@ -1,5 +1,5 @@
 import { RedisClientType, createClient } from 'redis';
-import { OrderPlaced } from '../utils/types';
+import { On_Ramp, OrderPlaced } from '../utils/types';
 
 type WsMessage = {
    stream: string;
@@ -34,6 +34,32 @@ export class RedisPublisher {
    }
 
    // --- Core Methods ---
+   sendOnRampSuccess(data: On_Ramp['data'], clientId: string): void {
+      const payload = {
+         type: 'ON_RAMP_SUCCESS',
+         payload: {
+            amount: data.amount,
+            asset: data.asset,
+            timestamp: Date.now(),
+         },
+      };
+
+      this.sendToClient(clientId, payload);
+   }
+
+   sendOnRampFailure(data: On_Ramp['data'], clientId: string): void {
+      const payload = {
+         type: 'ON_RAMP_FAILED',
+         payload: {
+            amount: data.amount,
+            asset: data.asset,
+            timestamp: Date.now(),
+         },
+      };
+
+      this.sendToClient(clientId, payload);
+   }
+
    publishTrade(trade: TradeEvent) {
       this.client.publish(
          `trade@${trade.market}`,

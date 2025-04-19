@@ -7,6 +7,7 @@ import {
    CREATE_ORDER,
    deleteOrderSchema,
    GET_OPEN_ORDERS,
+   onRampSchema,
    postOrderSchema,
 } from '../utils/types';
 
@@ -55,6 +56,30 @@ order.get('/open', async (c) => {
       type: GET_OPEN_ORDERS,
       data: {
          userId,
+         market,
+      },
+   });
+   return c.json(response.payload);
+});
+
+order.post('/on-ramp', zValidator('json', onRampSchema), async (c) => {
+   const { userId, asset, amount } = c.req.valid('json');
+   const response = await RedisManager.getInstance().sendAndAwait({
+      type: 'ON_RAMP',
+      data: {
+         userId,
+         asset,
+         amount: parseInputAmount(amount),
+      },
+   });
+   return c.json(response.payload);
+});
+
+order.get('/depth', async (c) => {
+   const { market } = c.req.query();
+   const response = await RedisManager.getInstance().sendAndAwait({
+      type: 'GET_DEPTH',
+      data: {
          market,
       },
    });

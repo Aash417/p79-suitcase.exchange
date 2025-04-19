@@ -9,7 +9,7 @@ kline.get('/', async (c) => {
 
    try {
       const kline = await fetch(
-         `https://api.backpack.exchange/api/v1/klines?symbol=${symbol}&interval=1d&startTime=1714865400`
+         `https://api.backpack.exchange/api/v1/klines?symbol=${symbol}&interval=1d&startTime=1714865400`,
       );
       const klineData: KLine[] = await kline.json();
 

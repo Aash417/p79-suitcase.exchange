@@ -1,7 +1,7 @@
-import { RedisPublisher } from './redis-publisher';
+import { OrderBookService } from './orderbook-service';
 
 export class MarketDataService {
-   constructor(private orderbooks: OrderBook[]) {}
+   constructor(private orderbooks: OrderBookService[]) {}
 
    sendDepth(market: string, clientId: string) {
       const orderbook = this.getOrderBook(market);
@@ -13,7 +13,9 @@ export class MarketDataService {
          qty.toFixed(2),
       ]);
 
-      RedisPublisher.sendDepth(clientId, formattedBids);
+      console.log(formattedBids);
+
+      // RedisPublisher.sendDepth(clientId, formattedBids);
    }
 
    getOpenOrders(userId: string, market: string) {

@@ -26,7 +26,7 @@ export type MessageFromOrderbook =
                  price: number;
                  qty: number;
                  tradeId: number;
-              }
+              },
            ];
         };
      }
@@ -73,7 +73,7 @@ export type MessageToEngine =
         data: {
            amount: number;
            userId: string;
-           txnId: string;
+           asset: string;
         };
      }
    | {
@@ -105,6 +105,12 @@ export const postOrderSchema = z.object({
 export const deleteOrderSchema = z.object({
    orderId: z.string().min(1),
    market: z.string().min(1).max(10),
+});
+
+export const onRampSchema = z.object({
+   userId: z.string().min(1),
+   asset: z.string().min(1),
+   amount: z.string().regex(/^[1-9]\d*$/, 'Amount must be a positive integer'),
 });
 
 export interface KLine {
