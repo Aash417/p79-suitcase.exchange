@@ -1,5 +1,10 @@
 import { QUOTE_ASSET } from '../utils/constants';
-import { Cancel_order, Create_order, Order } from '../utils/types';
+import {
+   Cancel_order,
+   Create_order,
+   GET_OPEN_ORDERS,
+   Order,
+} from '../utils/types';
 import { BalanceService } from './balance-service';
 import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
@@ -66,7 +71,18 @@ export class OrderService {
       // this.marketDataService.publishOrderCancelled(market, order.price);
    }
 
-   private async unlockFunds(order: Order): Promise<void> {
+   getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {
+      const { userId, market } = data;
+      const relevantBooks = market
+         ? [this.getOrderBook(market)]
+         : this.orderbooks;
+
+      const orders = relevantBooks.flatMap((ob) => ob.getOpenOrders(userId));
+
+      RedisPublisher.getInstance().sendOpenOrders(clientId, orders);
+   }
+
+   private unlockFunds(order: Order) {
       const asset = order.side === 'buy' ? QUOTE_ASSET : 'SOL';
       const amount = order.price * order.quantity;
 

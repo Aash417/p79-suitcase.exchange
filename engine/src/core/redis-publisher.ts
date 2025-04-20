@@ -1,5 +1,5 @@
 import { RedisClientType, createClient } from 'redis';
-import { Depth, On_Ramp, OrderPlaced } from '../utils/types';
+import { Depth, On_Ramp, Order, OrderPlaced } from '../utils/types';
 
 type WsMessage = {
    stream: string;
@@ -24,7 +24,7 @@ export class RedisPublisher {
       this.client = createClient();
       this.client.connect();
    }
-   // --- Singleton Access ---
+
    static getInstance(): RedisPublisher {
       if (!this.instance) {
          this.instance = new RedisPublisher();
@@ -33,31 +33,6 @@ export class RedisPublisher {
    }
 
    // --- Core Methods ---
-   sendOnRampSuccess(data: On_Ramp['data'], clientId: string): void {
-      const payload = {
-         type: 'ON_RAMP_SUCCESS',
-         payload: {
-            amount: data.amount,
-            asset: data.asset,
-            timestamp: Date.now(),
-         },
-      };
-
-      this.sendToClient(clientId, payload);
-   }
-
-   sendOnRampFailure(data: On_Ramp['data'], clientId: string): void {
-      const payload = {
-         type: 'ON_RAMP_FAILED',
-         payload: {
-            amount: data.amount,
-            asset: data.asset,
-            timestamp: Date.now(),
-         },
-      };
-
-      this.sendToClient(clientId, payload);
-   }
 
    publishTrade(trade: TradeEvent) {
       this.client.publish(
@@ -123,6 +98,44 @@ export class RedisPublisher {
       this.sendToClient(clientId, {
          type: 'DEPTH',
          payload: depth,
+      });
+   }
+
+   sendOnRampSuccess(clientId: string, data: On_Ramp['data']): void {
+      const payload = {
+         type: 'ON_RAMP_SUCCESS',
+         payload: {
+            amount: data.amount,
+            asset: data.asset,
+            timestamp: Date.now(),
+         },
+      };
+
+      this.sendToClient(clientId, payload);
+   }
+
+   sendOnRampFailure(clientId: string, data: On_Ramp['data']): void {
+      const payload = {
+         type: 'ON_RAMP_FAILED',
+         payload: {
+            amount: data.amount,
+            asset: data.asset,
+            timestamp: Date.now(),
+         },
+      };
+
+      this.sendToClient(clientId, payload);
+   }
+
+   sendOpenOrders(clientId: string, orders: Order[]) {
+      this.sendToClient(clientId, {
+         type: 'OPEN_ORDERS',
+         payload: orders.map((o) => ({
+            id: o.orderId,
+            price: (o.price / 100).toFixed(2),
+            quantity: o.quantity.toFixed(2),
+            side: o.side,
+         })),
       });
    }
 }

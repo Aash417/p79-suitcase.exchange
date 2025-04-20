@@ -76,6 +76,23 @@ export class OrderBookService {
       return undefined;
    }
 
+   getOpenOrders(userId: string): Order[] {
+      const isUserOrder = (o: Order) =>
+         o.userId === userId && o.quantity > o.filled;
+
+      return [
+         ...this.getOrdersFromMap(this.bids, isUserOrder),
+         ...this.getOrdersFromMap(this.asks, isUserOrder),
+      ];
+   }
+
+   private getOrdersFromMap(
+      priceMap: Map<number, Order[]>,
+      filterFn: (o: Order) => boolean,
+   ): Order[] {
+      return Array.from(priceMap.values()).flat().filter(filterFn);
+   }
+
    private aggregatePriceLevels(
       priceMap: Map<number, Order[]>,
       sortOrder: 'asc' | 'desc',

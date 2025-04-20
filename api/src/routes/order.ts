@@ -50,13 +50,13 @@ order.delete('/', zValidator('json', deleteOrderSchema), async (c) => {
 });
 
 order.get('/open', async (c) => {
-   const { userId, market } = c.req.query();
+   const { userId, symbol } = c.req.query();
 
    const response = await RedisManager.getInstance().sendAndAwait({
       type: GET_OPEN_ORDERS,
       data: {
          userId,
-         market,
+         symbol,
       },
    });
    return c.json(response.payload);

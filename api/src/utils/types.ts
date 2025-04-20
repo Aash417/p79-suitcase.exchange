@@ -85,7 +85,7 @@ export type MessageToEngine =
         type: typeof GET_OPEN_ORDERS;
         data: {
            userId: string;
-           market: string;
+           symbol: string;
         };
      };
 

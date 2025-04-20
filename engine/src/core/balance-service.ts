@@ -109,13 +109,13 @@ export class BalanceService {
          userBalance[asset].available += amount;
          this.balances.set(userId, userBalance);
 
-         RedisPublisher.getInstance().sendOnRampSuccess(data, clientId);
+         RedisPublisher.getInstance().sendOnRampSuccess(clientId, data);
 
          console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
       } catch (error) {
          console.error(`On-ramp failed: ${error.message}`);
 
-         RedisPublisher.getInstance().sendOnRampFailure(data, clientId);
+         RedisPublisher.getInstance().sendOnRampFailure(clientId, data);
          throw error;
       }
    }

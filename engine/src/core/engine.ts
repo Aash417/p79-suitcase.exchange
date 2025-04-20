@@ -2,6 +2,7 @@ import {
    CANCEL_ORDER,
    CREATE_ORDER,
    GET_DEPTH,
+   GET_OPEN_ORDERS,
    MessageFromApi,
    ON_RAMP,
 } from '../utils/types';
@@ -52,11 +53,15 @@ export class Engine {
             case CANCEL_ORDER:
                this.orderService.cancelOrder(message.data, clientId);
                break;
+            case ON_RAMP:
+               this.balanceService.onRamp(message.data, clientId);
+               break;
             case GET_DEPTH:
                this.marketDataService.sendDepth(message.data.market, clientId);
                break;
-            case ON_RAMP:
-               this.balanceService.onRamp(message.data, clientId);
+
+            case GET_OPEN_ORDERS:
+               this.orderService.getUserOpenOrders(message.data, clientId);
                break;
          }
       } catch (error) {
