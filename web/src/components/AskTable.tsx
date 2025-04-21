@@ -29,6 +29,7 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
       </div>
    );
 };
+
 function Ask({
    price,
    quantity,

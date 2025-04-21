@@ -22,19 +22,21 @@ export class Engine {
 
    constructor() {
       this.balanceService = new BalanceService();
-      this.orderService = new OrderService(this.balanceService);
       this.orderbooks = [new OrderBookService('SOL')];
+      this.marketDataService = new MarketDataService(this.orderbooks);
       this.orderService = new OrderService(
          this.balanceService,
          this.orderbooks,
+         this.marketDataService,
       );
       this.snapshotService = new SnapshotService(
          this.orderbooks,
          this.balanceService,
       );
-      this.marketDataService = new MarketDataService(this.orderbooks);
 
       if (!this.snapshotService.load()) this.initializeFresh();
+
+      setInterval(() => this.snapshotService.save(), 10000);
    }
 
    process({

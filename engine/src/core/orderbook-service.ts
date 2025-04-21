@@ -5,12 +5,10 @@ export class OrderBookService {
    private bids = new Map<number, Order[]>(); // price => orders (sorted high to low)
    private asks = new Map<number, Order[]>(); // price => orders (sorted low to high)
    public readonly quoteAsset = QUOTE_ASSET;
+   public lastTradeId: number = 125;
 
-   constructor(
-      public readonly baseAsset: string,
+   constructor(public readonly baseAsset: string) {}
 
-      public lastTradeId: number = 125,
-   ) {}
    // For snapshot deserialization
    initialize(bids: Order[], asks: Order[], lastTradeId: number) {
       this.bids = this.groupOrdersByPrice(bids, 'desc');

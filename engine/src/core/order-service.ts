@@ -6,6 +6,7 @@ import {
    Order,
 } from '../utils/types';
 import { BalanceService } from './balance-service';
+import { MarketDataService } from './market-data-service';
 import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
 
@@ -13,6 +14,7 @@ export class OrderService {
    constructor(
       private balanceService: BalanceService,
       private orderbooks: OrderBookService[] = [],
+      private marketDataService: MarketDataService,
    ) {}
 
    createOrder(order: Create_order['data'], clientId: string) {
@@ -40,13 +42,18 @@ export class OrderService {
          userId,
       );
 
+      this.marketDataService.publishDepthUpdate(
+         placedOrder.fills,
+         side,
+         market,
+         price,
+      );
+
       // 4. Publish events
       RedisPublisher.getInstance().sendOrderPlaced(clientId, {
          type: 'ORDER_PLACED',
          payload: placedOrder,
       });
-
-      // MarketDataPublisher.sendDepthUpdate(market, fills);
    }
 
    cancelOrder(data: Cancel_order['data'], clientId: string) {

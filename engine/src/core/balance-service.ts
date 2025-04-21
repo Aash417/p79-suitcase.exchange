@@ -73,14 +73,14 @@ export class BalanceService {
    setDefaultBalances() {
       this.balances = new Map([
          [
-            'user1',
+            '123',
             {
                [QUOTE_ASSET]: { available: 100_0000, locked: 0 },
                SOL: { available: 50, locked: 0 }, // 50 SOL
             },
          ],
          [
-            'user2',
+            '231',
             {
                [QUOTE_ASSET]: { available: 50_0000, locked: 0 },
                SOL: { available: 25, locked: 0 },

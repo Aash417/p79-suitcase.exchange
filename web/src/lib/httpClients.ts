@@ -1,11 +1,11 @@
 import { Depth, KLine } from './types';
 
-const BACKEND_URL = 'http://localhost:3001/api/v1';
-// const BACKEND_URL = 'https://api.backpack.exchange/api/v1';
+// const BACKEND_URL = 'http://localhost:3001/api/v1';
+const BACKEND_URL = 'https://api.backpack.exchange/api/v1';
 
 export async function getKlines(market: string): Promise<KLine[]> {
    const kline = await fetch(
-      `${BACKEND_URL}/klines?symbol=${market}&interval=1d&startTime=1714865400`
+      `${BACKEND_URL}/klines?symbol=${market}&interval=1d&startTime=1714865400`,
    );
    const klineData: KLine[] = await kline.json();
 
@@ -17,5 +17,6 @@ export async function getKlines(market: string): Promise<KLine[]> {
 export async function getDepth(market: string): Promise<Depth> {
    const depth = await fetch(`${BACKEND_URL}/depth?symbol=${market}`);
 
+   console.log('depth', depth);
    return await depth.json();
 }

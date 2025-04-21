@@ -50,15 +50,16 @@ export class RedisPublisher {
       );
    }
 
-   publishDepth(market: string, depth: DepthUpdate) {
+   publishDepthUpdate(market: string, depth: Depth['payload']) {
       this.client.publish(
          `depth@${market}`,
          JSON.stringify({
             stream: `depth@${market}`,
             data: {
                e: 'depth',
-               a: depth.asks, // Formatted asks ([price, qty][])
-               b: depth.bids, // Formatted bids ([price, qty][])
+               t: Date.now(),
+               b: depth.bids,
+               a: depth.asks,
             },
          }),
       );

@@ -22,6 +22,7 @@ export class SnapshotService {
 
    save() {
       try {
+         const test = this.orderbooks[0].getDepth();
          const snapshot: Snapshot = {
             orderbooks: this.orderbooks.map((ob) => ({
                baseAsset: ob.baseAsset,
@@ -32,7 +33,7 @@ export class SnapshotService {
             balances: Array.from(this.balanceService.getBalances().entries()),
          };
 
-         writeFileSync('./new.json', JSON.stringify(snapshot, null, 2));
+         writeFileSync('./new.json', JSON.stringify(test, null, 2));
          return true;
       } catch (error) {
          console.error('Snapshot save failed:', error);

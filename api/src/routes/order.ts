@@ -15,13 +15,6 @@ const order = new Hono();
 
 order.post('/', zValidator('json', postOrderSchema), async (c) => {
    const { market, price, quantity, side, userId } = c.req.valid('json');
-   console.log({
-      market,
-      price: parseInputAmount(price),
-      quantity: parseInputAmount(quantity),
-      side,
-      userId,
-   });
 
    //TODO: can u make the type of the response object right? Right now it is a union.
    const response = await RedisManager.getInstance().sendAndAwait({
