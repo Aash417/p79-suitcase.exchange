@@ -8,7 +8,6 @@ import {
 import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
 import { OrderBookService } from './orderbook-service';
-import { RedisPublisher } from './redis-publisher';
 
 export class OrderService {
    constructor(
@@ -19,63 +18,56 @@ export class OrderService {
 
    createOrder(order: Create_order['data'], clientId: string) {
       const { market, price, quantity, side, userId } = order;
-      const orderbook = this.getOrderBook(market);
+      try {
+         const orderbook = this.getOrderBook(market);
 
-      // 1. Lock funds (in paisa)
-      this.balanceService.lockFunds(userId, side, price, quantity);
+         this.balanceService.lockFunds(userId, side, price, quantity);
 
-      // 2. Add to orderbook (integer math)
-      const placedOrder = orderbook.addOrder({
-         userId,
-         orderId: this.generateId(),
-         side,
-         price, // Already in paisa
-         quantity,
-         filled: 0,
-      });
+         const placedOrder = orderbook.addOrder({
+            userId,
+            orderId: this.generateId(),
+            side,
+            price,
+            quantity,
+            filled: 0,
+         });
 
-      // 3. Update balances
-      this.balanceService.updateBalanceAfterTrade(
-         placedOrder.fills,
-         market,
-         side,
-         userId,
-      );
+         this.balanceService.updateBalanceAfterTrade(
+            placedOrder.fills,
+            market,
+            side,
+            userId,
+         );
 
-      this.marketDataService.publishDepthUpdate(
-         placedOrder.fills,
-         side,
-         market,
-         price,
-      );
-
-      // 4. Publish events
-      RedisPublisher.getInstance().sendOrderPlaced(clientId, {
-         type: 'ORDER_PLACED',
-         payload: placedOrder,
-      });
+         this.marketDataService.sendOrderPlaced(clientId, {
+            type: 'ORDER_PLACED',
+            payload: placedOrder,
+         });
+         this.marketDataService.publishDepthUpdate(market);
+         this.marketDataService.publishTrades(
+            userId,
+            market,
+            placedOrder.fills,
+         );
+      } catch (error) {
+         this.marketDataService.sendError(clientId, 'ORDER_ERROR', error);
+      }
    }
 
    cancelOrder(data: Cancel_order['data'], clientId: string) {
       const { orderId, market } = data;
 
-      // 1. Find orderbook and order
       const orderbook = this.getOrderBook(market);
       const order = orderbook.findOrder(orderId);
       if (!order) throw new Error(`Order ${orderId} not found`);
 
-      // 2. Cancel in orderbook
       const cancelled = orderbook.cancelOrder(orderId, order.side);
       if (!cancelled) throw new Error(`Failed to cancel order ${orderId}`);
 
-      // 3. Unlock funds
       this.unlockFunds(order.order);
 
-      // 4. Notify client
-      RedisPublisher.getInstance().sendOrderCancelled(clientId, orderId);
-
-      // 5. Update market data
-      // this.marketDataService.publishOrderCancelled(market, order.price);
+      this.marketDataService.sendOrderCancelled(clientId, orderId);
+      this.marketDataService.publishDepthUpdate(market);
    }
 
    getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {
@@ -86,7 +78,7 @@ export class OrderService {
 
       const orders = relevantBooks.flatMap((ob) => ob.getOpenOrders(userId));
 
-      RedisPublisher.getInstance().sendOpenOrders(clientId, orders);
+      this.marketDataService.sendOpenOrders(clientId, orders);
    }
 
    private unlockFunds(order: Order) {

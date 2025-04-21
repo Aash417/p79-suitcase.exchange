@@ -10,7 +10,6 @@ import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
 import { OrderService } from './order-service';
 import { OrderBookService } from './orderbook-service';
-import { RedisPublisher } from './redis-publisher';
 import { SnapshotService } from './snapshot-service';
 
 export class Engine {
@@ -21,9 +20,9 @@ export class Engine {
    private orderbooks: OrderBookService[] = [];
 
    constructor() {
-      this.balanceService = new BalanceService();
       this.orderbooks = [new OrderBookService('SOL')];
       this.marketDataService = new MarketDataService(this.orderbooks);
+      this.balanceService = new BalanceService(this.marketDataService);
       this.orderService = new OrderService(
          this.balanceService,
          this.orderbooks,
@@ -67,7 +66,7 @@ export class Engine {
                break;
          }
       } catch (error) {
-         RedisPublisher.getInstance().sendError(clientId, message.type, error);
+         this.marketDataService.sendError(clientId, message.type, error);
       }
    }
 

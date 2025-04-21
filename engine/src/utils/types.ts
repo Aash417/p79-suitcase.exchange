@@ -25,7 +25,7 @@ export interface Order {
 
 export interface Fill {
    price: number;
-   qty: number;
+   quantity: number;
    tradeId: number;
    otherUserId: string;
    markerOrderId: string;
@@ -46,7 +46,7 @@ export type OrderPlaced = {
       executedQty: number;
       fills: {
          price: number;
-         qty: number;
+         quantity: number;
          tradeId: number;
       }[];
    };
@@ -130,6 +130,7 @@ export type DepthUpdateMessage = {
       b?: [string, string][];
       a?: [string, string][];
       e: 'depth';
+      t: number;
    };
 };
 

@@ -1,9 +1,11 @@
 import { QUOTE_ASSET } from '../utils/constants';
 import { Fill, On_Ramp, UserBalance } from '../utils/types';
-import { RedisPublisher } from './redis-publisher';
+import { MarketDataService } from './market-data-service';
 
 export class BalanceService {
    private balances = new Map<string, UserBalance>();
+
+   constructor(public readonly marketDataService: MarketDataService) {}
 
    lockFunds(
       userId: string,
@@ -11,16 +13,16 @@ export class BalanceService {
       price: number,
       quantity: number,
    ) {
-      const balance = this.getUserBalance(userId);
+      const userBalance = this.getUserBalance(userId);
       const asset = side === 'buy' ? QUOTE_ASSET : 'SOL';
 
       const totalAmount = price * quantity;
-      if (balance[asset].available < totalAmount) {
+      if (userBalance[asset].available < totalAmount) {
          throw new Error('Insufficient funds');
       }
 
-      balance[asset].available -= totalAmount;
-      balance[asset].locked += totalAmount;
+      userBalance[asset].available -= totalAmount;
+      userBalance[asset].locked += totalAmount;
    }
 
    unlockFunds(userId: string, asset: string, amount: number) {
@@ -53,12 +55,12 @@ export class BalanceService {
          const sellerId = side === 'sell' ? userId : fill.otherUserId;
 
          // Update quote asset (INR)
-         this.adjustBalance(buyerId, quoteAsset, -fill.price * fill.qty);
-         this.adjustBalance(sellerId, quoteAsset, fill.price * fill.qty);
+         this.adjustBalance(buyerId, quoteAsset, -fill.price * fill.quantity);
+         this.adjustBalance(sellerId, quoteAsset, fill.price * fill.quantity);
 
          // Update base asset (SOL)
-         this.adjustBalance(sellerId, baseAsset, -fill.qty);
-         this.adjustBalance(buyerId, baseAsset, fill.qty);
+         this.adjustBalance(sellerId, baseAsset, -fill.quantity);
+         this.adjustBalance(buyerId, baseAsset, fill.quantity);
       });
    }
 
@@ -109,13 +111,13 @@ export class BalanceService {
          userBalance[asset].available += amount;
          this.balances.set(userId, userBalance);
 
-         RedisPublisher.getInstance().sendOnRampSuccess(clientId, data);
+         this.marketDataService.sendOnRampSuccess(clientId, data);
 
          console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
       } catch (error) {
          console.error(`On-ramp failed: ${error.message}`);
 
-         RedisPublisher.getInstance().sendOnRampFailure(clientId, data);
+         this.marketDataService.sendOnRampFailure(clientId, data);
          throw error;
       }
    }

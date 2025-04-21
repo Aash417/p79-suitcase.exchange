@@ -208,7 +208,7 @@ export class OrderBookService {
    private createFill(order: Order, price: number, qty: number): Fill {
       return {
          price,
-         qty,
+         quantity: qty,
          tradeId: ++this.lastTradeId,
          otherUserId: order.userId,
          markerOrderId: order.orderId,
