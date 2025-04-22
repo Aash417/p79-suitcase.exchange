@@ -7,6 +7,7 @@ import {
    ON_RAMP,
 } from '../utils/types';
 import { BalanceService } from './balance-service';
+import { ErrorService } from './error-service';
 import { MarketDataService } from './market-data-service';
 import { OrderService } from './order-service';
 import { OrderBookService } from './orderbook-service';
@@ -18,8 +19,10 @@ export class Engine {
    private balanceService: BalanceService;
    private marketDataService: MarketDataService;
    private orderbooks: OrderBookService[] = [];
+   private errorService: ErrorService;
 
    constructor() {
+      this.errorService = new ErrorService();
       this.orderbooks = [new OrderBookService('SOL')];
       this.marketDataService = new MarketDataService(this.orderbooks);
       this.balanceService = new BalanceService(this.marketDataService);
@@ -66,7 +69,7 @@ export class Engine {
                break;
          }
       } catch (error) {
-         this.marketDataService.sendError(clientId, message.type, error);
+         this.errorService.handleError(error, clientId);
       }
    }
 

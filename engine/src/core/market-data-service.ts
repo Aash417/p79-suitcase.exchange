@@ -123,8 +123,8 @@ export class MarketDataService {
       levels: [number, number][],
    ): [string, string][] {
       return levels.map(([price, qty]) => [
-         (price / 100).toFixed(2), // Convert paisa to currency
-         qty.toFixed(2), // Format quantity
+         (price / 100).toFixed(2),
+         qty.toFixed(2),
       ]);
    }
 }

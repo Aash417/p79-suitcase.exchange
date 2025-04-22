@@ -18,7 +18,7 @@ export class OrderBookService {
 
    // For snapshot serialization
    getBidsMap(): Map<number, Order[]> {
-      return new Map(this.bids); // Return a copy
+      return new Map(this.bids);
    }
 
    getAsksMap(): Map<number, Order[]> {

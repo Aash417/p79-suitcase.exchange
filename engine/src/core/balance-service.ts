@@ -18,7 +18,7 @@ export class BalanceService {
 
       const totalAmount = price * quantity;
       if (userBalance[asset].available < totalAmount) {
-         throw new Error('Insufficient funds');
+         throw new Error('INSUFFICIENT_FUNDS');
       }
 
       userBalance[asset].available -= totalAmount;
@@ -26,21 +26,16 @@ export class BalanceService {
    }
 
    unlockFunds(userId: string, asset: string, amount: number) {
-      try {
-         const userBalance = this.getUserBalance(userId);
+      const userBalance = this.getUserBalance(userId);
 
-         if (userBalance[asset].locked < amount) {
-            throw new Error(`Insufficient locked ${asset} to unlock`);
-         }
-
-         userBalance[asset].locked -= amount;
-         userBalance[asset].available += amount;
-
-         console.log(`Unlocked ${amount} ${asset} for user ${userId}`);
-      } catch (error) {
-         console.error(`Failed to unlock funds: ${error.message}`);
-         throw error;
+      if (userBalance[asset].locked < amount) {
+         throw new Error('INSUFFICIENT_LOCKED_FUNDS');
       }
+
+      userBalance[asset].locked -= amount;
+      userBalance[asset].available += amount;
+
+      console.log(`Unlocked ${amount} ${asset} for user ${userId}`);
    }
 
    updateBalanceAfterTrade(
@@ -93,39 +88,25 @@ export class BalanceService {
 
    onRamp(data: On_Ramp['data'], clientId: string) {
       const { userId, amount, asset } = data;
-      try {
-         if (amount <= 0) throw new Error('Amount must be positive');
-         if (!Number.isInteger(amount))
-            throw new Error('Amount must be an integer');
-
-         // Get or create user balance
-         const userBalance = this.balances.get(userId) || {
-            [QUOTE_ASSET]: { available: 0, locked: 0 },
-         };
-
-         // Initialize asset if not exists
-         if (!userBalance[asset]) {
-            userBalance[asset] = { available: 0, locked: 0 };
-         }
-
-         userBalance[asset].available += amount;
-         this.balances.set(userId, userBalance);
-
-         this.marketDataService.sendOnRampSuccess(clientId, data);
-
-         console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
-      } catch (error) {
-         console.error(`On-ramp failed: ${error.message}`);
-
-         this.marketDataService.sendOnRampFailure(clientId, data);
-         throw error;
+      // Get or create user balance
+      const userBalance = this.balances.get(userId) || {
+         [QUOTE_ASSET]: { available: 0, locked: 0 },
+      };
+      // Initialize asset if not exists
+      if (!userBalance[asset]) {
+         userBalance[asset] = { available: 0, locked: 0 };
       }
+
+      userBalance[asset].available += amount;
+      this.balances.set(userId, userBalance);
+      this.marketDataService.sendOnRampSuccess(clientId, data);
+
+      console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
    }
 
    private getUserBalance(userId: string): UserBalance {
-      if (!this.balances.has(userId)) {
-         throw new Error(`User ${userId} not found`);
-      }
+      if (!this.balances.has(userId)) throw new Error('USER_NOT_FOUND');
+
       return this.balances.get(userId)!;
    }
 

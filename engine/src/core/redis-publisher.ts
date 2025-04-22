@@ -31,8 +31,20 @@ export class RedisPublisher {
       return this.instance;
    }
 
-   sendToClient(clientId: string, message: ApiMessage) {
-      this.client.publish(clientId, JSON.stringify(message));
+   async sendToClient(clientId: string, message: ApiMessage, retries = 3) {
+      try {
+         this.client.publish(clientId, JSON.stringify(message));
+         return true;
+      } catch (error) {
+         if (retries > 0) {
+            await new Promise((resolve) =>
+               setTimeout(resolve, 100 * (4 - retries)),
+            );
+            return this.sendToClient(clientId, message, retries - 1);
+         }
+         console.error(`Failed to send to ${clientId} after 3 attempts`);
+         throw error;
+      }
    }
 
    sendToWs(channel: string, message: WsMessage) {

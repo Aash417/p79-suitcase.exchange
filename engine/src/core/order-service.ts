@@ -18,40 +18,30 @@ export class OrderService {
 
    createOrder(order: Create_order['data'], clientId: string) {
       const { market, price, quantity, side, userId } = order;
-      try {
-         const orderbook = this.getOrderBook(market);
+      const orderbook = this.getOrderBook(market);
 
-         this.balanceService.lockFunds(userId, side, price, quantity);
+      this.balanceService.lockFunds(userId, side, price, quantity);
+      const placedOrder = orderbook.addOrder({
+         userId,
+         orderId: this.generateId(),
+         side,
+         price,
+         quantity,
+         filled: 0,
+      });
+      this.balanceService.updateBalanceAfterTrade(
+         placedOrder.fills,
+         market,
+         side,
+         userId,
+      );
 
-         const placedOrder = orderbook.addOrder({
-            userId,
-            orderId: this.generateId(),
-            side,
-            price,
-            quantity,
-            filled: 0,
-         });
-
-         this.balanceService.updateBalanceAfterTrade(
-            placedOrder.fills,
-            market,
-            side,
-            userId,
-         );
-
-         this.marketDataService.sendOrderPlaced(clientId, {
-            type: 'ORDER_PLACED',
-            payload: placedOrder,
-         });
-         this.marketDataService.publishDepthUpdate(market);
-         this.marketDataService.publishTrades(
-            userId,
-            market,
-            placedOrder.fills,
-         );
-      } catch (error) {
-         this.marketDataService.sendError(clientId, 'ORDER_ERROR', error);
-      }
+      this.marketDataService.sendOrderPlaced(clientId, {
+         type: 'ORDER_PLACED',
+         payload: placedOrder,
+      });
+      this.marketDataService.publishDepthUpdate(market);
+      this.marketDataService.publishTrades(userId, market, placedOrder.fills);
    }
 
    cancelOrder(data: Cancel_order['data'], clientId: string) {
@@ -59,10 +49,10 @@ export class OrderService {
 
       const orderbook = this.getOrderBook(market);
       const order = orderbook.findOrder(orderId);
-      if (!order) throw new Error(`Order ${orderId} not found`);
+      if (!order) throw new Error('ORDER_NOT_FOUND');
 
       const cancelled = orderbook.cancelOrder(orderId, order.side);
-      if (!cancelled) throw new Error(`Failed to cancel order ${orderId}`);
+      if (!cancelled) throw new Error('ORDER_CANCEL_FAILED');
 
       this.unlockFunds(order.order);
 
@@ -90,7 +80,7 @@ export class OrderService {
 
    private getOrderBook(market: string) {
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
-      if (!orderbook) throw new Error('Orderbook not found');
+      if (!orderbook) throw new Error('ORDERBOOK_NOT_FOUND');
       return orderbook;
    }
 
