@@ -29,9 +29,12 @@ export type DepthUpdateMessage = {
    data: {
       b?: [string, string][];
       a?: [string, string][];
-      id: number;
+      t: number;
       e: 'depth';
    };
 };
 
 export type OutgoingMessage = TickerUpdateMessage | DepthUpdateMessage;
+
+export type ChannelName = string;
+export type ConnectionId = string;

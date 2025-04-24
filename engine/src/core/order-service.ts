@@ -1,3 +1,4 @@
+import { randomUUIDv7 } from 'bun';
 import { QUOTE_ASSET } from '../utils/constants';
 import {
    Cancel_order,
@@ -23,7 +24,7 @@ export class OrderService {
       this.balanceService.lockFunds(userId, side, price, quantity);
       const placedOrder = orderbook.addOrder({
          userId,
-         orderId: this.generateId(),
+         orderId: randomUUIDv7(),
          side,
          price,
          quantity,
@@ -82,9 +83,5 @@ export class OrderService {
       const orderbook = this.orderbooks.find((o) => o.ticker() === market);
       if (!orderbook) throw new Error('ORDERBOOK_NOT_FOUND');
       return orderbook;
-   }
-
-   private generateId() {
-      return Math.random().toString(36).substring(2, 15);
    }
 }

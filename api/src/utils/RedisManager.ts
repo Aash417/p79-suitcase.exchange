@@ -1,3 +1,4 @@
+import { randomUUIDv7 } from 'bun';
 import { RedisClientType, createClient } from 'redis';
 import { MessageFromOrderbook, MessageToEngine } from './types';
 
@@ -23,7 +24,7 @@ export class RedisManager {
 
    public sendAndAwait(message: MessageToEngine, timeoutMs: number = 5000) {
       return new Promise<MessageFromOrderbook>((resolve, reject) => {
-         const id = this.getRandomClientId();
+         const id = randomUUIDv7();
          let timeout: NodeJS.Timeout;
 
          timeout = setTimeout(() => {
@@ -45,12 +46,5 @@ export class RedisManager {
             JSON.stringify({ clientId: id, message }),
          );
       });
-   }
-
-   public getRandomClientId() {
-      return (
-         Math.random().toString(36).substring(2, 15) +
-         Math.random().toString(36).substring(2, 15)
-      );
    }
 }

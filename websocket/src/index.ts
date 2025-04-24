@@ -1,10 +1,16 @@
 import { WebSocketServer } from 'ws';
-import { UserManager } from './user-manager';
+import { ConnectionPool } from './core/connection-pool';
 
-const wss = new WebSocketServer({ port: 3003 });
+const PORT = 3003;
 
-wss.on('connection', (ws) => {
-   UserManager.getInstance().addUser(ws);
-});
+export function main() {
+   const wss = new WebSocketServer({ port: PORT });
 
-console.log('WebSocket server started on ws://localhost:3003');
+   wss.on('connection', (socket) => {
+      ConnectionPool.getInstance().addConnection(socket);
+   });
+
+   console.log(`WebSocket server running on ws://localhost:${PORT}`);
+}
+
+main();
