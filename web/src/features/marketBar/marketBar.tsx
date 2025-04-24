@@ -1,5 +1,5 @@
-import { Ticker } from '@/lib/types';
-import { MarketTicker } from './ticker';
+import { Ticker } from '@/features/marketBar/utils/types';
+import { MarketTicker } from './components/ticker';
 
 type Props = {
    market: string;

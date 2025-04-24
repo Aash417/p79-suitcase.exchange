@@ -1,8 +1,8 @@
 'use client';
 
-import { ChartManager } from '@/lib/chartManager';
-import { KLine } from '@/lib/types';
+import { ChartManager } from '@/features/klineChart/utils/chartManager';
 import { useEffect, useRef } from 'react';
+import { KLine } from './utils/types';
 
 type Props = {
    market: string;

@@ -42,7 +42,7 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
          if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
          const data = await res.json();
-         console.timeEnd('one')
+         console.timeEnd('one');
          console.log('Response data:', data);
       } catch (error) {
          console.error('Error submitting order:', error);

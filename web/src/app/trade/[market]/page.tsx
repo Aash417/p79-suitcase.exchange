@@ -1,7 +1,7 @@
 import Appbar from '@/components/appbar';
-import MarketBar from '@/components/marketBar';
-import Orderbook from '@/components/orderbook';
-import SwapForm from '@/components/swapForm';
+import MarketBar from '@/features/marketBar/marketBar';
+import Orderbook from '@/features/orderbook/orderbook';
+import SwapForm from '@/features/swapUI/swapForm';
 import { getDepth } from '@/lib/httpClients';
 
 export default async function Market({
@@ -20,7 +20,7 @@ export default async function Market({
 
          {/* Main content (subtract header height) */}
          <div className="flex gap-2 h-[calc(100%-4.2rem)] w-[calc(100%-1rem)]">
-            {/* Left side */}
+            {/* Left panel */}
             <div className="basis-[72vw] flex-1">
                <div className="grid grid-rows-[auto_1fr] h-full gap-2">
                   {/* Top row */}

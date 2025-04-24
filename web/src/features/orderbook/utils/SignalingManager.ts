@@ -1,7 +1,5 @@
-import { Ticker } from './types';
-
-export const BASE_URL = 'ws://localhost:3003/';
-// export const BASE_URL = 'wss://ws.backpack.exchange/';
+import { WS_URL } from '@/lib/env';
+import { Ticker } from '../../marketBar/utils/types';
 
 export class SignalingManager {
    private readonly ws: WebSocket;
@@ -12,7 +10,7 @@ export class SignalingManager {
    private initialized: boolean = false;
 
    private constructor() {
-      this.ws = new WebSocket(BASE_URL);
+      this.ws = new WebSocket(WS_URL);
       this.bufferedMessages = [];
       this.id = 1;
       this.init();
@@ -33,6 +31,7 @@ export class SignalingManager {
          });
          this.bufferedMessages = [];
       };
+
       this.ws.onmessage = (event) => {
          const message = JSON.parse(event.data);
          const type = message.data.e;
@@ -51,16 +50,6 @@ export class SignalingManager {
                   callback(newTicker);
                }
                if (type === 'depth') {
-                  // const newTicker: Partial<Ticker> = {
-                  //     lastPrice: message.data.c,
-                  //     high: message.data.h,
-                  //     low: message.data.l,
-                  //     volume: message.data.v,
-                  //     quoteVolume: message.data.V,
-                  //     symbol: message.data.s,
-                  // }
-                  // console.log(newTicker);
-                  // callback(newTicker);
                   const updatedBids = message.data.b;
                   const updatedAsks = message.data.a;
                   callback({ bids: updatedBids, asks: updatedAsks });

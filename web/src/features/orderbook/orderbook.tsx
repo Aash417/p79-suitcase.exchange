@@ -1,10 +1,10 @@
 'use client';
 
-import { SignalingManager } from '@/lib/SignalingManager';
-import { Depth } from '@/lib/types';
+import { SignalingManager } from '@/features/orderbook/utils/SignalingManager';
 import { useEffect, useState } from 'react';
-import { AskTable } from './AskTable';
-import { BidTable } from './BidTable';
+import { AskTable } from './components/askTable';
+import { BidTable } from './components/bidTable';
+import { Depth } from './utils/types';
 
 type Props = {
    market: string;
@@ -12,8 +12,8 @@ type Props = {
 };
 
 export default function Orderbook({ market, depthdata }: Readonly<Props>) {
-   const [bids, setBids] = useState<[string, string][]>();
-   const [asks, setAsks] = useState<[string, string][]>();
+   const [bids, setBids] = useState<[string, string][]>([['', '']]);
+   const [asks, setAsks] = useState<[string, string][]>([['', '']]);
    const [price, setPrice] = useState<string>();
 
    useEffect(() => {
@@ -75,7 +75,7 @@ export default function Orderbook({ market, depthdata }: Readonly<Props>) {
    }, []);
 
    return (
-      <div>
+      <div className="">
          <TableHeader />
          {asks && <AskTable asks={asks} />}
          {price && <div>{price}</div>}
@@ -87,9 +87,9 @@ export default function Orderbook({ market, depthdata }: Readonly<Props>) {
 function TableHeader() {
    return (
       <div className="flex justify-between text-xs">
-         <div className="text-white">Price</div>
-         <div className="text-slate-500">Size</div>
-         <div className="text-slate-500">Total</div>
+         <div className="text-white">Price(USDC)</div>
+         <div className="text-slate-500">Size(SOL)</div>
+         <div className="text-slate-500">Total(SOL)</div>
       </div>
    );
 }
