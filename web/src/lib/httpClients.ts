@@ -17,6 +17,6 @@ export async function getKlines(market: string): Promise<KLine[]> {
 export async function getDepth(market: string): Promise<Depth> {
    const depth = await fetch(`${BACKEND_URL}/depth?symbol=${market}`);
 
-   console.log('depth', depth);
+   // console.log('depth', depth);
    return await depth.json();
 }

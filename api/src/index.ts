@@ -1,10 +1,19 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import depthRouter from './routes/depth';
 import klineRouter from './routes/kline';
 import orderRouter from './routes/order';
 import tickerRouter from './routes/ticker';
 
 const app = new Hono();
+
+app.use(
+   cors({
+      origin: '*', // Allow all origins (for development only!)
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+   })
+);
 
 app.route('/api/v1/depth', depthRouter);
 app.route('/api/v1/klines', klineRouter);

@@ -1,0 +1,129 @@
+
+{
+  "timestamp": "2025-04-24T15:18:49.432Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T15:20:22.452Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:46:28.463Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:34.090Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:35.138Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:36.593Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:37.355Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:37.806Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:38.369Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:38.946Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:41.854Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:42.044Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:42.229Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:42.429Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:42.647Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
+{
+  "timestamp": "2025-04-24T16:49:42.918Z",
+  "error": {
+    "name": "Error",
+    "message": "INSUFFICIENT_FUNDS",
+    "stack": "Error: INSUFFICIENT_FUNDS\n    at lockFunds (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\balance-service.ts:21:20)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\order-service.ts:24:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\engine\\src\\core\\engine.ts:55:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\engine\\src\\index.ts:15:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}
