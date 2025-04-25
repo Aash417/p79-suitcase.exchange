@@ -1,95 +1,98 @@
 'use client';
 
-import { SignalingManager } from '@/features/orderbook/utils/SignalingManager';
-import { useEffect, useState } from 'react';
+import { WebSocketManager } from '@/lib/websocketManager';
+import { useEffect, useMemo, useState } from 'react';
 import { AskTable } from './components/askTable';
 import { BidTable } from './components/bidTable';
 import { Depth } from './utils/types';
 
 type Props = {
    market: string;
-   depthdata: Depth;
+   depthData: Depth;
 };
 
-export default function Orderbook({ market, depthdata }: Readonly<Props>) {
-   const [bids, setBids] = useState<[string, string][]>([['', '']]);
-   const [asks, setAsks] = useState<[string, string][]>([['', '']]);
-   const [price, setPrice] = useState<string>();
+export default function Orderbook({ market, depthData }: Readonly<Props>) {
+   const [bids, setBids] = useState<[string, string][]>([]);
+   const [asks, setAsks] = useState<[string, string][]>([]);
 
    useEffect(() => {
-      SignalingManager.getInstance().registerCallback(
+      setBids(depthData.bids);
+      setAsks(depthData.asks);
+
+      function handleDepthUpdate(data: {
+         bids: [string, string][];
+         asks: [string, string][];
+      }) {
+         setBids((prevBids) => updateBids(prevBids, data.bids));
+         setAsks((prevAsks) => updateAsks(prevAsks, data.asks));
+      }
+
+      const wsManager = WebSocketManager.getInstance();
+      wsManager.registerCallback(
          'depth',
-         (data: any) => {
-            setBids((originalBids) => {
-               const bidsAfterUpdate = [...(originalBids || [])];
-
-               for (const element of bidsAfterUpdate) {
-                  for (let j = 0; j < data.bids.length; j++) {
-                     if (element[0] === data.bids[j][0]) {
-                        element[1] = data.bids[j][1];
-                        break;
-                     }
-                  }
-               }
-               return bidsAfterUpdate;
-            });
-
-            setAsks((originalAsks) => {
-               const asksAfterUpdate = [...(originalAsks || [])];
-
-               for (const element of asksAfterUpdate) {
-                  for (let j = 0; j < data.asks.length; j++) {
-                     if (element[0] === data.asks[j][0]) {
-                        element[1] = data.asks[j][1];
-                        break;
-                     }
-                  }
-               }
-               return asksAfterUpdate;
-            });
-         },
-         `DEPTH-${market}`,
+         handleDepthUpdate,
+         `depth.200ms.${market}`,
       );
-
-      SignalingManager.getInstance().sendMessage({
+      wsManager.sendMessage({
          method: 'SUBSCRIBE',
-         params: [`depth.${market}`],
+         params: [`depth.200ms.${market}`],
       });
 
-      setBids(depthdata.bids.reverse());
-      setAsks(depthdata.asks);
-
-      // getTicker(market).then((t) => setPrice(t.lastPrice));
-      // getTrades(market).then((t) => setPrice(t[0].price));
-      // getKlines(market, "1h", 1640099200, 1640100800).then(t => setPrice(t[0].close));
       return () => {
-         SignalingManager.getInstance().sendMessage({
+         wsManager.sendMessage({
             method: 'UNSUBSCRIBE',
             params: [`depth.200ms.${market}`],
          });
-         SignalingManager.getInstance().deRegisterCallback(
-            'depth',
-            `DEPTH-${market}`,
-         );
+         wsManager.deRegisterCallback('depth', `depth.200ms.${market}`);
       };
    }, []);
 
+   const topBids = useMemo(() => bids.slice(0, 11).reverse(), [bids]);
+   const topAsks = useMemo(() => asks.slice(0, 11), [asks]);
+
    return (
-      <div className="">
+      <div className="m-2">
          <TableHeader />
-         {asks && <AskTable asks={asks} />}
-         {price && <div>{price}</div>}
-         {bids && <BidTable bids={bids} />}
+         <AskTable asks={topAsks} />
+         <BidTable bids={topBids} />
       </div>
    );
 }
 
 function TableHeader() {
    return (
-      <div className="flex justify-between text-xs">
+      <div className="flex justify-between text-xs font-medium">
          <div className="text-white">Price(USDC)</div>
          <div className="text-slate-500">Size(SOL)</div>
          <div className="text-slate-500">Total(SOL)</div>
       </div>
+   );
+}
+
+function updateBids(prevBids: [string, string][], newBids: [string, string][]) {
+   const bidMap = new Map(prevBids);
+   newBids.forEach(([price, size]) => {
+      if (size === '0.00') {
+         bidMap.delete(price);
+      } else {
+         bidMap.set(price, size);
+      }
+   });
+   return Array.from(bidMap.entries()).sort(
+      (a, b) => Number(b[0]) - Number(a[0]),
+   );
+}
+
+function updateAsks(prevAsks: [string, string][], newAsks: [string, string][]) {
+   const askMap = new Map(prevAsks);
+   newAsks.forEach(([price, size]) => {
+      if (size === '0.00') {
+         askMap.delete(price);
+      } else {
+         askMap.set(price, size);
+      }
+   });
+   return Array.from(askMap.entries()).sort(
+      (a, b) => Number(a[0]) - Number(b[0]),
    );
 }

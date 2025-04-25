@@ -1,15 +1,16 @@
 import Appbar from '@/components/appbar';
+import KlineChart from '@/features/klineChart/klineChart';
 import MarketBar from '@/features/marketBar/marketBar';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swapForm';
-import { getDepth } from '@/lib/httpClients';
+import { getDepth, getKlines } from '@/lib/httpClients';
 
 export default async function Market({
    params,
 }: Readonly<{ params: Promise<{ market: string }> }>) {
    const { market } = await params;
-   // const klineData = await getKlines(market);
-   const depthdata = await getDepth(market);
+   const klineData = await getKlines(market);
+   const depthData = await getDepth(market);
 
    return (
       <div className="h-screen w-full rounded-md m-2">
@@ -30,11 +31,11 @@ export default async function Market({
 
                   {/* Bottom row with columns */}
                   <div className="col-span-2 py-6 bg-[#14151b] h-full rounded-md">
-                     {/* <KlineChart market={market} klineData={klineData} /> */}
+                     <KlineChart market={market} klineData={klineData} />
                   </div>
                   <div className="bg-[#14151b] h-full rounded-md">
                      <div className="w-55">
-                        <Orderbook market={market} depthdata={depthdata} />
+                        <Orderbook market={market} depthData={depthData} />
                      </div>
                   </div>
                </div>

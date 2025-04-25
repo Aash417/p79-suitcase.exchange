@@ -1,25 +1,31 @@
+'use client';
+
+import { useMemo } from 'react';
+
 export const BidTable = ({ bids }: { bids: [string, string][] }) => {
-   let currentTotal = 0;
-   const relevantBids = bids.slice(0, 15);
-   const bidsWithTotal: [string, string, number][] = relevantBids.map(
-      ([price, quantity]) => [
-         price,
-         quantity,
-         (currentTotal += Number(quantity)),
-      ],
-   );
-   const maxTotal = relevantBids.reduce(
-      (acc, [_, quantity]) => acc + Number(quantity),
-      0,
-   );
+   const { bidsWithTotal, maxTotal } = useMemo(() => {
+      let currentTotal = 0;
+      const bidsWithTotal: [string, string, number][] = bids.map(
+         ([price, quantity]) => [
+            price,
+            quantity,
+            (currentTotal += parseFloat(quantity)),
+         ],
+      );
+      const maxTotal = bids.reduce(
+         (acc, [_, quantity]) => acc + parseFloat(quantity),
+         0,
+      );
+      return { bidsWithTotal, maxTotal };
+   }, [bids]);
 
    return (
-      <div>
-         {bidsWithTotal?.map(([price, quantity, total]) => (
+      <div className="space-y-px">
+         {bidsWithTotal.map(([price, quantity, total]) => (
             <Bid
                maxTotal={maxTotal}
                total={total}
-               key={price}
+               key={`${price}-${quantity}`}
                price={price}
                quantity={quantity}
             />
@@ -39,29 +45,19 @@ function Bid({
    total: number;
    maxTotal: number;
 }>) {
+   const widthPercentage = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+
    return (
-      <div
-         style={{
-            display: 'flex',
-            position: 'relative',
-            width: '100%',
-            backgroundColor: 'transparent',
-            overflow: 'hidden',
-         }}
-      >
+      <div className="relative h-6">
          <div
+            className="absolute inset-0 bg-green-900/30 m-[1px]"
             style={{
-               position: 'absolute',
-               top: 0,
-               left: 0,
-               width: `${(100 * total) / maxTotal}%`,
-               height: '100%',
-               background: 'rgba(1, 167, 129, 0.325)',
+               width: `${widthPercentage}%`,
                transition: 'width 0.3s ease-in-out',
             }}
-         ></div>
-         <div className={`flex justify-between text-xs w-full`}>
-            <div>{price}</div>
+         />
+         <div className="flex justify-between text-xs relative z-10 px-2 h-full items-center">
+            <div className="text-green-400">{price}</div>
             <div>{quantity}</div>
             <div>{total.toFixed(2)}</div>
          </div>
