@@ -1,53 +1,31 @@
+/* eslint-disable @next/next/no-img-element */
+import { WebSocketManager } from '@/lib/websocketManager';
 import Link from 'next/link';
 
 export default function Page() {
+   WebSocketManager.getInstance();
+
    return (
       <div className="bg-gradient-to-b from-[#101212] relative to-[#08201D]">
          <header className="absolute inset-x-0 top-0 z-10 w-full">
             <div className="px-4 mx-auto sm:px-6 lg:px-8">
                <div className="flex items-center justify-between h-16 lg:h-20">
-                  <div className="flex-shrink-0">
-                     <a href="#" title="" className="flex">
-                        {/* <img */}
-                        {/*   className="w-auto h-8" */}
-                        {/*   src="https://cdn.rareblocks.xyz/collection/celebration/images/hero/5/logo.svg" */}
-                        {/*   alt="" */}
-                        {/* /> */}
-                     </a>
-                  </div>
-
                   <div className="hidden lg:flex lg:items-center lg:justify-center lg:space-x-10">
-                     <a
-                        href="#"
-                        title=""
-                        className="text-base text-white transition-all duration-200 hover:text-opacity-80"
-                     >
-                        Features{' '}
-                     </a>
+                     <p className="text-base text-white transition-all duration-200 hover:text-opacity-80">
+                        Features
+                     </p>
 
-                     <a
-                        href="#"
-                        title=""
-                        className="text-base text-white transition-all duration-200 hover:text-opacity-80"
-                     >
-                        Solutions{' '}
-                     </a>
+                     <p className="text-base text-white transition-all duration-200 hover:text-opacity-80">
+                        Solutions
+                     </p>
 
-                     <a
-                        href="#"
-                        title=""
-                        className="text-base text-white transition-all duration-200 hover:text-opacity-80"
-                     >
-                        Resources{' '}
-                     </a>
+                     <p className="text-base text-white transition-all duration-200 hover:text-opacity-80">
+                        Resources
+                     </p>
 
-                     <a
-                        href="#"
-                        title=""
-                        className="text-base text-white transition-all duration-200 hover:text-opacity-80"
-                     >
-                        Pricing{' '}
-                     </a>
+                     <p className="text-base text-white transition-all duration-200 hover:text-opacity-80">
+                        Pricing
+                     </p>
                   </div>
 
                   <div className="lg:flex lg:items-center lg:justify-end lg:space-x-6 sm:ml-auto">
@@ -55,7 +33,6 @@ export default function Page() {
                         href="/markets"
                         title=""
                         className="inline-flex items-center justify-center px-3 sm:px-5 py-2.5 text-sm sm:text-base font-semibold transition-all duration-200 text-white bg-white/20 hover:bg-white/40 focus:bg-white/40 rounded-lg"
-                        role="button"
                      >
                         Get started
                      </Link>
@@ -125,7 +102,6 @@ export default function Page() {
                      href="/markets"
                      title=""
                      className="inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg sm:mt-16 hover:bg-blue-700 focus:bg-blue-700"
-                     role="button"
                   >
                      Get started
                      <svg

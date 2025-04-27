@@ -54,3 +54,16 @@ export type WsResponse = {
    stream: string; // Stream name
    data: TickerData | TradeData | KlineData | DepthData; // Data payload
 };
+
+export interface Ticker {
+   firstPrice: string;
+   high: string;
+   lastPrice: string;
+   low: string;
+   priceChange: string;
+   priceChangePercent: string;
+   quoteVolume: string;
+   symbol: string;
+   trades: string;
+   volume: string;
+}
