@@ -5,18 +5,18 @@ import { useMemo } from 'react';
 export const AskTable = ({ asks }: { asks: [string, string][] }) => {
    const { asksWithTotal, maxTotal } = useMemo(() => {
       let currentTotal = 0;
-      const asksWithTotal: [string, string, number][] = asks.map(
-         ([price, quantity]) => [
-            price,
-            quantity,
-            (currentTotal += parseFloat(quantity)),
-         ],
+      const revAsk = [...asks].reverse();
+      const total = asks.map(
+         ([, quantity]) => (currentTotal += parseFloat(quantity)),
       );
-      const maxTotal = asks.reduce(
-         (acc, [_, quantity]) => acc + parseFloat(quantity),
-         0,
+      const revTotal = [...total].reverse();
+
+      const asksWithTotal: [string, string, number][] = revAsk.map(
+         ([price, quantity], index) => {
+            return [price, quantity, revTotal[index]];
+         },
       );
-      return { asksWithTotal, maxTotal };
+      return { asksWithTotal, maxTotal: revTotal[0] };
    }, [asks]);
 
    return (
@@ -50,16 +50,16 @@ function Ask({
    return (
       <div className="relative h-6">
          <div
-            className="absolute inset-0 bg-red-900/30 m-[1px]"
+            className="absolute inset-y-0 right-0 left-auto bg-[#792c31]/30 m-[1px]"
             style={{
                width: `${widthPercentage}%`,
-               transition: 'width 0.3s ease-in-out',
+               transition: 'width 0.4s ease-in-out',
             }}
          />
-         <div className="flex justify-between text-xs relative z-10 px-2 h-full items-center">
-            <div className="text-red-400">{price}</div>
-            <div>{quantity}</div>
-            <div>{total.toFixed(2)}</div>
+         <div className="grid grid-cols-3 text-xs relative z-10 px-2 h-full items-center">
+            <div className="text-red-400 text-left">{price}</div>
+            <div className="text-gray-300 text-right">{quantity}</div>
+            <div className="text-gray-300 text-right">{total.toFixed(2)}</div>
          </div>
       </div>
    );

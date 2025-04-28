@@ -6,14 +6,13 @@ export const BidTable = ({ bids }: { bids: [string, string][] }) => {
    const { bidsWithTotal, maxTotal } = useMemo(() => {
       let currentTotal = 0;
       const bidsWithTotal: [string, string, number][] = bids.map(
-         ([price, quantity]) => [
-            price,
-            quantity,
-            (currentTotal += parseFloat(quantity)),
-         ],
+         ([price, quantity]) => {
+            currentTotal += parseFloat(quantity);
+            return [price, quantity, currentTotal];
+         },
       );
       const maxTotal = bids.reduce(
-         (acc, [_, quantity]) => acc + parseFloat(quantity),
+         (acc, [, quantity]) => acc + parseFloat(quantity),
          0,
       );
       return { bidsWithTotal, maxTotal };
@@ -50,16 +49,16 @@ function Bid({
    return (
       <div className="relative h-6">
          <div
-            className="absolute inset-0 bg-green-900/30 m-[1px]"
+            className="absolute inset-y-0 right-0 left-auto bg-[#0c5f43]/30 m-[1px]"
             style={{
                width: `${widthPercentage}%`,
                transition: 'width 0.3s ease-in-out',
             }}
          />
-         <div className="flex justify-between text-xs relative z-10 px-2 h-full items-center">
-            <div className="text-green-400">{price}</div>
-            <div>{quantity}</div>
-            <div>{total.toFixed(2)}</div>
+         <div className="grid grid-cols-3 text-xs relative z-10 px-2 h-full items-center">
+            <div className="text-green-400 text-left">{price}</div>
+            <div className="text-gray-300 text-right">{quantity}</div>
+            <div className="text-gray-300 text-right">{total.toFixed(2)}</div>
          </div>
       </div>
    );

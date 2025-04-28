@@ -10,8 +10,14 @@ export default async function Market({
 }: Readonly<{ params: Promise<{ market: string }> }>) {
    const { market } = await params;
    const kline = await getKlines(market);
-   const depth = await getDepth(market);
+   const depthData = await getDepth(market);
    const ticker = await getTicker(market);
+
+   const depth = {
+      ...depthData,
+      bids: [...depthData.bids].reverse(), // Highest first
+      asks: [...depthData.asks], // Lowest first (already sorted)
+   };
 
    return (
       <div className="h-screen w-full rounded-md m-2">
@@ -36,7 +42,11 @@ export default async function Market({
                   </div>
                   <div className="bg-[#14151b] h-full rounded-md">
                      <div className="w-55">
-                        <Orderbook market={market} depthData={depth} />
+                        <Orderbook
+                           market={market}
+                           depthData={depth}
+                           lastTradedPrice={ticker?.lastPrice}
+                        />
                      </div>
                   </div>
                </div>

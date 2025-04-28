@@ -34,7 +34,7 @@ export default async function Ticker({ ticker }: Readonly<Props>) {
 
          <div className="flex items-center flex-row flex-wrap gap-x-6">
             <div className="flex flex-col h-full justify-center">
-               <p className="font-medium tabular-nums text-green-text text-lg">
+               <p className="font-medium tabular-nums text-green-text text-lg text-green-500">
                   {formatPrice(ticker.lastPrice)}
                </p>
                <p className="text-high-emphasis text-left text-sm font-normal tabular-nums">

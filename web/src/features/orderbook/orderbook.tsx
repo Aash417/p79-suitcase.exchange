@@ -8,10 +8,15 @@ import { Depth } from './utils/types';
 
 type Props = {
    market: string;
+   lastTradedPrice?: string;
    depthData: Depth;
 };
 
-export default function Orderbook({ market, depthData }: Readonly<Props>) {
+export default function Orderbook({
+   market,
+   depthData,
+   lastTradedPrice,
+}: Readonly<Props>) {
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
 
@@ -47,13 +52,14 @@ export default function Orderbook({ market, depthData }: Readonly<Props>) {
       };
    }, []);
 
-   const topBids = useMemo(() => bids.slice(0, 11).reverse(), [bids]);
-   const topAsks = useMemo(() => asks.slice(0, 11), [asks]);
+   const topBids = useMemo(() => bids.slice(0, 10), [bids]);
+   const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
 
    return (
       <div className="m-2">
          <TableHeader />
          <AskTable asks={topAsks} />
+         <div className=" py-2 text-sm font-medium">{lastTradedPrice}</div>
          <BidTable bids={topBids} />
       </div>
    );
