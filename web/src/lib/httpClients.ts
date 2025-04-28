@@ -41,3 +41,18 @@ export async function getTickers() {
 
    return tickerData;
 }
+
+export async function getTicker(market: string) {
+   const res = await fetch(`${API_URL_BACKPACK}/ticker?symbol=${market}`);
+   const data: Ticker = await res.json();
+
+   const symbolInfo = SYMBOLS_MAP.get(data.symbol);
+   if (symbolInfo) {
+      return {
+         ...data,
+         change: (Number(data.priceChangePercent) * 100).toFixed(2),
+         name: symbolInfo.name,
+         imageUrl: symbolInfo.imageUrl,
+      };
+   }
+}

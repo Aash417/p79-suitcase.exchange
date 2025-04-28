@@ -1,21 +1,22 @@
 import Appbar from '@/components/appbar';
 import KlineChart from '@/features/klineChart/klineChart';
-import MarketBar from '@/features/marketBar/marketBar';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swapForm';
-import { getDepth, getKlines } from '@/lib/httpClients';
+import Ticker from '@/features/ticker/ticker';
+import { getDepth, getKlines, getTicker } from '@/lib/httpClients';
 
 export default async function Market({
    params,
 }: Readonly<{ params: Promise<{ market: string }> }>) {
    const { market } = await params;
-   const klineData = await getKlines(market);
-   const depthData = await getDepth(market);
+   const kline = await getKlines(market);
+   const depth = await getDepth(market);
+   const ticker = await getTicker(market);
 
    return (
       <div className="h-screen w-full rounded-md m-2">
          {/* Header */}
-         <div className="h-10 w-[calc(100%-1rem)] bg-[#14151b] mb-2 rounded-md">
+         <div className="h-10 w-[calc(100%-1rem)]  mb-2 rounded-md">
             <Appbar />
          </div>
 
@@ -26,16 +27,16 @@ export default async function Market({
                <div className="grid grid-rows-[auto_1fr] h-full gap-2">
                   {/* Top row */}
                   <div className="col-span-3 h-15 bg-[#14151b]  rounded-md">
-                     <MarketBar market={market} />
+                     <Ticker ticker={ticker} />
                   </div>
 
                   {/* Bottom row with columns */}
                   <div className="col-span-2 py-6 bg-[#14151b] h-full rounded-md">
-                     <KlineChart market={market} klineData={klineData} />
+                     <KlineChart market={market} klineData={kline} />
                   </div>
                   <div className="bg-[#14151b] h-full rounded-md">
                      <div className="w-55">
-                        <Orderbook market={market} depthData={depthData} />
+                        <Orderbook market={market} depthData={depth} />
                      </div>
                   </div>
                </div>

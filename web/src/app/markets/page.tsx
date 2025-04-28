@@ -15,25 +15,15 @@ export default async function Markets() {
    const tickerData = await getTickers();
 
    return (
-      <div className="w-full bg-black text-white p-4 rounded-lg">
+      <div className="w-full  text-white p-4 rounded-lg h-">
          <div className="flex items-center mb-6">
             <div className="text-2xl font-bold mr-6 flex items-center">
                <span className="bg-gray-800 p-1 rounded mr-2">💼</span>Suitcase
             </div>
          </div>
 
-         <div className="mb-4">
-            <div className="flex space-x-4">
-               <span className="font-semibold border-b-2 border-white pb-2">
-                  Spot
-               </span>
-               <span className="text-gray-400">Futures</span>
-               <span className="text-gray-400">Lending</span>
-            </div>
-         </div>
-
-         <Table className="bg-[#14151b]">
-            <TableHeader className="bg-gray-900">
+         <Table className="bg-[#14151b] rounded-md p-5">
+            <TableHeader className="border-b border-gray-800 ">
                <TableRow>
                   <TableHead className="text-gray-400">Name</TableHead>
                   <TableHead className="text-gray-400 text-right">
@@ -68,7 +58,7 @@ export default async function Markets() {
                                  <div className="font-medium text-white">
                                     {crypto.name}
                                  </div>
-                                 <div className="text-gray-400 text-sm">
+                                 <div className="text-gray-400 text-xs">
                                     {crypto.symbol}
                                  </div>
                               </div>
