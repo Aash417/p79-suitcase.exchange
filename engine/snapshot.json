@@ -79,6 +79,14 @@
             "SOL": {
                "available": 50000,
                "locked": 0
+            },
+            "PEPE": {
+               "available": 50000,
+               "locked": 0
+            },
+            "BTC": {
+               "available": 50000,
+               "locked": 0
             }
          }
       ]

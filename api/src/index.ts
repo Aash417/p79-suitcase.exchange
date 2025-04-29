@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import capitalRouter from './routes/capital';
 import depthRouter from './routes/depth';
 import klineRouter from './routes/kline';
 import orderRouter from './routes/order';
@@ -12,13 +13,14 @@ app.use(
       origin: '*', // Allow all origins (for development only!)
       allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
-   })
+   }),
 );
 
 app.route('/api/v1/depth', depthRouter);
 app.route('/api/v1/klines', klineRouter);
 app.route('/api/v1/order', orderRouter);
 app.route('/api/v1/ticker', tickerRouter);
+app.route('/api/v1/capital', capitalRouter);
 
 app.get('/', (c) => {
    return c.text('Hello Hono!');

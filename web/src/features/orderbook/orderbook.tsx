@@ -38,10 +38,10 @@ export default function Orderbook({
          handleDepthUpdate,
          `depth.200ms.${market}`,
       );
-      wsManager.sendMessage({
-         method: 'SUBSCRIBE',
-         params: [`depth.200ms.${market}`],
-      });
+      // wsManager.sendMessage({
+      //    method: 'SUBSCRIBE',
+      //    params: [`depth.200ms.${market}`],
+      // });
 
       return () => {
          wsManager.sendMessage({

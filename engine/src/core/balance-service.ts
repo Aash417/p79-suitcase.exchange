@@ -59,6 +59,12 @@ export class BalanceService {
       });
    }
 
+   getUserBalances(userId: string, clientId: string) {
+      const userBalance = this.balances.get(userId);
+
+      this.marketDataService.sendUserBalance(clientId, userBalance);
+   }
+
    getBalances(): Map<string, UserBalance> {
       return new Map(this.balances);
    }
@@ -87,7 +93,7 @@ export class BalanceService {
    }
 
    onRamp(data: On_Ramp['data'], clientId: string) {
-      const { userId, amount, asset } = data;
+      const { userId, quantity, asset } = data;
       // Get or create user balance
       const userBalance = this.balances.get(userId) || {
          [QUOTE_ASSET]: { available: 0, locked: 0 },
@@ -97,11 +103,11 @@ export class BalanceService {
          userBalance[asset] = { available: 0, locked: 0 };
       }
 
-      userBalance[asset].available += amount;
+      userBalance[asset].available += quantity;
       this.balances.set(userId, userBalance);
       this.marketDataService.sendOnRampSuccess(clientId, data);
 
-      console.log(`On-ramped ${amount} ${asset} for user ${userId}`);
+      console.log(`On-ramped ${quantity} ${asset} for user ${userId}`);
    }
 
    private getUserBalance(userId: string): UserBalance {

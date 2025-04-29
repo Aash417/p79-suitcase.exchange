@@ -1,6 +1,7 @@
 import {
    CANCEL_ORDER,
    CREATE_ORDER,
+   GET_CAPITAL,
    GET_DEPTH,
    GET_OPEN_ORDERS,
    MessageFromApi,
@@ -63,7 +64,12 @@ export class Engine {
             case GET_DEPTH:
                this.marketDataService.sendDepth(message.data.market, clientId);
                break;
-
+            case GET_CAPITAL:
+               this.balanceService.getUserBalances(
+                  message.data.userId,
+                  clientId,
+               );
+               break;
             case GET_OPEN_ORDERS:
                this.orderService.getUserOpenOrders(message.data, clientId);
                break;

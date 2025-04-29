@@ -7,13 +7,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SYMBOLS_MAP } from '@/lib/constants';
+import { API_URL } from '@/lib/env';
+import { formatComma } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+type Props = {
+   market: string;
+   balance: {
+      [key: string]: {
+         available: number;
+         locked: number;
+      };
+   };
+};
 
-export default function SwapForm({ market }: Readonly<{ market: string }>) {
+export default function SwapForm({ market, balance }: Readonly<Props>) {
    const [activeTab, setActiveTab] = useState('buy');
-   const [price, setPrice] = useState(''); // for calculations
-   const [priceFormatted, setPriceFormatted] = useState(''); // for display
+   const [price, setPrice] = useState('');
+   const [priceFormatted, setPriceFormatted] = useState('');
    const [quantity, setQuantity] = useState('');
+   const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
 
    useEffect(() => {
@@ -34,10 +46,10 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
          side: activeTab,
          userId: '47854',
       };
-      console.log(order);
+
       try {
          console.time('one');
-         const res = await fetch('http://localhost:3001/api/v1/order', {
+         const res = await fetch(`${API_URL}/order`, {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json',
@@ -84,10 +96,8 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
             cleanValue = cleanValue.replace(/^0+/, '');
          }
 
-         // Store clean value for calculations
          setPrice(cleanValue);
 
-         // Format value for display if it's a complete number
          if (!cleanValue.endsWith('.')) {
             const formattedValue = Number(cleanValue).toLocaleString('en-US', {
                minimumFractionDigits: cleanValue.includes('.')
@@ -97,7 +107,6 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
             });
             setPriceFormatted(formattedValue);
          } else {
-            // Keep the decimal point visible while typing
             setPriceFormatted(cleanValue);
          }
       }
@@ -106,11 +115,21 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
    function handleQuantityChange(e: React.ChangeEvent<HTMLInputElement>) {
       const regex = /^\d+$/;
       const inputValue = e.target.value;
-      if (inputValue === '') {
+      const valueWithoutCommas = inputValue.replace(/,/g, '');
+
+      if (valueWithoutCommas === '') {
          setQuantity('');
+         setQuantityFormatted('');
          return;
       }
-      if (regex.test(inputValue)) setQuantity(inputValue);
+
+      if (regex.test(valueWithoutCommas)) {
+         setQuantity(valueWithoutCommas);
+
+         const formattedValue =
+            Number(valueWithoutCommas).toLocaleString('en-US');
+         setQuantityFormatted(formattedValue);
+      }
    }
 
    return (
@@ -135,6 +154,23 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
                      Sell
                   </TabsTrigger>
                </TabsList>
+
+               <div className="flex  justify-between">
+                  <Label className=" text-gray-400 text-xs underline">
+                     Balance
+                  </Label>
+                  <span className="text-xs text-gray-400">
+                     {activeTab === 'buy'
+                        ? formatComma(
+                             balance[market.split('_')[1]].available / 100,
+                          ) + ' USDC'
+                        : formatComma(
+                             balance[market.split('_')[0]].available / 100,
+                          ) +
+                          ' ' +
+                          market.split('_')[0]}
+                  </span>
+               </div>
 
                <div className="space-y-3">
                   <div>
@@ -164,7 +200,7 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
                      <div className="relative">
                         <Input
                            type="text"
-                           value={quantity}
+                           value={quantityFormatted}
                            onChange={handleQuantityChange}
                            placeholder="0"
                            className="mt-1"
@@ -202,10 +238,11 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
                   </div>
 
                   <Button
-                     className={`w-full cursor-pointer ${activeTab === 'buy'
+                     className={`w-full cursor-pointer ${
+                        activeTab === 'buy'
                            ? 'bg-green-500 hover:bg-green-600'
                            : 'bg-red-500 hover:bg-red-600'
-                        }`}
+                     }`}
                      type="submit"
                      onClick={handleSubmit}
                      disabled={!price || !quantity}

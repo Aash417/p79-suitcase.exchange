@@ -3,6 +3,7 @@ export const CANCEL_ORDER = 'CANCEL_ORDER';
 export const ON_RAMP = 'ON_RAMP';
 export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
 export const GET_DEPTH = 'GET_DEPTH';
+export const GET_CAPITAL = 'GET_CAPITAL';
 export const TRADE_ADDED = 'TRADE_ADDED';
 export const ORDER_UPDATE = 'ORDER_UPDATE';
 export type ORDER_SIDE = 'buy' | 'sell';
@@ -87,7 +88,7 @@ export type On_Ramp = {
    data: {
       userId: string;
       asset: string;
-      amount: number;
+      quantity: number;
    };
 };
 export type GET_DEPTH = {
@@ -103,12 +104,19 @@ export type GET_OPEN_ORDERS = {
       market: string;
    };
 };
+export type GET_CAPITAL = {
+   type: typeof GET_CAPITAL;
+   data: {
+      userId: string;
+   };
+};
 export type MessageFromApi =
    | Create_order
    | Cancel_order
    | On_Ramp
    | GET_DEPTH
-   | GET_OPEN_ORDERS;
+   | GET_OPEN_ORDERS
+   | GET_CAPITAL;
 
 export type TickerUpdateMessage = {
    stream: string;

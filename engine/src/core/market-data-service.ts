@@ -80,6 +80,10 @@ export class MarketDataService {
       });
    }
 
+   sendUserBalance(clientId: string, data) {
+      RedisPublisher.getInstance().sendToClient(clientId, data);
+   }
+
    // Send messages to WebSocket
    publishDepthUpdate(market: string) {
       const orderbook = this.getOrderBook(market);

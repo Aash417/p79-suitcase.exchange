@@ -5,6 +5,7 @@ export const CANCEL_ORDER = 'CANCEL_ORDER';
 export const ON_RAMP = 'ON_RAMP';
 export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
 export const GET_DEPTH = 'GET_DEPTH';
+export const GET_CAPITAL = 'GET_CAPITAL';
 
 export type MessageFromOrderbook =
    | {
@@ -70,7 +71,7 @@ export type MessageToEngine =
    | {
         type: typeof ON_RAMP;
         data: {
-           amount: number;
+           quantity: number;
            userId: string;
            asset: string;
         };
@@ -86,6 +87,12 @@ export type MessageToEngine =
         data: {
            userId: string;
            symbol: string;
+        };
+     }
+   | {
+        type: typeof GET_CAPITAL;
+        data: {
+           userId: string;
         };
      };
 
@@ -109,7 +116,9 @@ export const deleteOrderSchema = z.object({
 export const onRampSchema = z.object({
    userId: z.string().min(1),
    asset: z.string().min(1),
-   amount: z.string().regex(/^[1-9]\d*$/, 'Amount must be a positive integer'),
+   quantity: z
+      .string()
+      .regex(/^[1-9]\d*$/, 'Amount must be a positive integer'),
 });
 
 export interface KLine {

@@ -56,13 +56,13 @@ order.get('/open', async (c) => {
 });
 
 order.post('/on-ramp', zValidator('json', onRampSchema), async (c) => {
-   const { userId, asset, amount } = c.req.valid('json');
+   const { userId, asset, quantity } = c.req.valid('json');
    const response = await RedisManager.getInstance().sendAndAwait({
       type: 'ON_RAMP',
       data: {
          userId,
          asset,
-         amount: parseInputAmount(amount),
+         quantity: parseInputAmount(quantity),
       },
    });
    return c.json(response.payload);
