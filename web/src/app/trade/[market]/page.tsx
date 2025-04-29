@@ -1,5 +1,6 @@
 import Appbar from '@/components/appbar';
 import KlineChart from '@/features/klineChart/klineChart';
+import DepositForm from '@/features/onRampUI/depositForm';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swapForm';
 import Ticker from '@/features/ticker/ticker';
@@ -53,8 +54,13 @@ export default async function Market({
             </div>
 
             {/* Right panel */}
-            <div className="basis-[28vw] bg-[#14151b] rounded-md">
-               <SwapForm market={market} />
+            <div className="h-full flex flex-col gap-2">
+               <div className="basis-[28vw] bg-[#14151b] rounded-md">
+                  <SwapForm market={market} />
+               </div>
+               <div className="basis-[28vw] bg-[#14151b] rounded-md">
+                  <DepositForm />
+               </div>
             </div>
          </div>
       </div>

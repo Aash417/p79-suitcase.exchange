@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { formatPrice } from '@/lib/utils';
+import { formatComma, formatPrice } from '@/lib/utils';
 import type { Ticker } from './utils/types';
 
 type Props = {
@@ -55,14 +55,14 @@ export default async function Ticker({ ticker }: Readonly<Props>) {
             <div className="flex justify-center flex-col relative">
                <p className="font-medium text-gray-400 text-xs">24H High</p>
                <span className="text-high-emphasis mt-1 text-sm leading-4 font-normal tabular-nums">
-                  {new Intl.NumberFormat('en-US').format(Number(ticker.high))}
+                  {formatComma(ticker.high)}
                </span>
             </div>
 
             <div className="flex justify-center flex-col relative">
                <p className="font-medium text-gray-400 text-xs">24H Low</p>
                <span className="text-high-emphasis mt-1 text-sm leading-4 font-normal tabular-nums">
-                  {new Intl.NumberFormat('en-US').format(Number(ticker.low))}
+                  {formatComma(ticker.low)}
                </span>
             </div>
 
@@ -71,7 +71,7 @@ export default async function Ticker({ ticker }: Readonly<Props>) {
                   24H Volume ({market[0]})
                </p>
                <span className="text-high-emphasis mt-1 text-sm leading-4 font-normal tabular-nums">
-                  {new Intl.NumberFormat('en-US').format(Number(ticker.volume))}
+                  {formatComma(ticker.volume)}
                </span>
             </div>
          </div>

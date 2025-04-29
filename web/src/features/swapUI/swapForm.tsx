@@ -1,21 +1,28 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SYMBOLS_MAP } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 
 export default function SwapForm({ market }: Readonly<{ market: string }>) {
    const [activeTab, setActiveTab] = useState('buy');
-   const [price, setPrice] = useState('');
+   const [price, setPrice] = useState(''); // for calculations
+   const [priceFormatted, setPriceFormatted] = useState(''); // for display
    const [quantity, setQuantity] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
 
    useEffect(() => {
-      const rounded = (Number(price) * Number(quantity)).toFixed(2);
-      setTotalPrice(rounded);
+      const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
+      const formattedTotal = Number(calculatedTotal).toLocaleString('en-US', {
+         minimumFractionDigits: 2,
+         maximumFractionDigits: 2,
+      });
+      setTotalPrice(formattedTotal);
    }, [price, quantity]);
 
    async function handleSubmit(e: React.FormEvent) {
@@ -50,13 +57,50 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
    }
 
    function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
-      const regex = /^\d+(\.\d{0,2})?$/;
+      const regex = /^(\d*\.?\d{0,2}|\d*\.?)$/;
       const inputValue = e.target.value;
-      if (inputValue === '') {
+      const valueWithoutCommas = inputValue.replace(/,/g, '');
+
+      if (valueWithoutCommas === '') {
          setPrice('');
+         setPriceFormatted('');
          return;
       }
-      if (regex.test(inputValue)) setPrice(inputValue);
+
+      if (valueWithoutCommas === '.') {
+         setPrice('0.');
+         setPriceFormatted('0.');
+         return;
+      }
+
+      if (regex.test(valueWithoutCommas)) {
+         // Clean the value for calculations
+         let cleanValue = valueWithoutCommas;
+         if (
+            cleanValue.length > 1 &&
+            cleanValue.startsWith('0') &&
+            cleanValue[1] !== '.'
+         ) {
+            cleanValue = cleanValue.replace(/^0+/, '');
+         }
+
+         // Store clean value for calculations
+         setPrice(cleanValue);
+
+         // Format value for display if it's a complete number
+         if (!cleanValue.endsWith('.')) {
+            const formattedValue = Number(cleanValue).toLocaleString('en-US', {
+               minimumFractionDigits: cleanValue.includes('.')
+                  ? cleanValue.split('.')[1].length
+                  : 0,
+               maximumFractionDigits: 2,
+            });
+            setPriceFormatted(formattedValue);
+         } else {
+            // Keep the decimal point visible while typing
+            setPriceFormatted(cleanValue);
+         }
+      }
    }
 
    function handleQuantityChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -70,109 +114,108 @@ export default function SwapForm({ market }: Readonly<{ market: string }>) {
    }
 
    return (
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="m-2">
-         <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger
-               value="buy"
-               className="data-[state=active]:bg-green-500/20 data-[state=active]:text-white"
+      <Card className="border-0 shadow-none">
+         <CardContent className="">
+            <Tabs
+               value={activeTab}
+               onValueChange={setActiveTab}
+               className="w-full"
             >
-               Buy
-            </TabsTrigger>
-            <TabsTrigger
-               value="sell"
-               className="data-[state=active]:bg-red-500/20 data-[state=active]:text-white"
-            >
-               Sell
-            </TabsTrigger>
-         </TabsList>
+               <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#d4d4d408] text-gray-500">
+                  <TabsTrigger
+                     value="buy"
+                     className=" data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500"
+                  >
+                     Buy
+                  </TabsTrigger>
+                  <TabsTrigger
+                     value="sell"
+                     className=" data-[state=active]:bg-red-500/20 data-[state=active]:text-red-500"
+                  >
+                     Sell
+                  </TabsTrigger>
+               </TabsList>
 
-         <TabsContent value="buy">
-            <Card>
-               <CardContent className="space-y-2">
-                  <form onSubmit={handleSubmit}>
-                     <div className="space-y-1">
-                        <Label htmlFor="buy-price">Price</Label>
+               <div className="space-y-3">
+                  <div>
+                     <Label className=" text-gray-400 text-xs">Price</Label>
+                     <div className="relative">
                         <Input
                            type="text"
-                           value={price}
+                           value={priceFormatted}
                            onChange={handlePriceChange}
                            placeholder="0"
+                           className="mt-1"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                           <img
+                              src="/usdc.webp"
+                              alt=""
+                              className="object-cover w-full h-full"
+                           />
+                        </div>
                      </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="buy-quantity">Quantity</Label>
+                  </div>
+
+                  <div>
+                     <Label className="flex justify-between text-gray-400 text-xs">
+                        Quantity
+                     </Label>
+                     <div className="relative">
                         <Input
                            type="text"
                            value={quantity}
                            onChange={handleQuantityChange}
                            placeholder="0"
+                           className="mt-1"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                           <img
+                              src={SYMBOLS_MAP.get(market)?.imageUrl}
+                              alt=""
+                              className="object-cover w-full h-full"
+                           />
+                        </div>
                      </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="buy-total">Total Price</Label>
-                        <Input
-                           id="buy-total"
-                           value={totalPrice}
-                           readOnly
-                           disabled
-                        />
-                     </div>
-                     <CardFooter>
-                        <Button
-                           type="submit"
-                           className="bg-green-500/50 hover:bg-green-600"
-                        >
-                           Submit Buy Order
-                        </Button>
-                     </CardFooter>
-                  </form>
-               </CardContent>
-            </Card>
-         </TabsContent>
+                  </div>
 
-         <TabsContent value="sell">
-            <Card>
-               <CardContent className="space-y-2">
-                  <form onSubmit={handleSubmit}>
-                     <div className="space-y-1">
-                        <Label htmlFor="sell-price">Price</Label>
+                  <div>
+                     <Label className="text-xs flex  text-gray-400 ">
+                        Order value
+                     </Label>
+                     <div className="relative">
                         <Input
                            type="text"
-                           value={price}
-                           onChange={handlePriceChange}
-                           placeholder="0"
-                        />
-                     </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="sell-quantity">Quantity</Label>
-                        <Input
-                           type="text"
-                           value={quantity}
-                           onChange={handleQuantityChange}
-                           placeholder="0"
-                        />
-                     </div>
-                     <div className="space-y-1">
-                        <Label htmlFor="sell-total">Total Price</Label>
-                        <Input
-                           id="sell-total"
                            value={totalPrice}
                            readOnly
                            disabled
+                           className="mt-1"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                           <img
+                              src="/usdc.webp"
+                              alt=""
+                              className="object-cover w-full h-full"
+                           />
+                        </div>
                      </div>
-                     <CardFooter>
-                        <Button
-                           type="submit"
-                           className="bg-red-500/50 hover:bg-red-600"
-                        >
-                           Submit Sell Order
-                        </Button>
-                     </CardFooter>
-                  </form>
-               </CardContent>
-            </Card>
-         </TabsContent>
-      </Tabs>
+                  </div>
+
+                  <Button
+                     className={`w-full cursor-pointer ${activeTab === 'buy'
+                           ? 'bg-green-500 hover:bg-green-600'
+                           : 'bg-red-500 hover:bg-red-600'
+                        }`}
+                     type="submit"
+                     onClick={handleSubmit}
+                     disabled={!price || !quantity}
+                  >
+                     {activeTab === 'buy' ? 'Buy' : 'Sell'}{' '}
+                     {market.split('_')[0]}
+                  </Button>
+               </div>
+            </Tabs>
+         </CardContent>
+      </Card>
    );
 }

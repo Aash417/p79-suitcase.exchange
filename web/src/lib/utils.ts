@@ -23,3 +23,7 @@ export const formatVolume = (value: string | number): string => {
       return (num / 1e3).toFixed(1) + 'K';
    } else return num.toFixed(2);
 };
+
+export const formatComma = (value: string | number): string => {
+   return new Intl.NumberFormat('en-US').format(Number(value));
+};
