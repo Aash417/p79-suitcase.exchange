@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
          className={cn(
             // Base styles
             'flex h-10 w-full rounded-lg px-3 py-2 text-sm',
-            'bg-[#1C1D21] border border-[#2C2D33]',
+            'bg-[#202127] ',
             'text-gray-100 placeholder:text-gray-500',
 
             // Focus states
@@ -18,7 +18,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
 
             // Disabled state
             'disabled:opacity-50 ',
-            'disabled:bg-[#1C1D21]/50',
+            'disabled:bg-[#202127]/50',
 
             // Transitions
             'transition-colors duration-200',

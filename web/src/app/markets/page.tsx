@@ -7,7 +7,7 @@ import {
    TableHeader,
    TableRow,
 } from '@/components/ui/table';
-import { getTickers } from '@/lib/httpClients';
+import { getTickers } from '@/lib/http-clients';
 import { formatPrice, formatVolume } from '@/lib/utils';
 import Link from 'next/link';
 

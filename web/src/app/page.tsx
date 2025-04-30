@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { WebSocketManager } from '@/lib/websocketManager';
+import { WebSocketManager } from '@/lib/websocket-manager';
 import Link from 'next/link';
 
 export default function Page() {

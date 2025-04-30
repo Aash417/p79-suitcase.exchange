@@ -1,21 +1,23 @@
 'use client';
 
-import { WebSocketManager } from '@/lib/websocketManager';
+import { WebSocketManager } from '@/lib/websocket-manager';
 import { useEffect, useMemo, useState } from 'react';
-import { AskTable } from './components/askTable';
-import { BidTable } from './components/bidTable';
+import { AskTable } from './components/ask-table';
+import { BidTable } from './components/bid-table';
+import LastTradePrice from './components/last-trade-price';
+import { TableHeader } from './components/table-header';
 import { Depth } from './utils/types';
 
 type Props = {
    market: string;
-   lastTradedPrice?: string;
+   lastTradePrice?: string;
    depthData: Depth;
 };
 
 export default function Orderbook({
    market,
    depthData,
-   lastTradedPrice,
+   lastTradePrice,
 }: Readonly<Props>) {
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
@@ -56,21 +58,16 @@ export default function Orderbook({
    const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
 
    return (
-      <div className="m-2">
+      <div className="flex flex-col h-full grow overflow-x-hidden">
          <TableHeader />
-         <AskTable asks={topAsks} />
-         <div className=" py-2 text-sm font-medium">{lastTradedPrice}</div>
-         <BidTable bids={topBids} />
-      </div>
-   );
-}
 
-function TableHeader() {
-   return (
-      <div className="flex justify-between text-xs font-medium">
-         <div className="text-white">Price(USDC)</div>
-         <div className="text-slate-500">Size(SOL)</div>
-         <div className="text-slate-500">Total(SOL)</div>
+         <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto">
+            <AskTable asks={topAsks} />
+            <LastTradePrice lastTradePrice={lastTradePrice} />
+            <BidTable bids={topBids} />
+         </div>
+
+         {/* <OrderbookStatus/> */}
       </div>
    );
 }

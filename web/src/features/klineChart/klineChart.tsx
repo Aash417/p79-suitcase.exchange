@@ -1,6 +1,6 @@
 'use client';
 
-import { ChartManager } from '@/features/klineChart/utils/chartManager';
+import { ChartManager } from '@/features/klineChart/utils/chart-manager';
 import { useEffect, useRef } from 'react';
 import { KLine } from './utils/types';
 
@@ -31,22 +31,29 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
                      timestamp: new Date(x.end),
                   }))
                   .sort((x, y) => (x.timestamp < y.timestamp ? -1 : 1)),
-               {
-                  background: '#0e0f14',
-                  color: 'white',
-               },
             );
             chartManagerRef.current = chartManager;
          }
       };
       init();
+
+      return () => {
+         if (chartManagerRef.current) {
+            chartManagerRef.current.destroy();
+            chartManagerRef.current = null;
+         }
+      };
    }, [market, chartRef, klineData]);
 
    return (
       <div
          ref={chartRef}
-         style={{ height: '80%', width: '90%' }}
-         className="m-5 p-0 relative h-full w-full"
+         style={{
+            display: 'block',
+            height: '100%', // Full height
+            width: '100%', // Full width
+            minHeight: '400px', // Minimum height for better visibility}}
+         }}
       ></div>
    );
 }
