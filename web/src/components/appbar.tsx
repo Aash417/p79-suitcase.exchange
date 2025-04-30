@@ -19,11 +19,11 @@ export default function Appbar() {
             <Link href="/markets">Markets</Link>
          </div>
          <div
-            className={`text-sm pt-1 flex flex-col justify-center pl-8 cursor-pointer ${
+            className={`text-sm pt-1 flex flex-col justify-center pl-8  ${
                route.startsWith('/trade') ? 'text-white' : 'text-slate-500'
             }`}
          >
-            <Link href="">Trade</Link>
+            Trade
          </div>
       </div>
    );

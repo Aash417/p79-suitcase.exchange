@@ -40,10 +40,10 @@ export default function Orderbook({
          handleDepthUpdate,
          `depth.200ms.${market}`,
       );
-      // wsManager.sendMessage({
-      //    method: 'SUBSCRIBE',
-      //    params: [`depth.200ms.${market}`],
-      // });
+      wsManager.sendMessage({
+         method: 'SUBSCRIBE',
+         params: [`depth.200ms.${market}`],
+      });
 
       return () => {
          wsManager.sendMessage({
@@ -61,7 +61,7 @@ export default function Orderbook({
       <div className="flex flex-col h-full grow overflow-x-hidden">
          <TableHeader />
 
-         <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto">
+         <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto pb-1">
             <AskTable asks={topAsks} />
             <LastTradePrice lastTradePrice={lastTradePrice} />
             <BidTable bids={topBids} />

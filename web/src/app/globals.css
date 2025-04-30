@@ -146,6 +146,9 @@ body {
 .bg-base-background-l1 {
    background-color: var(--color-base-background-l1);
 }
+.bg-base-background-l2 {
+   background-color: var(--color-base-background-l2);
+}
 .text-med-emphasis {
    color: var(--color-med-emphasis);
 }
