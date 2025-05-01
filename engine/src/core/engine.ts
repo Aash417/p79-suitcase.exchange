@@ -49,7 +49,7 @@ export class Engine {
       clientId: string;
       message: MessageFromApi;
    }) {
-      console.log('started processing message');
+      console.log('started processing message', message.type);
       try {
          switch (message.type) {
             case CREATE_ORDER:

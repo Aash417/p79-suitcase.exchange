@@ -11,8 +11,8 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select';
+import { useDepositAsset } from '@/hooks.ts';
 import { SYMBOLS } from '@/lib/constants';
-import { API_URL } from '@/lib/env';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
@@ -20,6 +20,7 @@ export default function DepositForm() {
    const [quantity, setQuantity] = useState(''); // for calculations
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [asset, setAsset] = useState('USDC'); // for calculations
+   const { mutate } = useDepositAsset();
 
    function handleQuantityChange(e: React.ChangeEvent<HTMLInputElement>) {
       const regex = /^\d+$/;
@@ -43,28 +44,19 @@ export default function DepositForm() {
 
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
-      const payload = {
+      const data = {
          asset,
          quantity: String(Number(quantity) * 100),
          userId: '47854',
       };
 
       try {
-         console.time('one');
-         const res = await fetch(`${API_URL}/order/on-ramp`, {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-               accept: '*/*',
+         mutate(data, {
+            onSuccess: () => {
+               setQuantity('');
+               setQuantityFormatted('');
             },
-            body: JSON.stringify(payload),
          });
-
-         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-         const data = await res.json();
-         console.timeEnd('one');
-         console.log('Response data:', data);
       } catch (error) {
          console.error('Error depositing asset:', error);
       }

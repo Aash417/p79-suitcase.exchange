@@ -12,26 +12,6 @@ export default async function Market({
    const kline = await getKlines(market);
    const depthData = await getDepth(market);
    const ticker = await getTicker(market);
-   // const balance = await getUserBalances();
-
-   const balance = {
-      USDC: {
-         available: 999900000,
-         locked: 100000,
-      },
-      SOL: {
-         available: 50000,
-         locked: 0,
-      },
-      PEPE: {
-         available: 50000,
-         locked: 0,
-      },
-      BTC: {
-         available: 50000,
-         locked: 0,
-      },
-   };
 
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
@@ -89,7 +69,7 @@ export default async function Market({
                <div className="flex flex-col gap-2">
                   <div className="flex flex-col bg-base-background-l1 w-[332px] gap-4 rounded-lg px-[16px] py-[16px]">
                      <div className="basis-[28vw] bg-base-background-l1 rounded-md">
-                        <SwapForm market={market} balance={balance} />
+                        <SwapForm market={market} />
                      </div>
                   </div>
 

@@ -62,10 +62,3 @@ export async function getTicker(market: string) {
       };
    }
 }
-
-export async function getUserBalances() {
-   const res = await fetch(`${API_URL}/capital`);
-   const data = await res.json();
-
-   return data;
-}

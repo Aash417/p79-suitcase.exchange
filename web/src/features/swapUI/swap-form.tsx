@@ -5,27 +5,36 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useExecuteOrder, useGetUserBalances } from '@/hooks.ts';
 import { SYMBOLS_MAP } from '@/lib/constants';
-import { API_URL } from '@/lib/env';
 import { formatComma } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+
 type Props = {
    market: string;
-   balance: {
-      [key: string]: {
-         available: number;
-         locked: number;
-      };
-   };
 };
 
-export default function SwapForm({ market, balance }: Readonly<Props>) {
+export default function SwapForm({ market }: Readonly<Props>) {
    const [activeTab, setActiveTab] = useState('buy');
    const [price, setPrice] = useState('');
    const [priceFormatted, setPriceFormatted] = useState('');
    const [quantity, setQuantity] = useState('');
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
+   const { mutate } = useExecuteOrder();
+   const { data: balance, isLoading, error } = useGetUserBalances();
+   console.log(balance);
+
+   const getAssetBalance = (asset: string) => {
+      if (!balance || !balance[asset]) return 0;
+      return balance[asset].available / 100;
+   };
+
+   const [baseAsset, quoteAsset] = market.split('_');
+   const currentBalance =
+      activeTab === 'buy'
+         ? getAssetBalance(quoteAsset)
+         : getAssetBalance(baseAsset);
 
    useEffect(() => {
       const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
@@ -38,7 +47,7 @@ export default function SwapForm({ market, balance }: Readonly<Props>) {
 
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
-      const order = {
+      const data = {
          market,
          price: String(Number(price) * 100),
          quantity,
@@ -47,21 +56,15 @@ export default function SwapForm({ market, balance }: Readonly<Props>) {
       };
 
       try {
-         console.time('one');
-         const res = await fetch(`${API_URL}/order`, {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-               accept: '*/*',
+         mutate(data, {
+            onSuccess: () => {
+               setPrice('');
+               setPriceFormatted('');
+               setQuantity('');
+               setQuantityFormatted('');
+               setTotalPrice('');
             },
-            body: JSON.stringify(order),
          });
-
-         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-         const data = await res.json();
-         console.timeEnd('one');
-         console.log('Response data:', data);
       } catch (error) {
          console.error('Error submitting order:', error);
       }
@@ -131,6 +134,22 @@ export default function SwapForm({ market, balance }: Readonly<Props>) {
       }
    }
 
+   if (isLoading) {
+      return (
+         <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-spin">Loading...</div>
+         </div>
+      );
+   }
+
+   if (error) {
+      return (
+         <div className="w-full p-4 text-center text-red-500">
+            Failed to load balances. Please try again.
+         </div>
+      );
+   }
+
    return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
          <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#d4d4d408] text-gray-500">
@@ -151,12 +170,8 @@ export default function SwapForm({ market, balance }: Readonly<Props>) {
          <div className="flex  justify-between">
             <Label className=" text-gray-400 text-xs underline">Balance</Label>
             <span className="text-xs text-gray-400">
-               {activeTab === 'buy'
-                  ? formatComma(balance[market.split('_')[1]].available / 100) +
-                    ' USDC'
-                  : formatComma(balance[market.split('_')[0]].available / 100) +
-                    ' ' +
-                    market.split('_')[0]}
+               {formatComma(currentBalance)}{' '}
+               {activeTab === 'buy' ? 'USDC' : baseAsset}
             </span>
          </div>
 
@@ -233,9 +248,9 @@ export default function SwapForm({ market, balance }: Readonly<Props>) {
                }`}
                type="submit"
                onClick={handleSubmit}
-               disabled={!price || !quantity}
+               disabled={!price || !quantity || !currentBalance}
             >
-               {activeTab === 'buy' ? 'Buy' : 'Sell'} {market.split('_')[0]}
+               {activeTab === 'buy' ? 'Buy' : 'Sell'} {baseAsset}
             </Button>
          </div>
       </Tabs>
