@@ -41,7 +41,12 @@ export class OrderService {
          type: 'ORDER_PLACED',
          payload: placedOrder,
       });
-      this.marketDataService.publishDepthUpdate(market);
+      this.marketDataService.publishDepthUpdate(
+         market,
+         side,
+         price,
+         placedOrder.fills,
+      );
       this.marketDataService.publishTrades(userId, market, placedOrder.fills);
    }
 
@@ -58,7 +63,7 @@ export class OrderService {
       this.unlockFunds(order.order);
 
       this.marketDataService.sendOrderCancelled(clientId, orderId);
-      this.marketDataService.publishDepthUpdate(market);
+      // this.marketDataService.publishDepthUpdate(market);
    }
 
    getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {

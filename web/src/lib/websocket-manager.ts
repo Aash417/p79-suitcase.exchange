@@ -1,4 +1,4 @@
-import { WS_URL_BACKPACK } from '@/lib/env';
+import { WS_URL } from '@/lib/env';
 
 type Callback = {
    id: string;
@@ -15,7 +15,7 @@ export class WebSocketManager {
    private initialized = false;
 
    private constructor() {
-      this.ws = new WebSocket(WS_URL_BACKPACK);
+      this.ws = new WebSocket(WS_URL);
       this.setupWebSocket();
    }
 

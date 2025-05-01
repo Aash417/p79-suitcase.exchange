@@ -1,12 +1,12 @@
 import { KLine } from '@/features/klineChart/utils/types';
 import { Depth } from '@/features/orderbook/utils/types';
 import { SYMBOLS_MAP } from './constants';
-import { API_URL, API_URL_BACKPACK } from './env';
+import { API_URL } from './env';
 import { Ticker } from './types';
 
 export async function getKlines(market: string): Promise<KLine[]> {
    const kline = await fetch(
-      `${API_URL_BACKPACK}/klines?symbol=${market}&interval=1d&startTime=1714865400`,
+      `${API_URL}/klines?symbol=${market}&interval=1d&startTime=1714865400`,
    );
    const klineData: KLine[] = await kline.json();
 
@@ -14,7 +14,7 @@ export async function getKlines(market: string): Promise<KLine[]> {
 }
 
 export async function getDepth(market: string): Promise<Depth> {
-   const depth = await fetch(`${API_URL_BACKPACK}/depth?symbol=${market}`);
+   const depth = await fetch(`${API_URL}/depth?symbol=${market}`);
    const depthData = await depth.json();
 
    const final = {
@@ -26,7 +26,7 @@ export async function getDepth(market: string): Promise<Depth> {
 }
 
 export async function getTickers() {
-   const res = await fetch(`${API_URL_BACKPACK}/tickers`);
+   const res = await fetch(`${API_URL}/tickers`);
    const data: Ticker[] = await res.json();
 
    // Now lookup is O(1) instead of O(m)
@@ -49,7 +49,7 @@ export async function getTickers() {
 }
 
 export async function getTicker(market: string) {
-   const res = await fetch(`${API_URL_BACKPACK}/ticker?symbol=${market}`);
+   const res = await fetch(`${API_URL}/ticker?symbol=${market}`);
    const data: Ticker = await res.json();
 
    const symbolInfo = SYMBOLS_MAP.get(data.symbol);

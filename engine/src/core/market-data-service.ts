@@ -46,7 +46,7 @@ export class MarketDataService {
       const payload = {
          type: 'ON_RAMP_SUCCESS',
          payload: {
-            amount: data.amount,
+            amount: data.quantity,
             asset: data.asset,
             timestamp: Date.now(),
          },
@@ -59,7 +59,7 @@ export class MarketDataService {
       const payload = {
          type: 'ON_RAMP_FAILED',
          payload: {
-            amount: data.amount,
+            amount: data.quantity,
             asset: data.asset,
             timestamp: Date.now(),
          },
@@ -85,25 +85,79 @@ export class MarketDataService {
    }
 
    // Send messages to WebSocket
-   publishDepthUpdate(market: string) {
+   publishDepthUpdate(
+      market: string,
+      side: string,
+      price: number,
+      fills: Fill[] = [],
+   ) {
       const orderbook = this.getOrderBook(market);
-      const { bids, asks } = orderbook.getDepth();
+      const depth = orderbook.getDepth();
 
-      RedisPublisher.getInstance().sendToWs(`depth@${market}`, {
-         stream: `depth@${market}`,
-         data: {
-            e: 'depth',
-            t: Date.now(),
-            b: this.formatPaisaToRupeeLevels(bids),
-            a: this.formatPaisaToRupeeLevels(asks),
-         },
+      // No specific updates - send full depth
+      if (!fills.length) {
+         RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
+            stream: 'depth',
+            data: {
+               a: this.formatPaisaToRupeeLevels(depth.asks),
+               b: this.formatPaisaToRupeeLevels(depth.bids),
+               e: 'depth',
+               t: Date.now(),
+            },
+         });
+         return;
+      }
+
+      // Handle specific updates
+      const fillPrices = fills.map((f) => f.price);
+
+      const updates = {
+         a: [] as [string, string][],
+         b: [] as [string, string][],
+         e: 'depth' as const,
+         t: Date.now(),
+      };
+
+      if (side === 'buy') {
+         // Update asks that were matched
+         updates.a = this.formatPaisaToRupeeLevels(
+            depth.asks.filter((level) => fillPrices.includes(level[0])),
+         );
+
+         // Add new bid level if exists
+         if (price) {
+            const bidLevel = depth.bids.find((level) => level[0] === price);
+            if (bidLevel) {
+               updates.b = this.formatPaisaToRupeeLevels([bidLevel]);
+            }
+         }
+      }
+
+      if (side === 'sell') {
+         // Update bids that were matched
+         updates.b = this.formatPaisaToRupeeLevels(
+            depth.bids.filter((level) => fillPrices.includes(level[0])),
+         );
+
+         // Add new ask level if exists
+         if (price) {
+            const askLevel = depth.asks.find((level) => level[0] === price);
+            if (askLevel) {
+               updates.a = this.formatPaisaToRupeeLevels([askLevel]);
+            }
+         }
+      }
+
+      RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
+         stream: 'depth',
+         data: updates,
       });
    }
 
    publishTrades(userId: string, market: string, fills: Fill[]) {
       fills.forEach((fill) => {
-         RedisPublisher.getInstance().sendToWs(`trade@${market}`, {
-            stream: `trade@${market}`,
+         RedisPublisher.getInstance().sendToWs(`trade.${market}`, {
+            stream: `trade.${market}`,
             data: {
                e: 'trade',
                t: fill.tradeId,

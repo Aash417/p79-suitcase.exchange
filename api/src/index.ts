@@ -5,6 +5,7 @@ import depthRouter from './routes/depth';
 import klineRouter from './routes/kline';
 import orderRouter from './routes/order';
 import tickerRouter from './routes/ticker';
+import tickersRouter from './routes/tickers';
 
 const app = new Hono();
 
@@ -20,6 +21,7 @@ app.route('/api/v1/depth', depthRouter);
 app.route('/api/v1/klines', klineRouter);
 app.route('/api/v1/order', orderRouter);
 app.route('/api/v1/ticker', tickerRouter);
+app.route('/api/v1/tickers', tickersRouter);
 app.route('/api/v1/capital', capitalRouter);
 
 app.get('/', (c) => {
