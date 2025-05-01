@@ -95,7 +95,17 @@ export default async function Markets() {
                                                       {crypto.name}
                                                    </div>
                                                    <div className="text-[#9DA3B3] text-sm">
-                                                      {crypto.symbol}
+                                                      {
+                                                         crypto.symbol.split(
+                                                            '_',
+                                                         )[0]
+                                                      }
+                                                      /
+                                                      {
+                                                         crypto.symbol.split(
+                                                            '_',
+                                                         )[1]
+                                                      }
                                                    </div>
                                                 </div>
                                              </div>

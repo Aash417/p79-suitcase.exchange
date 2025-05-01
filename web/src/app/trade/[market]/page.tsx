@@ -33,12 +33,6 @@ export default async function Market({
       },
    };
 
-   const depth = {
-      ...depthData,
-      bids: [...depthData.bids].reverse(), // Highest first
-      asks: [...depthData.asks], // Lowest first (already sorted)
-   };
-
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
          <div className="flex flex-col flex-1">
@@ -77,8 +71,8 @@ export default async function Market({
                                  <div className="flex flex-col grow overflow-y-hidden">
                                     <Orderbook
                                        market={market}
-                                       depthData={depth}
-                                       lastTradePrice={ticker?.lastPrice}
+                                       depthData={depthData}
+                                       ticker={ticker}
                                     />
                                  </div>
                               </div>

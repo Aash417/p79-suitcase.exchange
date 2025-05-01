@@ -165,3 +165,9 @@ body {
    color-scheme: normal;
    display: contents;
 }
+.text-green-text {
+   color: var(--color-green-text);
+}
+.text-red-text {
+   color: var(--color-red-text);
+}

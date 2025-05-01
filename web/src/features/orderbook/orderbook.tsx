@@ -1,23 +1,24 @@
 'use client';
 
+import { Ticker } from '@/lib/types';
 import { WebSocketManager } from '@/lib/websocket-manager';
 import { useEffect, useMemo, useState } from 'react';
 import { AskTable } from './components/ask-table';
 import { BidTable } from './components/bid-table';
-import LastTradePrice from './components/last-trade-price';
+import { LastTradePrice } from './components/last-trade-price';
 import { TableHeader } from './components/table-header';
 import { Depth } from './utils/types';
 
 type Props = {
    market: string;
-   lastTradePrice?: string;
+   ticker?: Ticker & { change: string; name: string; imageUrl: string };
    depthData: Depth;
 };
 
 export default function Orderbook({
    market,
    depthData,
-   lastTradePrice,
+   ticker,
 }: Readonly<Props>) {
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
@@ -38,19 +39,19 @@ export default function Orderbook({
       wsManager.registerCallback(
          'depth',
          handleDepthUpdate,
-         `depth.200ms.${market}`,
+         `depth.1000ms.${market}`,
       );
       wsManager.sendMessage({
          method: 'SUBSCRIBE',
-         params: [`depth.200ms.${market}`],
+         params: [`depth.1000ms.${market}`],
       });
 
       return () => {
          wsManager.sendMessage({
             method: 'UNSUBSCRIBE',
-            params: [`depth.200ms.${market}`],
+            params: [`depth.1000ms.${market}`],
          });
-         wsManager.deRegisterCallback('depth', `depth.200ms.${market}`);
+         wsManager.deRegisterCallback('depth', `depth.1000ms.${market}`);
       };
    }, []);
 
@@ -63,7 +64,7 @@ export default function Orderbook({
 
          <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto pb-1">
             <AskTable asks={topAsks} />
-            <LastTradePrice lastTradePrice={lastTradePrice} />
+            <LastTradePrice ticker={ticker} />
             <BidTable bids={topBids} />
          </div>
 

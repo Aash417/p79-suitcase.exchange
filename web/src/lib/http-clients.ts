@@ -15,8 +15,14 @@ export async function getKlines(market: string): Promise<KLine[]> {
 
 export async function getDepth(market: string): Promise<Depth> {
    const depth = await fetch(`${API_URL_BACKPACK}/depth?symbol=${market}`);
+   const depthData = await depth.json();
 
-   return await depth.json();
+   const final = {
+      ...depthData,
+      bids: [...depthData.bids].reverse(), // Highest first
+      asks: [...depthData.asks], // Lowest first (already sorted)
+   };
+   return final;
 }
 
 export async function getTickers() {

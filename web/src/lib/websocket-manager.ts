@@ -91,6 +91,7 @@ export class WebSocketManager {
          }
          if (type === 'ticker') {
             callback({
+               firstPrice: message.data.o,
                lastPrice: message.data.c,
                high: message.data.h,
                low: message.data.l,
