@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useExecuteOrder, useGetUserBalances } from '@/hooks.ts';
+import { useExecuteOrder, useGetUserBalances } from '@/hooks';
 import { SYMBOLS_MAP } from '@/lib/constants';
 import { formatComma } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
    market: string;
@@ -23,6 +24,7 @@ export default function SwapForm({ market }: Readonly<Props>) {
    const [totalPrice, setTotalPrice] = useState('');
    const { mutate } = useExecuteOrder();
    const { data: balance, isLoading, error } = useGetUserBalances();
+
    // const isLoading = false;
    // const error = false;
 
@@ -44,7 +46,7 @@ export default function SwapForm({ market }: Readonly<Props>) {
    //       locked: 0,
    //    },
    // };
-
+   const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {
       if (!balance || !balance[asset]) return 0;
       return balance[asset].available / 100;
@@ -57,7 +59,6 @@ export default function SwapForm({ market }: Readonly<Props>) {
          : getAssetBalance(baseAsset);
 
    useEffect(() => {
-      const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
       const formattedTotal = Number(calculatedTotal).toLocaleString('en-US', {
          minimumFractionDigits: 2,
          maximumFractionDigits: 2,
@@ -67,6 +68,14 @@ export default function SwapForm({ market }: Readonly<Props>) {
 
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
+
+      if (Number(calculatedTotal) > currentBalance) {
+         toast.error('Insufficient funds for transaction.!', {
+            duration: 2000,
+         });
+         return;
+      }
+
       const data = {
          market,
          price: String(Number(price) * 100),

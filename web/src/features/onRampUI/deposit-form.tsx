@@ -11,7 +11,7 @@ import {
    SelectTrigger,
    SelectValue,
 } from '@/components/ui/select';
-import { useDepositAsset } from '@/hooks.ts';
+import { useDepositAsset } from '@/hooks';
 import { SYMBOLS } from '@/lib/constants';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
