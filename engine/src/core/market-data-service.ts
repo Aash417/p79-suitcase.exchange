@@ -87,70 +87,19 @@ export class MarketDataService {
    // Send messages to WebSocket
    publishDepthUpdate(
       market: string,
-      side: string,
-      price: number,
-      fills: Fill[] = [],
+      updatedDepth: {
+         a: [number, number][];
+         b: [number, number][];
+      },
    ) {
-      const orderbook = this.getOrderBook(market);
-      const depth = orderbook.getDepth();
-
-      // No specific updates - send full depth
-      if (!fills.length) {
-         RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
-            stream: 'depth',
-            data: {
-               a: this.formatPaisaToRupeeLevels(depth.asks),
-               b: this.formatPaisaToRupeeLevels(depth.bids),
-               e: 'depth',
-               t: Date.now(),
-            },
-         });
-         return;
-      }
-
-      // Handle specific updates
-      const fillPrices = fills.map((f) => f.price);
-
-      const updates = {
-         a: [] as [string, string][],
-         b: [] as [string, string][],
-         e: 'depth' as const,
-         t: Date.now(),
-      };
-
-      if (side === 'buy') {
-         // Update asks that were matched
-         updates.a = this.formatPaisaToRupeeLevels(
-            depth.asks.filter((level) => fillPrices.includes(level[0])),
-         );
-
-         // Add new bid level if exists
-         if (price) {
-            const bidLevel = depth.bids.find((level) => level[0] === price);
-            if (bidLevel) {
-               updates.b = this.formatPaisaToRupeeLevels([bidLevel]);
-            }
-         }
-      }
-
-      if (side === 'sell') {
-         // Update bids that were matched
-         updates.b = this.formatPaisaToRupeeLevels(
-            depth.bids.filter((level) => fillPrices.includes(level[0])),
-         );
-
-         // Add new ask level if exists
-         if (price) {
-            const askLevel = depth.asks.find((level) => level[0] === price);
-            if (askLevel) {
-               updates.a = this.formatPaisaToRupeeLevels([askLevel]);
-            }
-         }
-      }
-
       RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
          stream: 'depth',
-         data: updates,
+         data: {
+            a: this.formatPaisaToRupeeLevels(updatedDepth.a),
+            b: this.formatPaisaToRupeeLevels(updatedDepth.b),
+            e: 'depth',
+            t: Date.now(),
+         },
       });
    }
 

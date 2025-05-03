@@ -22,7 +22,7 @@ export class OrderService {
       const orderbook = this.getOrderBook(market);
 
       this.balanceService.lockFunds(userId, side, price, quantity);
-      const placedOrder = orderbook.addOrder({
+      const { fills, orderId, executedQty, updatedDepth } = orderbook.addOrder({
          userId,
          orderId: randomUUIDv7(),
          side,
@@ -30,24 +30,14 @@ export class OrderService {
          quantity,
          filled: 0,
       });
-      this.balanceService.updateBalanceAfterTrade(
-         placedOrder.fills,
-         market,
-         side,
-         userId,
-      );
+      this.balanceService.updateBalanceAfterTrade(fills, market, side, userId);
 
       this.marketDataService.sendOrderPlaced(clientId, {
          type: 'ORDER_PLACED',
-         payload: placedOrder,
+         payload: { fills, orderId, executedQty },
       });
-      this.marketDataService.publishDepthUpdate(
-         market,
-         side,
-         price,
-         placedOrder.fills,
-      );
-      this.marketDataService.publishTrades(userId, market, placedOrder.fills);
+      this.marketDataService.publishDepthUpdate(market, updatedDepth);
+      // this.marketDataService.publishTrades(userId, market, placedOrder.fills);
    }
 
    cancelOrder(data: Cancel_order['data'], clientId: string) {

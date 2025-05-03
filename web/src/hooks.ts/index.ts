@@ -51,6 +51,7 @@ type DepositReq = {
 };
 
 export function useDepositAsset() {
+   const queryClient = useQueryClient();
    const mutation = useMutation<ResponseType, Error, DepositReq>({
       mutationFn: async (data) => {
          const response = await fetch(`${API_URL}/order/on-ramp`, {
@@ -69,6 +70,7 @@ export function useDepositAsset() {
       },
       onSuccess: () => {
          toast.success('Asset added successfully', { duration: 1300 });
+         queryClient.invalidateQueries({ queryKey: ['UserBalance'] });
       },
       onError: (error) => {
          toast.error(error.message || 'Failed to deposit asset', {
@@ -84,7 +86,6 @@ export function useDepositAsset() {
 type userBalRes = {
    [key: string]: {
       available: number;
-
       locked: number;
    };
 };
@@ -104,6 +105,6 @@ export function useGetUserBalances() {
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30000, // Consider data fresh for 30 seconds
-      initialData: {} as userBalRes, // Provide empty initial data
+      // initialData: {} as userBalRes, // Provide empty initial data
    });
 }

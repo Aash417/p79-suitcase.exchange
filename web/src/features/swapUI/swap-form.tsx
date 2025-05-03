@@ -23,7 +23,27 @@ export default function SwapForm({ market }: Readonly<Props>) {
    const [totalPrice, setTotalPrice] = useState('');
    const { mutate } = useExecuteOrder();
    const { data: balance, isLoading, error } = useGetUserBalances();
-   console.log(balance);
+   // const isLoading = false;
+   // const error = false;
+
+   // const balance = {
+   //    USDC: {
+   //       available: 999900000,
+   //       locked: 100000,
+   //    },
+   //    SOL: {
+   //       available: 50000,
+   //       locked: 0,
+   //    },
+   //    PEPE: {
+   //       available: 50000,
+   //       locked: 0,
+   //    },
+   //    BTC: {
+   //       available: 50000,
+   //       locked: 0,
+   //    },
+   // };
 
    const getAssetBalance = (asset: string) => {
       if (!balance || !balance[asset]) return 0;
@@ -134,14 +154,6 @@ export default function SwapForm({ market }: Readonly<Props>) {
       }
    }
 
-   if (isLoading) {
-      return (
-         <div className="w-full h-full flex items-center justify-center">
-            <div className="animate-spin">Loading...</div>
-         </div>
-      );
-   }
-
    if (error) {
       return (
          <div className="w-full p-4 text-center text-red-500">
@@ -169,10 +181,15 @@ export default function SwapForm({ market }: Readonly<Props>) {
 
          <div className="flex  justify-between">
             <Label className=" text-gray-400 text-xs underline">Balance</Label>
-            <span className="text-xs text-gray-400">
-               {formatComma(currentBalance)}{' '}
-               {activeTab === 'buy' ? 'USDC' : baseAsset}
-            </span>
+
+            {isLoading ? (
+               <span className="text-xs text-gray-400">...</span>
+            ) : (
+               <span className="text-xs text-gray-400">
+                  {formatComma(currentBalance)}{' '}
+                  {activeTab === 'buy' ? 'USDC' : baseAsset}
+               </span>
+            )}
          </div>
 
          <div className="space-y-3">

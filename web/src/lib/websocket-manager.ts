@@ -85,7 +85,7 @@ export class WebSocketManager {
       callbacks.forEach(({ callback }) => {
          if (type === 'depth') {
             callback({
-               bids: message.data.a,
+               bids: message.data.b,
                asks: message.data.a,
             });
          }

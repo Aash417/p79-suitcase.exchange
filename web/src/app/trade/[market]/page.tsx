@@ -1,17 +1,15 @@
-import KlineChart from '@/features/klineChart/klineChart';
 import DepositForm from '@/features/onRampUI/deposit-form';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swap-form';
-import Ticker from '@/features/ticker/ticker';
-import { getDepth, getKlines, getTicker } from '@/lib/http-clients';
+import { getDepth } from '@/lib/http-clients';
 
 export default async function Market({
    params,
 }: Readonly<{ params: Promise<{ market: string }> }>) {
    const { market } = await params;
-   const kline = await getKlines(market);
+   // const kline = await getKlines(market);
    const depthData = await getDepth(market);
-   const ticker = await getTicker(market);
+   // const ticker = await getTicker(market);
 
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
@@ -25,7 +23,7 @@ export default async function Market({
                      <div className="flex items-center flex-row bg-base-background-l1 relative w-full rounded-lg">
                         <div className="flex items-center flex-row no-scrollbar mr-4 h-[72px] w-full overflow-auto pl-4">
                            <div className="flex justify-between flex-row w-full gap-4">
-                              <Ticker ticker={ticker} />
+                              {/* <Ticker ticker={ticker} /> */}
                            </div>
                         </div>
                      </div>
@@ -36,10 +34,10 @@ export default async function Market({
                            {/* chart */}
                            <div className="flex flex-col bg-base-background-l1 flex-1 overflow-hidden rounded-lg">
                               <div className="tradingview-chart">
-                                 <KlineChart
+                                 {/* <KlineChart
                                     market={market}
                                     klineData={kline}
-                                 />
+                                 /> */}
                               </div>
                            </div>
 
@@ -52,7 +50,7 @@ export default async function Market({
                                     <Orderbook
                                        market={market}
                                        depthData={depthData}
-                                       ticker={ticker}
+                                       // ticker={ticker}
                                     />
                                  </div>
                               </div>

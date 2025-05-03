@@ -16,13 +16,21 @@ export class BalanceService {
       const userBalance = this.getUserBalance(userId);
       const asset = side === 'buy' ? QUOTE_ASSET : 'SOL';
 
-      const totalAmount = price * quantity;
-      if (userBalance[asset].available < totalAmount) {
-         throw new Error('INSUFFICIENT_FUNDS');
-      }
+      if (side === 'buy') {
+         const totalAmount = price * quantity;
+         if (userBalance[asset].available < totalAmount) {
+            throw new Error('INSUFFICIENT_FUNDS');
+         }
 
-      userBalance[asset].available -= totalAmount;
-      userBalance[asset].locked += totalAmount;
+         userBalance[asset].available -= totalAmount;
+         userBalance[asset].locked += totalAmount;
+      } else {
+         if (userBalance[asset].available < quantity) {
+            throw new Error('INSUFFICIENT_FUNDS');
+         }
+         userBalance[asset].available -= quantity;
+         userBalance[asset].locked += quantity;
+      }
    }
 
    unlockFunds(userId: string, asset: string, amount: number) {

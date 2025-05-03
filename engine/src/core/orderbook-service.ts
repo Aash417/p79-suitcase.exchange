@@ -31,18 +31,37 @@ export class OrderBookService {
 
    addOrder(order: Order) {
       const isBuy = order.side === 'buy';
-      const { fills, executedQty } = isBuy
+      const { fills, executedQty, affectedPrice } = isBuy
          ? this.matchBid(order)
          : this.matchAsk(order);
 
-      if (executedQty < order.quantity) {
+      const remainingQty = order.quantity - executedQty;
+
+      const updatedAsks = isBuy
+         ? affectedPrice
+         : remainingQty > 0
+           ? [[order.price, remainingQty]]
+           : [];
+
+      const updatedBids = isBuy
+         ? remainingQty > 0
+            ? [[order.price, remainingQty]]
+            : []
+         : affectedPrice;
+
+      const updatedDepth = {
+         a: updatedAsks,
+         b: updatedBids,
+      } as { a: [number, number][]; b: [number, number][] };
+
+      if (remainingQty > 0) {
          this.insertOrder({
             ...order,
-            quantity: order.quantity - executedQty,
+            quantity: remainingQty,
          });
       }
 
-      return { orderId: ++this.lastTradeId, fills, executedQty };
+      return { orderId: ++this.lastTradeId, fills, executedQty, updatedDepth };
    }
 
    cancelOrder(orderId: string, side: ORDER_SIDE): boolean {
@@ -137,9 +156,14 @@ export class OrderBookService {
       return false;
    }
 
-   private matchBid(order: Order): { fills: Fill[]; executedQty: number } {
+   private matchBid(order: Order): {
+      fills: Fill[];
+      executedQty: number;
+      affectedPrice: [number, number][];
+   } {
       const fills: Fill[] = [];
       let remainingQty = order.quantity;
+      const affectedPrice: [number, number][] = [];
 
       // 1. Iterate asks from lowest to highest price (Map keys are already sorted)
       for (const [askPrice, ordersAtPrice] of this.asks) {
@@ -152,6 +176,9 @@ export class OrderBookService {
             fills.push(this.createFill(ask, askPrice, fillQty));
             remainingQty -= fillQty;
             ask.quantity -= fillQty;
+
+            // Track affected ask (record new quantity after fill)
+            affectedPrice.push([askPrice, ask.quantity]);
 
             // 4. Early exit if order is fully filled
             if (remainingQty <= 0) break;
@@ -166,12 +193,21 @@ export class OrderBookService {
          else this.asks.delete(askPrice); // Remove empty price levels
       }
 
-      return { fills, executedQty: order.quantity - remainingQty };
+      return {
+         fills,
+         executedQty: order.quantity - remainingQty,
+         affectedPrice,
+      };
    }
 
-   private matchAsk(order: Order): { fills: Fill[]; executedQty: number } {
+   private matchAsk(order: Order): {
+      fills: Fill[];
+      executedQty: number;
+      affectedPrice: [number, number][];
+   } {
       const fills: Fill[] = [];
       let remainingQty = order.quantity;
+      const affectedPrice: [number, number][] = [];
 
       for (const [bidPrice, ordersAtPrice] of this.bids) {
          if (bidPrice < order.price || remainingQty <= 0) break;
@@ -181,6 +217,8 @@ export class OrderBookService {
             fills.push(this.createFill(bid, bidPrice, fillQty));
             remainingQty -= fillQty;
             bid.quantity -= fillQty;
+
+            affectedPrice.push([bidPrice, bid.quantity]);
 
             if (remainingQty <= 0) break;
          }
@@ -193,7 +231,11 @@ export class OrderBookService {
          else this.bids.delete(bidPrice);
       }
 
-      return { fills, executedQty: order.quantity - remainingQty };
+      return {
+         fills,
+         executedQty: order.quantity - remainingQty,
+         affectedPrice,
+      };
    }
 
    private insertOrder(order: Order) {
