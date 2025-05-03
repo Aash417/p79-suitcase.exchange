@@ -22,6 +22,7 @@ export class OrderService {
       const orderbook = this.getOrderBook(market);
 
       this.balanceService.lockFunds(userId, side, price, quantity);
+
       const { fills, orderId, executedQty, updatedDepth } = orderbook.addOrder({
          userId,
          orderId: randomUUIDv7(),
@@ -30,6 +31,7 @@ export class OrderService {
          quantity,
          filled: 0,
       });
+
       this.balanceService.updateBalanceAfterTrade(fills, market, side, userId);
 
       this.marketDataService.sendOrderPlaced(clientId, {

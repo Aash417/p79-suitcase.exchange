@@ -40,8 +40,8 @@ export class OrderBookService {
       const updatedAsks = isBuy
          ? affectedPrice
          : remainingQty > 0
-           ? [[order.price, remainingQty]]
-           : [];
+         ? [[order.price, remainingQty]]
+         : [];
 
       const updatedBids = isBuy
          ? remainingQty > 0
@@ -105,27 +105,27 @@ export class OrderBookService {
 
    private getOrdersFromMap(
       priceMap: Map<number, Order[]>,
-      filterFn: (o: Order) => boolean,
+      filterFn: (o: Order) => boolean
    ): Order[] {
       return Array.from(priceMap.values()).flat().filter(filterFn);
    }
 
    private aggregatePriceLevels(
       priceMap: Map<number, Order[]>,
-      sortOrder: 'asc' | 'desc',
+      sortOrder: 'asc' | 'desc'
    ): [number, number][] {
       // 1. Aggregate quantities per price level
       const aggregated = new Map<number, number>();
       for (const [price, orders] of priceMap) {
          aggregated.set(
             price,
-            orders.reduce((sum, o) => sum + o.quantity, 0),
+            orders.reduce((sum, o) => sum + o.quantity, 0)
          );
       }
 
       // 2. Sort and return as array
       return Array.from(aggregated.entries()).sort((a, b) =>
-         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0]
       );
    }
 
@@ -139,7 +139,7 @@ export class OrderBookService {
 
    private removeOrderFromMap(
       priceMap: Map<number, Order[]>,
-      orderId: string,
+      orderId: string
    ): boolean {
       for (const [price, orders] of priceMap) {
          const filteredOrders = orders.filter((o) => o.orderId !== orderId);
@@ -172,6 +172,9 @@ export class OrderBookService {
 
          // 3. Match against all orders at this price level
          for (const ask of ordersAtPrice) {
+            // Skip orders from the same user
+            if (ask.userId === order.userId) continue;
+
             const fillQty = Math.min(remainingQty, ask.quantity);
             fills.push(this.createFill(ask, askPrice, fillQty));
             remainingQty -= fillQty;
@@ -186,7 +189,7 @@ export class OrderBookService {
 
          // 5. Clean up fully filled orders at this price level
          const remainingOrders = ordersAtPrice.filter(
-            (ask) => ask.quantity > 0,
+            (ask) => ask.quantity > 0
          );
          if (remainingOrders.length > 0)
             this.asks.set(askPrice, remainingOrders);
@@ -213,6 +216,8 @@ export class OrderBookService {
          if (bidPrice < order.price || remainingQty <= 0) break;
 
          for (const bid of ordersAtPrice) {
+            if (bid.userId === order.userId) continue;
+
             const fillQty = Math.min(remainingQty, bid.quantity);
             fills.push(this.createFill(bid, bidPrice, fillQty));
             remainingQty -= fillQty;
@@ -224,7 +229,7 @@ export class OrderBookService {
          }
 
          const remainingOrders = ordersAtPrice.filter(
-            (bid) => bid.quantity > 0,
+            (bid) => bid.quantity > 0
          );
          if (remainingOrders.length > 0)
             this.bids.set(bidPrice, remainingOrders);
@@ -259,7 +264,7 @@ export class OrderBookService {
 
    private groupOrdersByPrice(
       orders: Order[],
-      sortOrder: 'asc' | 'desc',
+      sortOrder: 'asc' | 'desc'
    ): Map<number, Order[]> {
       const priceMap = new Map<number, Order[]>();
 
@@ -272,7 +277,7 @@ export class OrderBookService {
 
       // Convert to sorted array of entries
       const sortedEntries = Array.from(priceMap.entries()).sort((a, b) =>
-         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0]
       );
 
       // Rebuild Map to preserve sort order (JavaScript Maps iterate in insertion order)

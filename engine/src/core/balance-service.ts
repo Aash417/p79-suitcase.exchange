@@ -28,8 +28,8 @@ export class BalanceService {
          if (userBalance[asset].available < quantity) {
             throw new Error('INSUFFICIENT_FUNDS');
          }
-         userBalance[asset].available -= quantity;
-         userBalance[asset].locked += quantity;
+         userBalance[asset].available -= quantity * 100;
+         userBalance[asset].locked += quantity * 100;
       }
    }
 
