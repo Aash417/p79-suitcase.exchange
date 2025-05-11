@@ -7,7 +7,14 @@ export class OrderBookService {
    public readonly quoteAsset = QUOTE_ASSET;
    public lastTradeId: number = 125;
 
-   constructor(public readonly baseAsset: string) {}
+   constructor(
+      public readonly baseAsset: string,
+      bids: Order[],
+      asks: Order[]
+   ) {
+      this.bids = this.groupOrdersByPrice(bids, 'desc');
+      this.asks = this.groupOrdersByPrice(asks, 'asc');
+   }
 
    // For snapshot deserialization
    initialize(bids: Order[], asks: Order[], lastTradeId: number) {
@@ -51,13 +58,13 @@ export class OrderBookService {
 
       const updatedDepth = {
          a: updatedAsks,
-         b: updatedBids,
+         b: updatedBids
       } as { a: [number, number][]; b: [number, number][] };
 
       if (remainingQty > 0) {
          this.insertOrder({
             ...order,
-            quantity: remainingQty,
+            quantity: remainingQty
          });
       }
 
@@ -75,7 +82,7 @@ export class OrderBookService {
    } {
       return {
          bids: this.aggregatePriceLevels(this.bids, 'asc'),
-         asks: this.aggregatePriceLevels(this.asks, 'asc'),
+         asks: this.aggregatePriceLevels(this.asks, 'asc')
       };
    }
 
@@ -99,33 +106,33 @@ export class OrderBookService {
 
       return [
          ...this.getOrdersFromMap(this.bids, isUserOrder),
-         ...this.getOrdersFromMap(this.asks, isUserOrder),
+         ...this.getOrdersFromMap(this.asks, isUserOrder)
       ];
    }
 
    private getOrdersFromMap(
       priceMap: Map<number, Order[]>,
-      filterFn: (o: Order) => boolean,
+      filterFn: (o: Order) => boolean
    ): Order[] {
       return Array.from(priceMap.values()).flat().filter(filterFn);
    }
 
    private aggregatePriceLevels(
       priceMap: Map<number, Order[]>,
-      sortOrder: 'asc' | 'desc',
+      sortOrder: 'asc' | 'desc'
    ): [number, number][] {
       // 1. Aggregate quantities per price level
       const aggregated = new Map<number, number>();
       for (const [price, orders] of priceMap) {
          aggregated.set(
             price,
-            orders.reduce((sum, o) => sum + o.quantity, 0),
+            orders.reduce((sum, o) => sum + o.quantity, 0)
          );
       }
 
       // 2. Sort and return as array
       return Array.from(aggregated.entries()).sort((a, b) =>
-         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0]
       );
    }
 
@@ -139,7 +146,7 @@ export class OrderBookService {
 
    private removeOrderFromMap(
       priceMap: Map<number, Order[]>,
-      orderId: string,
+      orderId: string
    ): boolean {
       for (const [price, orders] of priceMap) {
          const filteredOrders = orders.filter((o) => o.orderId !== orderId);
@@ -189,7 +196,7 @@ export class OrderBookService {
 
          // 5. Clean up fully filled orders at this price level
          const remainingOrders = ordersAtPrice.filter(
-            (ask) => ask.quantity > 0,
+            (ask) => ask.quantity > 0
          );
          if (remainingOrders.length > 0)
             this.asks.set(askPrice, remainingOrders);
@@ -199,7 +206,7 @@ export class OrderBookService {
       return {
          fills,
          executedQty: order.quantity - remainingQty,
-         affectedPrice,
+         affectedPrice
       };
    }
 
@@ -229,7 +236,7 @@ export class OrderBookService {
          }
 
          const remainingOrders = ordersAtPrice.filter(
-            (bid) => bid.quantity > 0,
+            (bid) => bid.quantity > 0
          );
          if (remainingOrders.length > 0)
             this.bids.set(bidPrice, remainingOrders);
@@ -239,7 +246,7 @@ export class OrderBookService {
       return {
          fills,
          executedQty: order.quantity - remainingQty,
-         affectedPrice,
+         affectedPrice
       };
    }
 
@@ -258,13 +265,13 @@ export class OrderBookService {
          quantity: qty,
          tradeId: ++this.lastTradeId,
          otherUserId: order.userId,
-         markerOrderId: order.orderId,
+         markerOrderId: order.orderId
       };
    }
 
    private groupOrdersByPrice(
       orders: Order[],
-      sortOrder: 'asc' | 'desc',
+      sortOrder: 'asc' | 'desc'
    ): Map<number, Order[]> {
       const priceMap = new Map<number, Order[]>();
 
@@ -277,7 +284,7 @@ export class OrderBookService {
 
       // Convert to sorted array of entries
       const sortedEntries = Array.from(priceMap.entries()).sort((a, b) =>
-         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0],
+         sortOrder === 'desc' ? b[0] - a[0] : a[0] - b[0]
       );
 
       // Rebuild Map to preserve sort order (JavaScript Maps iterate in insertion order)

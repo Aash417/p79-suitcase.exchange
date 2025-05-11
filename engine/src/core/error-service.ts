@@ -7,7 +7,7 @@ export class ErrorService {
 
       RedisPublisher.getInstance().sendToClient(clientId, {
          type: 'ERROR',
-         payload: errorMessage,
+         payload: errorMessage
       });
 
       this.logError(error);
@@ -19,8 +19,7 @@ export class ErrorService {
          code: error.code || 'UNSPECIFIED',
          message: error.message || 'An error occurred',
          timestamp: Date.now(),
-         stack:
-            process.env.NODE_ENV === 'development' ? error.stack : undefined,
+         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       };
    }
 
@@ -30,8 +29,8 @@ export class ErrorService {
          error: {
             name: error.name,
             message: error.message,
-            stack: error.stack,
-         },
+            stack: error.stack
+         }
       };
 
       appendFile('./error.log', '\n' + JSON.stringify(logEntry, null, 2));

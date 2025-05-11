@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { SNAPSHOT_PATH } from '../utils/constants';
 import { Order, UserBalance } from '../utils/types';
 import { BalanceService } from './balance-service';
@@ -18,22 +18,23 @@ export class SnapshotService {
    constructor(
       private orderbooks: OrderBookService[],
       private balanceService: BalanceService,
+      private setOrderbooks?: (orderbooks: OrderBookService[]) => void
    ) {}
 
    save() {
       try {
-         const test = this.orderbooks[0].getDepth();
+         // const test = this.orderbooks[0].getDepth();
          const snapshot: Snapshot = {
             orderbooks: this.orderbooks.map((ob) => ({
                baseAsset: ob.baseAsset,
                bids: this.getOrdersFromMap(ob.getBidsMap()), // Convert Map<price, Order[]> => Order[]
                asks: this.getOrdersFromMap(ob.getAsksMap()),
-               lastTradeId: ob.lastTradeId,
+               lastTradeId: ob.lastTradeId
             })),
-            balances: Array.from(this.balanceService.getBalances().entries()),
+            balances: Array.from(this.balanceService.getBalances().entries())
          };
 
-         writeFileSync('./new.json', JSON.stringify(test, null, 2));
+         // writeFileSync('./new.json', JSON.stringify(test, null, 2));
          return true;
       } catch (error) {
          console.error('Snapshot save failed:', error);
@@ -46,22 +47,18 @@ export class SnapshotService {
          const data = readFileSync(SNAPSHOT_PATH, 'utf-8');
          const snapshot = JSON.parse(data) as Snapshot;
 
-         for (const obData of snapshot.orderbooks) {
-            const orderbook = this.orderbooks.find(
-               (ob) => ob.baseAsset === obData.baseAsset,
-            );
-            if (orderbook) {
-               orderbook.initialize(
-                  obData.bids,
-                  obData.asks,
-                  obData.lastTradeId,
-               );
-            }
-         }
+         const loadedOrderbooks = snapshot.orderbooks.map(
+            (obData) =>
+               new OrderBookService(obData.baseAsset, obData.bids, obData.asks)
+         );
+
+         // Update the reference in Engine
+         if (this.setOrderbooks) this.setOrderbooks(loadedOrderbooks);
 
          this.balanceService.setBalances(new Map(snapshot.balances));
 
          console.log('Snapshot loaded successfully');
+         console.log(this.orderbooks.length);
          return true;
       } catch (error) {
          console.error('Snapshot load failed:', error);

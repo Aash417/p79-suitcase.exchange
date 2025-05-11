@@ -5,25 +5,30 @@ import { RedisPublisher } from './redis-publisher';
 export class MarketDataService {
    constructor(private orderbooks: OrderBookService[]) {}
 
+   // Add method to update orderbooks reference
+   updateOrderbooks(orderbooks: OrderBookService[]) {
+      this.orderbooks = orderbooks;
+   }
+
    // Send messages to clients
    sendOrderPlaced(clientId: string, order: OrderPlaced) {
       RedisPublisher.getInstance().sendToClient(clientId, {
          type: 'ORDER_PLACED',
-         payload: order,
+         payload: order
       });
    }
 
    sendOrderCancelled(clientId: string, orderId: string) {
       RedisPublisher.getInstance().sendToClient(clientId, {
          type: 'ORDER_CANCELLED',
-         payload: { orderId },
+         payload: { orderId }
       });
    }
 
    sendError(clientId: string, message: string, error: any) {
       RedisPublisher.getInstance().sendToClient(clientId, {
          type: message,
-         payload: error,
+         payload: error
       });
    }
 
@@ -35,8 +40,8 @@ export class MarketDataService {
          payload: {
             bids: this.formatPaisaToRupeeLevels(bids),
             asks: this.formatPaisaToRupeeLevels(asks),
-            timestamp: Date.now(),
-         },
+            timestamp: Date.now()
+         }
       };
 
       RedisPublisher.getInstance().sendToClient(clientId, payload);
@@ -48,8 +53,8 @@ export class MarketDataService {
          payload: {
             amount: data.quantity,
             asset: data.asset,
-            timestamp: Date.now(),
-         },
+            timestamp: Date.now()
+         }
       };
 
       RedisPublisher.getInstance().sendToClient(clientId, payload);
@@ -61,8 +66,8 @@ export class MarketDataService {
          payload: {
             amount: data.quantity,
             asset: data.asset,
-            timestamp: Date.now(),
-         },
+            timestamp: Date.now()
+         }
       };
 
       RedisPublisher.getInstance().sendToClient(clientId, payload);
@@ -75,8 +80,8 @@ export class MarketDataService {
             id: o.orderId,
             price: (o.price / 100).toFixed(2),
             quantity: o.quantity.toFixed(2),
-            side: o.side,
-         })),
+            side: o.side
+         }))
       });
    }
 
@@ -90,7 +95,7 @@ export class MarketDataService {
       updatedDepth: {
          a: [number, number][];
          b: [number, number][];
-      },
+      }
    ) {
       RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
          stream: 'depth',
@@ -98,8 +103,8 @@ export class MarketDataService {
             a: this.formatPaisaToRupeeLevels(updatedDepth.a),
             b: this.formatPaisaToRupeeLevels(updatedDepth.b),
             e: 'depth',
-            t: Date.now(),
-         },
+            t: Date.now()
+         }
       });
    }
 
@@ -113,8 +118,8 @@ export class MarketDataService {
                m: fill.otherUserId === userId, // TODO: Is this right?
                p: fill.price,
                q: fill.quantity,
-               s: market,
-            },
+               s: market
+            }
          });
       });
    }
@@ -127,11 +132,11 @@ export class MarketDataService {
    }
 
    private formatPaisaToRupeeLevels(
-      levels: [number, number][],
+      levels: [number, number][]
    ): [string, string][] {
       return levels.map(([price, qty]) => [
          (price / 100).toFixed(2),
-         qty.toFixed(2),
+         qty.toFixed(2)
       ]);
    }
 }

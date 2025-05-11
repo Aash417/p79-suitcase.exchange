@@ -5,7 +5,7 @@ import {
    GET_DEPTH,
    GET_OPEN_ORDERS,
    MessageFromApi,
-   ON_RAMP,
+   ON_RAMP
 } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { ErrorService } from './error-service';
@@ -24,17 +24,27 @@ export class Engine {
 
    constructor() {
       this.errorService = new ErrorService();
-      this.orderbooks = [new OrderBookService('SOL')];
+
+      // Initialize services with empty orderbooks array
       this.marketDataService = new MarketDataService(this.orderbooks);
       this.balanceService = new BalanceService(this.marketDataService);
       this.orderService = new OrderService(
          this.balanceService,
          this.orderbooks,
-         this.marketDataService,
+         this.marketDataService
       );
+
+      // Create snapshot service with callback to update orderbooks
       this.snapshotService = new SnapshotService(
          this.orderbooks,
          this.balanceService,
+         (orderbooks) => {
+            // Update orderbooks array
+            this.orderbooks = orderbooks;
+            // Update references in other services
+            this.marketDataService.updateOrderbooks(orderbooks);
+            this.orderService.updateOrderbooks(orderbooks);
+         }
       );
 
       if (!this.snapshotService.load()) this.initializeFresh();
@@ -44,7 +54,7 @@ export class Engine {
 
    process({
       clientId,
-      message,
+      message
    }: {
       clientId: string;
       message: MessageFromApi;
@@ -67,7 +77,7 @@ export class Engine {
             case GET_CAPITAL:
                this.balanceService.getUserBalances(
                   message.data.userId,
-                  clientId,
+                  clientId
                );
                break;
             case GET_OPEN_ORDERS:
@@ -80,7 +90,7 @@ export class Engine {
    }
 
    private initializeFresh() {
-      this.orderbooks = [new OrderBookService('SOL')];
+      this.orderbooks = [new OrderBookService('SOL', [], [])];
       this.balanceService.setDefaultBalances();
    }
 }

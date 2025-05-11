@@ -38,7 +38,7 @@ export class RedisPublisher {
       } catch (error) {
          if (retries > 0) {
             await new Promise((resolve) =>
-               setTimeout(resolve, 100 * (4 - retries)),
+               setTimeout(resolve, 100 * (4 - retries))
             );
             return this.sendToClient(clientId, message, retries - 1);
          }

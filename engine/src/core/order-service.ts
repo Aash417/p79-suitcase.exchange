@@ -4,7 +4,7 @@ import {
    Cancel_order,
    Create_order,
    GET_OPEN_ORDERS,
-   Order,
+   Order
 } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
@@ -14,14 +14,18 @@ export class OrderService {
    constructor(
       private balanceService: BalanceService,
       private orderbooks: OrderBookService[] = [],
-      private marketDataService: MarketDataService,
+      private marketDataService: MarketDataService
    ) {}
+
+   updateOrderbooks(orderbooks: OrderBookService[]) {
+      this.orderbooks = orderbooks;
+   }
 
    createOrder(order: Create_order['data'], clientId: string) {
       const { market, price, quantity, side, userId } = order;
       const orderbook = this.getOrderBook(market);
 
-      this.balanceService.lockFunds(userId, side, price, quantity);
+      this.balanceService.lockFunds(market, userId, side, price, quantity);
 
       const { fills, orderId, executedQty, updatedDepth } = orderbook.addOrder({
          userId,
@@ -29,14 +33,14 @@ export class OrderService {
          side,
          price,
          quantity,
-         filled: 0,
+         filled: 0
       });
 
       this.balanceService.updateBalanceAfterTrade(fills, market, side, userId);
 
       this.marketDataService.sendOrderPlaced(clientId, {
          type: 'ORDER_PLACED',
-         payload: { fills, orderId, executedQty },
+         payload: { fills, orderId, executedQty }
       });
       this.marketDataService.publishDepthUpdate(market, updatedDepth);
       // this.marketDataService.publishTrades(userId, market, placedOrder.fills);

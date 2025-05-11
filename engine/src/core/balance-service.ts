@@ -8,13 +8,15 @@ export class BalanceService {
    constructor(public readonly marketDataService: MarketDataService) {}
 
    lockFunds(
+      market: string,
       userId: string,
       side: 'buy' | 'sell',
       price: number,
-      quantity: number,
+      quantity: number
    ) {
+      const BaseAsset = market.split('_')[0];
       const userBalance = this.getUserBalance(userId);
-      const asset = side === 'buy' ? QUOTE_ASSET : 'SOL';
+      const asset = side === 'buy' ? QUOTE_ASSET : BaseAsset;
 
       if (side === 'buy') {
          const totalAmount = price * quantity;
@@ -50,14 +52,14 @@ export class BalanceService {
       fills: Fill[],
       market: string,
       side: 'buy' | 'sell',
-      userId: string,
+      userId: string
    ) {
       const [baseAsset, quoteAsset] = market.split('_');
       fills.forEach((fill) => {
          const buyerId = side === 'buy' ? userId : fill.otherUserId;
          const sellerId = side === 'sell' ? userId : fill.otherUserId;
 
-         // Update quote asset (INR)
+         // Update quote asset (USDC)
          this.adjustBalance(buyerId, quoteAsset, -fill.price * fill.quantity);
          this.adjustBalance(sellerId, quoteAsset, fill.price * fill.quantity);
 
@@ -87,16 +89,16 @@ export class BalanceService {
             '123',
             {
                [QUOTE_ASSET]: { available: 100_0000, locked: 0 },
-               SOL: { available: 50, locked: 0 }, // 50 SOL
-            },
+               SOL: { available: 50, locked: 0 } // 50 SOL
+            }
          ],
          [
             '231',
             {
                [QUOTE_ASSET]: { available: 50_0000, locked: 0 },
-               SOL: { available: 25, locked: 0 },
-            },
-         ],
+               SOL: { available: 25, locked: 0 }
+            }
+         ]
       ]);
    }
 
@@ -104,7 +106,7 @@ export class BalanceService {
       const { userId, quantity, asset } = data;
       // Get or create user balance
       const userBalance = this.balances.get(userId) || {
-         [QUOTE_ASSET]: { available: 0, locked: 0 },
+         [QUOTE_ASSET]: { available: 0, locked: 0 }
       };
       // Initialize asset if not exists
       if (!userBalance[asset]) {
