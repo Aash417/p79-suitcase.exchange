@@ -12,7 +12,7 @@ type OrderReq = {
    userId: string;
 };
 
-export function useExecuteOrder() {
+export function useExecuteOrder(market: string) {
    const queryClient = useQueryClient();
    const mutation = useMutation<ResponseType, Error, OrderReq>({
       mutationFn: async (data) => {
@@ -34,6 +34,7 @@ export function useExecuteOrder() {
       onSuccess: () => {
          toast.success('Order created successfully', { duration: 1300 });
          queryClient.invalidateQueries({ queryKey: ['UserBalance'] });
+         queryClient.invalidateQueries({ queryKey: [market] });
       },
       onError: (error) => {
          toast.error(error.message || 'Failed to create order', {
@@ -106,5 +107,32 @@ export function useGetUserBalances() {
       refetchOnWindowFocus: true,
       staleTime: 30000, // Consider data fresh for 30 seconds
       // initialData: {} as userBalRes, // Provide empty initial data
+   });
+}
+
+export function useGetUserOpenOrders(market: string) {
+   return useQuery<
+      {
+         id: string;
+         price: string;
+         quantity: string;
+         side: string;
+      }[]
+   >({
+      queryKey: [market],
+      queryFn: async () => {
+         const response = await fetch(
+            `${API_URL}/order/open?symbol=${market}&userId=47854`,
+         );
+         if (!response.ok) {
+            throw new Error('Failed to fetch user balances');
+         }
+
+         const data = await response.json();
+         return data;
+      },
+      retry: 2,
+      refetchOnWindowFocus: true,
+      staleTime: 30000,
    });
 }

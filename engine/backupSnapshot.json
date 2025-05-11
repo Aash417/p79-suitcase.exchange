@@ -82,99 +82,26 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
+        },
+        {
+          "userId": "47854",
+          "orderId": "0196be0d-ea71-7000-afe1-77de57c0ad84",
+          "side": "buy",
+          "price": 20000,
+          "quantity": 3,
+          "filled": 0
+        },
+        {
+          "userId": "47854",
+          "orderId": "0196be10-6928-7000-80f1-f5b3fca35623",
+          "side": "buy",
+          "price": 50000,
+          "quantity": 5,
+          "filled": 0
         }
       ],
-      "asks": [
-        {
-          "price": 11000,
-          "quantity": 1,
-          "orderId": "0196948a-700c-7000-b380-d7ea901df201",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11010,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac28",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11020,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac29",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11030,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2a",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11040,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2b",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11050,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2c",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11060,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2d",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11070,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2e",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11080,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2f",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11090,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac30",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11100,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac31",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        }
-      ],
-      "lastTradeId": 125
+      "asks": [],
+      "lastTradeId": 139
     },
     {
       "baseAsset": "PEPE",
@@ -1779,11 +1706,11 @@
       "5",
       {
         "USDC": {
-          "available": 1000000,
+          "available": 1121550,
           "locked": 500000
         },
         "SOL": {
-          "available": 1000000,
+          "available": 999989,
           "locked": 500000
         },
         "PEPE": {
@@ -1828,11 +1755,11 @@
       "47854",
       {
         "USDC": {
-          "available": 1000000,
-          "locked": 500000
+          "available": 228450,
+          "locked": 1150000
         },
         "SOL": {
-          "available": 1000000,
+          "available": 1000011,
           "locked": 500000
         },
         "PEPE": {

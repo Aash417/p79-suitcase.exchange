@@ -63,9 +63,9 @@ export class OrderService {
    }
 
    getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {
-      const { userId, market } = data;
-      const relevantBooks = market
-         ? [this.getOrderBook(market)]
+      const { userId, symbol } = data;
+      const relevantBooks = symbol
+         ? [this.getOrderBook(symbol)]
          : this.orderbooks;
 
       const orders = relevantBooks.flatMap((ob) => ob.getOpenOrders(userId));

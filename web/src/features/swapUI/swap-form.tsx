@@ -22,7 +22,7 @@ export default function SwapForm({ market }: Readonly<Props>) {
    const [quantity, setQuantity] = useState('');
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
-   const { mutate } = useExecuteOrder();
+   const { mutate } = useExecuteOrder(market);
    const { data: balance, isLoading, error } = useGetUserBalances();
 
    // const isLoading = false;

@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import Balances from './balances';
+import OpenOrders from './open-orders';
 
 export default function Dashboard() {
    return (
@@ -34,9 +35,7 @@ export default function Dashboard() {
                className="bg-zinc-800/50 rounded-lg p-6 h-[50vh]"
             >
                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-white">
-                     Open Orders
-                  </h2>
+                  <OpenOrders />
                </div>
             </TabsContent>
          </Tabs>

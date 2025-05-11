@@ -101,7 +101,7 @@ export type GET_OPEN_ORDERS = {
    type: typeof GET_OPEN_ORDERS;
    data: {
       userId: string;
-      market: string;
+      symbol: string;
    };
 };
 export type GET_CAPITAL = {
