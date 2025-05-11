@@ -1,3 +1,4 @@
+import Dashboard from '@/features/dashboard/dashboard';
 import DepositForm from '@/features/onRampUI/deposit-form';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swap-form';
@@ -16,7 +17,7 @@ export default async function Market({
          <div className="flex flex-col flex-1">
             <div className="flex flex-row mb-4 h-screen flex-1 gap-2 overflow-hidden px-4">
                {/* left */}
-               <div className="flex flex-col flex-1">
+               <div className="flex flex-col flex-1 gap-2">
                   {/* upper dashboard */}
                   <div className="flex flex-col gap-2">
                      {/* ticker */}
@@ -60,7 +61,11 @@ export default async function Market({
                   </div>
 
                   {/* lower dashboard */}
-                  <div className="flex flex-col"></div>
+                  <div className="flex flex-col min-h-[50vh]">
+                     <div className="flex flex-col bg-base-background-l1 relative overflow-hidden rounded-lg">
+                        <Dashboard />
+                     </div>
+                  </div>
                </div>
 
                {/* right */}

@@ -49,7 +49,7 @@ export class Engine {
 
       if (!this.snapshotService.load()) this.initializeFresh();
 
-      setInterval(() => this.snapshotService.save(), 10000);
+      setInterval(() => this.snapshotService.save(), 15000);
    }
 
    process({
@@ -59,7 +59,6 @@ export class Engine {
       clientId: string;
       message: MessageFromApi;
    }) {
-      console.log('started processing message', message.type);
       try {
          switch (message.type) {
             case CREATE_ORDER:

@@ -69,7 +69,7 @@ export default function SwapForm({ market }: Readonly<Props>) {
    async function handleSubmit(e: React.FormEvent) {
       e.preventDefault();
 
-      if (Number(calculatedTotal) > currentBalance) {
+      if (Number(calculatedTotal) > currentBalance && activeTab === 'buy') {
          toast.error('Insufficient funds for transaction.!', {
             duration: 2000,
          });

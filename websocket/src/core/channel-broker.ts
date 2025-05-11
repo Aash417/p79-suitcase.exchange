@@ -62,7 +62,7 @@ export class ChannelBroker {
    private handleChannelMessage = (message: string, channel: string) => {
       const parsedMessage: OutgoingMessage = JSON.parse(message);
 
-      console.log(parsedMessage);
+      // console.log(parsedMessage);
       const subscribers = this.channelSubscribers.get(channel) || [];
 
       subscribers.forEach((connectionId) => {

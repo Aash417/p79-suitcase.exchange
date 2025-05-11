@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { SNAPSHOT_PATH } from '../utils/constants';
 import { Order, UserBalance } from '../utils/types';
 import { BalanceService } from './balance-service';
@@ -23,7 +23,6 @@ export class SnapshotService {
 
    save() {
       try {
-         // const test = this.orderbooks[0].getDepth();
          const snapshot: Snapshot = {
             orderbooks: this.orderbooks.map((ob) => ({
                baseAsset: ob.baseAsset,
@@ -34,7 +33,10 @@ export class SnapshotService {
             balances: Array.from(this.balanceService.getBalances().entries())
          };
 
-         // writeFileSync('./new.json', JSON.stringify(test, null, 2));
+         writeFileSync(
+            './backupSnapshot.json',
+            JSON.stringify(snapshot, null, 2)
+         );
          return true;
       } catch (error) {
          console.error('Snapshot save failed:', error);
@@ -53,7 +55,10 @@ export class SnapshotService {
          );
 
          // Update the reference in Engine
-         if (this.setOrderbooks) this.setOrderbooks(loadedOrderbooks);
+         if (this.setOrderbooks) {
+            this.setOrderbooks(loadedOrderbooks);
+            this.orderbooks = loadedOrderbooks;
+         }
 
          this.balanceService.setBalances(new Map(snapshot.balances));
 
