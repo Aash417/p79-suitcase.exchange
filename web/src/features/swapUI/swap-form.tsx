@@ -25,27 +25,6 @@ export default function SwapForm({ market }: Readonly<Props>) {
    const { mutate } = useExecuteOrder(market);
    const { data: balance, isLoading, error } = useGetUserBalances();
 
-   // const isLoading = false;
-   // const error = false;
-
-   // const balance = {
-   //    USDC: {
-   //       available: 999900000,
-   //       locked: 100000,
-   //    },
-   //    SOL: {
-   //       available: 50000,
-   //       locked: 0,
-   //    },
-   //    PEPE: {
-   //       available: 50000,
-   //       locked: 0,
-   //    },
-   //    BTC: {
-   //       available: 50000,
-   //       locked: 0,
-   //    },
-   // };
    const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {
       if (!balance || !balance[asset]) return 0;
@@ -163,16 +142,12 @@ export default function SwapForm({ market }: Readonly<Props>) {
       }
    }
 
-   if (error) {
-      return (
-         <div className="w-full p-4 text-center text-red-500">
-            Failed to load balances. Please try again.
-         </div>
-      );
-   }
-
    return (
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs
+         value={activeTab}
+         onValueChange={setActiveTab}
+         className={`w-full ${error ? 'opacity-50 pointer-events-none' : ''}`}
+      >
          <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#d4d4d408] text-gray-500">
             <TabsTrigger
                value="buy"

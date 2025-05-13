@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetUserBalances } from '@/hooks';
 
 export default function Balances() {
-   const { data, isLoading } = useGetUserBalances();
+   const { data, isLoading, error } = useGetUserBalances();
 
    let balances: any[] = [];
    if (data) {
@@ -19,7 +19,9 @@ export default function Balances() {
       );
 
    return (
-      <div className="overflow-x-auto">
+      <div
+         className={`w-full ${error ? 'opacity-50 pointer-events-none' : ''}`}
+      >
          <ScrollArea className="h-72 rounded-md ">
             <table className="w-full">
                <thead>

@@ -5,6 +5,7 @@ import { WebSocketManager } from '@/lib/websocket-manager';
 import { useEffect, useMemo, useState } from 'react';
 import { AskTable } from './components/ask-table';
 import { BidTable } from './components/bid-table';
+import { LastTradePrice } from './components/last-trade-price';
 import { TableHeader } from './components/table-header';
 import { Depth } from './utils/types';
 
@@ -63,7 +64,7 @@ export default function Orderbook({
 
          <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto pb-1">
             <AskTable asks={topAsks} />
-            {/* <LastTradePrice ticker={ticker} /> */}
+            <LastTradePrice ticker={ticker} />
             <BidTable bids={topBids} />
          </div>
 

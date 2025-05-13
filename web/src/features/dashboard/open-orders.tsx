@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 
 export default function OpenOrders() {
    const { market } = useParams<{ market: string }>();
-   const { data, isLoading } = useGetUserOpenOrders(market);
+   const { data, isLoading, error } = useGetUserOpenOrders(market);
 
    if (isLoading)
       return (
@@ -16,7 +16,9 @@ export default function OpenOrders() {
       );
 
    return (
-      <div className="overflow-x-auto">
+      <div
+         className={`w-full ${error ? 'opacity-50 pointer-events-none' : ''}`}
+      >
          <ScrollArea className="h-72 rounded-md ">
             <table className="w-full">
                <thead>
@@ -42,12 +44,16 @@ export default function OpenOrders() {
                            {id}
                         </td>
                         <td
-                           className={`text-right py-4 px-6 text-sm ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}
+                           className={`text-right py-4 px-6 text-sm ${
+                              side === 'buy' ? 'text-green-400' : 'text-red-400'
+                           }`}
                         >
                            {quantity}
                         </td>
                         <td
-                           className={`text-right py-4 px-6 text-sm ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}
+                           className={`text-right py-4 px-6 text-sm ${
+                              side === 'buy' ? 'text-green-400' : 'text-red-400'
+                           }`}
                         >
                            {price}
                         </td>
