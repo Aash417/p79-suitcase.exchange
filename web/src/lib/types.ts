@@ -67,3 +67,12 @@ export interface Ticker {
    trades: string;
    volume: string;
 }
+
+export interface Trades {
+   id: number;
+   isBuyerMaker: boolean;
+   price: string;
+   quantity: string;
+   quoteQuantity: string;
+   timestamp: number;
+}

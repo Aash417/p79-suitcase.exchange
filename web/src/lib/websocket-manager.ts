@@ -100,6 +100,15 @@ export class WebSocketManager {
                symbol: message.data.s,
             });
          }
+         if (type === 'trade') {
+            callback({
+               id: message.data.t,
+               price: message.data.p,
+               quantity: message.data.q,
+               timestamp: Math.floor(message.data.T / 1000),
+               isBuyerMaker: message.data.m,
+            });
+         }
       });
    }
 }

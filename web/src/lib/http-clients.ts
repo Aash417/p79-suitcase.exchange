@@ -2,7 +2,7 @@ import { KLine } from '@/features/klineChart/utils/types';
 import { Depth } from '@/features/orderbook/utils/types';
 import { SYMBOLS_MAP } from './constants';
 import { API_URL } from './env';
-import { Ticker } from './types';
+import { Ticker, Trades } from './types';
 
 export async function getKlines(market: string): Promise<KLine[]> {
    const kline = await fetch(
@@ -61,4 +61,11 @@ export async function getTicker(market: string) {
          imageUrl: symbolInfo.imageUrl,
       };
    }
+}
+
+export async function getTrades(market: string) {
+   const res = await fetch(`${API_URL}/trades?symbol=${market}&limit=20`);
+   const data: Trades[] = await res.json();
+
+   return data;
 }

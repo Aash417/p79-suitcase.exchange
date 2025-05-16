@@ -1,10 +1,12 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Dashboard from '@/features/dashboard/dashboard';
 import KlineChart from '@/features/klineChart/klineChart';
 import DepositForm from '@/features/onRampUI/deposit-form';
 import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swap-form';
 import Ticker from '@/features/ticker/ticker';
-import { getDepth, getKlines, getTicker } from '@/lib/http-clients';
+import Trades from '@/features/trades/trades';
+import { getDepth, getKlines, getTicker, getTrades } from '@/lib/http-clients';
 
 export default async function Market({
    params,
@@ -13,6 +15,7 @@ export default async function Market({
    const kline = await getKlines(market);
    const depthData = await getDepth(market);
    const ticker = await getTicker(market);
+   const trades = await getTrades(market);
 
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
@@ -44,18 +47,41 @@ export default async function Market({
                               </div>
                            </div>
 
-                           {/* orderbook */}
+                           {/* orderbook & Trades */}
                            <div className="flex flex-col bg-base-background-l1 w-1/3 max-w-[300px] min-w-[260px] overflow-hidden rounded-lg">
                               <div className="flex flex-col h-full">
-                                 <div className="px-4 py-4">Book</div>
+                                 <Tabs defaultValue="book">
+                                    <TabsList className="flex gap-2 mx-6 my-3 w-1/3 rounded-lg p-1">
+                                       <TabsTrigger
+                                          value="book"
+                                          className="text-sm rounded-md data-[state=active]:bg-zinc-700/30 data-[state=active]:text-white text-zinc-400"
+                                       >
+                                          Book
+                                       </TabsTrigger>
+                                       <TabsTrigger
+                                          value="trades"
+                                          className="text-sm rounded-md data-[state=active]:bg-zinc-700/30 data-[state=active]:text-white text-zinc-400"
+                                       >
+                                          Trades
+                                       </TabsTrigger>
+                                    </TabsList>
 
-                                 <div className="flex flex-col grow overflow-y-hidden">
-                                    <Orderbook
-                                       market={market}
-                                       depthData={depthData}
-                                       ticker={ticker}
-                                    />
-                                 </div>
+                                    <TabsContent value="book">
+                                       <div className="flex flex-col grow overflow-y-hidden">
+                                          <Orderbook
+                                             market={market}
+                                             depthData={depthData}
+                                             ticker={ticker}
+                                          />
+                                       </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="trades">
+                                       <div className="flex flex-col grow overflow-y-hidden">
+                                          <Trades trades={trades} />
+                                       </div>
+                                    </TabsContent>
+                                 </Tabs>
                               </div>
                            </div>
                         </div>

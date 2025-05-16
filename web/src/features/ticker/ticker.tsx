@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { type Ticker } from '@/lib/types';
 import { formatComma, formatPrice } from '@/lib/utils';
 import { WebSocketManager } from '@/lib/websocket-manager';
 import { useEffect, useState } from 'react';
-import type { Ticker } from './utils/types';
 
 type TickerUpdate = {
    firstPrice: string;
@@ -49,7 +49,7 @@ export default function Ticker({ ticker }: Readonly<Props>) {
                   volume: data.volume,
                };
             });
-            // Move this inside the state update to avoid race conditions
+
             setIsPriceUp(priceChange > 0);
          } catch (error) {
             if (error instanceof Error) {
