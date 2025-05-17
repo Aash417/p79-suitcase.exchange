@@ -82,7 +82,7 @@ export default function Ticker({ ticker }: Readonly<Props>) {
 
    return (
       <div className="flex flex-row shrink-0 gap-[32px]">
-         <div className="flex items-center justify-between flex-row bg-base-background-l2 cursor-pointer rounded-xl p-2 hover:opacity-90">
+         <div className="flex items-center justify-between flex-row bg-base-background-l2 rounded-xl p-2 hover:opacity-90">
             <div className="flex flex-row mr-2">
                <div className="flex items-center   gap-2">
                   <div className="size-8  rounded-full overflow-hidden">

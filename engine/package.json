@@ -5,6 +5,7 @@
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "dev": "bun run --hot src/index.ts",
+      "prod": "bun run src/index.ts",
       "format": "prettier --write ."
    },
    "keywords": [],

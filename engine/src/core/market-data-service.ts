@@ -1,4 +1,4 @@
-import { Fill, On_Ramp, Order, OrderPlaced } from '../utils/types';
+import { Fill, On_Ramp, Order, ORDER_SIDE, OrderPlaced } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
 
@@ -108,16 +108,16 @@ export class MarketDataService {
       });
    }
 
-   publishTrades(userId: string, market: string, fills: Fill[]) {
+   publishTrades(market: string, side: ORDER_SIDE, fills: Fill[]) {
       fills.forEach((fill) => {
          RedisPublisher.getInstance().sendToWs(`trade.${market}`, {
             stream: `trade.${market}`,
             data: {
                e: 'trade',
-               t: fill.tradeId,
-               m: fill.otherUserId === userId, // TODO: Is this right?
-               p: fill.price,
-               q: fill.quantity,
+               T: Date.now() * 1000,
+               m: side === 'sell',
+               p: (fill.price / 100).toFixed(2),
+               q: String(fill.quantity),
                s: market
             }
          });

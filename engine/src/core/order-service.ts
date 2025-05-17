@@ -35,7 +35,6 @@ export class OrderService {
          quantity,
          filled: 0
       });
-
       this.balanceService.updateBalanceAfterTrade(fills, market, side, userId);
 
       this.marketDataService.sendOrderPlaced(clientId, {
@@ -43,7 +42,7 @@ export class OrderService {
          payload: { fills, orderId, executedQty }
       });
       this.marketDataService.publishDepthUpdate(market, updatedDepth);
-      // this.marketDataService.publishTrades(userId, market, placedOrder.fills);
+      this.marketDataService.publishTrades(market, side, fills);
    }
 
    cancelOrder(data: Cancel_order['data'], clientId: string) {

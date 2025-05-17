@@ -64,7 +64,7 @@ export default function Trades({ trades }: Readonly<Props>) {
 
             {/* data */}
             <div className="flex flex-col no-scrollbar overflow-y-auto">
-               <ScrollArea className="h-[70dvh] rounded-md">
+               <ScrollArea className="h-[75dvh] rounded-md">
                   {newTrades.map((trade, idx) => (
                      <div
                         key={idx + 1}
