@@ -1,5 +1,6 @@
 import { QueryProvider } from '@/components/query-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
@@ -28,6 +29,7 @@ export default function RootLayout({
          <body className={`${geistSans.variable} ${geistMono.variable}`}>
             <QueryProvider>{children}</QueryProvider>
             <Toaster position="top-center" />
+            <Analytics />
          </body>
       </html>
    );
