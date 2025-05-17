@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { ScrollArea } from '@/components/ui/scroll-area';

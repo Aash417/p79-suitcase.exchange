@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
@@ -24,7 +25,7 @@ export default function SwapForm({ market }: Readonly<Props>) {
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
    const { mutate } = useExecuteOrder(market);
-   const { data: balance, isLoading, error } = useGetUserBalances();
+   const { data: balance, isLoading } = useGetUserBalances();
 
    const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {

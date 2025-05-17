@@ -85,7 +85,7 @@ export default function DepositForm() {
                         <img
                            src={
                               SYMBOLS.find(
-                                 (s) => s.symbol.split('_')[0] === asset
+                                 (s) => s.symbol.split('_')[0] === asset,
                               )?.imageUrl
                            }
                            alt=""
@@ -151,7 +151,7 @@ export default function DepositForm() {
                         asset === 'USDC'
                            ? '/usdc.webp'
                            : SYMBOLS.find(
-                                (s) => s.symbol.split('_')[0] === asset
+                                (s) => s.symbol.split('_')[0] === asset,
                              )?.imageUrl
                      }
                      alt=""
