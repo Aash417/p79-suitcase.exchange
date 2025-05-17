@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useExecuteOrder, useGetUserBalances } from '@/hooks';
 import { SYMBOLS_MAP } from '@/lib/constants';
+import { API_URL } from '@/lib/env';
 import { formatComma } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -146,7 +147,11 @@ export default function SwapForm({ market }: Readonly<Props>) {
       <Tabs
          value={activeTab}
          onValueChange={setActiveTab}
-         className={`w-full ${error ? 'opacity-50 pointer-events-none' : ''}`}
+         className={`w-full ${
+            API_URL === 'https://api.backpack.exchange/api/v1'
+               ? 'opacity-40 pointer-events-none'
+               : ''
+         }`}
       >
          <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#d4d4d408] text-gray-500">
             <TabsTrigger

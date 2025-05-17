@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { useDepositAsset } from '@/hooks';
 import { SYMBOLS } from '@/lib/constants';
+import { API_URL } from '@/lib/env';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
@@ -63,7 +64,13 @@ export default function DepositForm() {
    }
 
    return (
-      <div className="space-y-3">
+      <div
+         className={`space-y-3 ${
+            API_URL === 'https://api.backpack.exchange/api/v1'
+               ? 'opacity-40 pointer-events-none'
+               : ''
+         }`}
+      >
          <Select value={asset} onValueChange={setAsset} defaultValue="USDC">
             <SelectTrigger className="w-full h-10 px-3 py-2 rounded-lg bg-[#1C1D21] border-none  text-sm text-gray-100 focus:outline-none focus:ring-1 focus:ring-[#3B3C42] hover:bg-[#2C2D33]/50 transition-colors">
                <div className="flex items-center gap-2">
@@ -78,7 +85,7 @@ export default function DepositForm() {
                         <img
                            src={
                               SYMBOLS.find(
-                                 (s) => s.symbol.split('_')[0] === asset,
+                                 (s) => s.symbol.split('_')[0] === asset
                               )?.imageUrl
                            }
                            alt=""
@@ -144,7 +151,7 @@ export default function DepositForm() {
                         asset === 'USDC'
                            ? '/usdc.webp'
                            : SYMBOLS.find(
-                                (s) => s.symbol.split('_')[0] === asset,
+                                (s) => s.symbol.split('_')[0] === asset
                              )?.imageUrl
                      }
                      alt=""

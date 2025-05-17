@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
    title: 'suitcase.exchange',
-   description: 'Created by the community, for the community.',
+   description: 'Crypto trading platform, for seamless exchange',
 };
 
 export default function RootLayout({

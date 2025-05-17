@@ -1,10 +1,17 @@
+import { API_URL } from '@/lib/env';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import Balances from './balances';
 import OpenOrders from './open-orders';
 
 export default function Dashboard() {
    return (
-      <div className="w-full max-w-screen-xl mx-auto p-4">
+      <div
+         className={`w-full max-w-screen-xl mx-auto p-4 ${
+            API_URL === 'https://api.backpack.exchange/api/v1'
+               ? 'opacity-40 pointer-events-none'
+               : ''
+         }`}
+      >
          <Tabs defaultValue="balances" className="w-full">
             <TabsList className="flex mb-6 w-1/3  rounded-lg p-1">
                <TabsTrigger
