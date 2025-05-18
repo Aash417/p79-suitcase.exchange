@@ -20,7 +20,9 @@ export class RedisPublisher {
    private client: RedisClientType;
 
    private constructor() {
-      this.client = createClient();
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+      console.log(`Redis publisher connecting to ${redisUrl}`);
+      this.client = createClient({ url: redisUrl });
       this.client.connect();
    }
 

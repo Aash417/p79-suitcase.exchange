@@ -1,4 +1,4 @@
-import { randomUUIDv7 } from 'bun';
+import { randomUUID } from 'crypto';
 import { QUOTE_ASSET } from '../utils/constants';
 import {
    Cancel_order,
@@ -29,7 +29,7 @@ export class OrderService {
 
       const { fills, orderId, executedQty, updatedDepth } = orderbook.addOrder({
          userId,
-         orderId: randomUUIDv7(),
+         orderId: randomUUID(),
          side,
          price,
          quantity,

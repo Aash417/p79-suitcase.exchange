@@ -1,0 +1,32 @@
+# Node modules
+**/node_modules
+
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+
+# Next.js build output
+**/.next
+**/out
+
+# Environment variables
+**/.env
+**/.env.*
+!**/.env.example
+
+# Build files
+**/build
+**/dist
+
+# Misc
+**/.DS_Store
+**/.git
+**/.gitignore
+**/README.md
+**/*.md
+
+# Docker related
+**/docker-compose*.yml
+**/Dockerfile*
+**/.dockerignore

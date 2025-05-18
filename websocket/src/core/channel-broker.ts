@@ -52,7 +52,11 @@ export class ChannelBroker {
    }
 
    private initializeRedisClient(): void {
-      this.redisClient = createClient();
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+      console.log(
+         `WebSocket channel broker connecting to Redis at ${redisUrl}`
+      );
+      this.redisClient = createClient({ url: redisUrl });
       this.redisClient
          .connect()
          .then(() => console.log('Connected to Redis'))

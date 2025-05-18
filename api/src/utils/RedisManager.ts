@@ -1,4 +1,4 @@
-import { randomUUIDv7 } from 'bun';
+import { randomUUID } from 'crypto';
 import { RedisClientType, createClient } from 'redis';
 import { MessageFromOrderbook, MessageToEngine } from './types';
 
@@ -8,10 +8,12 @@ export class RedisManager {
    private static instance: RedisManager;
 
    private constructor() {
-      this.client = createClient();
+      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+      console.log(`API Redis manager connecting to ${redisUrl}`);
+      this.client = createClient({ url: redisUrl });
       this.client.connect();
 
-      this.publisher = createClient();
+      this.publisher = createClient({ url: redisUrl });
       this.publisher.connect();
    }
 
@@ -24,13 +26,13 @@ export class RedisManager {
 
    public sendAndAwait(message: MessageToEngine, timeoutMs: number = 5000) {
       return new Promise<MessageFromOrderbook>((resolve, reject) => {
-         const id = randomUUIDv7();
+         const id = randomUUID();
          let timeout: NodeJS.Timeout;
 
          timeout = setTimeout(() => {
             this.client.unsubscribe(id); // Ensure we unsubscribe to avoid resource leaks
             reject(
-               new Error(`Timeout: No response received within ${timeoutMs}ms`),
+               new Error(`Timeout: No response received within ${timeoutMs}ms`)
             );
          }, timeoutMs);
 
@@ -43,7 +45,7 @@ export class RedisManager {
          // Publish the message to the Redis queue
          this.publisher.lPush(
             'messages',
-            JSON.stringify({ clientId: id, message }),
+            JSON.stringify({ clientId: id, message })
          );
       });
    }

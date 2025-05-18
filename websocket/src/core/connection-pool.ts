@@ -1,4 +1,4 @@
-import { randomUUIDv7 } from 'bun';
+import { randomUUID } from 'crypto';
 import { WebSocket } from 'ws';
 import { ClientConnection } from './client-connection';
 
@@ -15,7 +15,7 @@ export class ConnectionPool {
    }
 
    addConnection(socket: WebSocket): string {
-      const connectionId = randomUUIDv7();
+      const connectionId = randomUUID();
       const client = new ClientConnection(connectionId, socket);
 
       this.connections.set(connectionId, client);
