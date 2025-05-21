@@ -2,8 +2,8 @@ import { QUOTE_ASSET } from '../utils/constants';
 import { Fill, Order, ORDER_SIDE } from '../utils/types';
 
 export class OrderBookService {
-   private bids = new Map<number, Order[]>(); // price => orders (sorted high to low)
-   private asks = new Map<number, Order[]>(); // price => orders (sorted low to high)
+   private bids = new Map<number, Order[]>();
+   private asks = new Map<number, Order[]>();
    public readonly quoteAsset = QUOTE_ASSET;
    public lastTradeId: number = 125;
 

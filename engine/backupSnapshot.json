@@ -86,6 +86,46 @@
          ],
          "asks": [
             {
+               "price": 11000,
+               "quantity": 10,
+               "orderId": "0196948a-700c-7000-b380-d7ea901df201",
+               "filled": 0,
+               "side": "sell",
+               "userId": "5"
+            },
+            {
+               "price": 11010,
+               "quantity": 10,
+               "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac28",
+               "filled": 0,
+               "side": "sell",
+               "userId": "5"
+            },
+            {
+               "price": 11020,
+               "quantity": 10,
+               "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac29",
+               "filled": 0,
+               "side": "sell",
+               "userId": "5"
+            },
+            {
+               "price": 11030,
+               "quantity": 10,
+               "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2a",
+               "filled": 0,
+               "side": "sell",
+               "userId": "5"
+            },
+            {
+               "price": 11040,
+               "quantity": 10,
+               "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2b",
+               "filled": 0,
+               "side": "sell",
+               "userId": "5"
+            },
+            {
                "price": 11050,
                "quantity": 10,
                "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2c",
@@ -134,7 +174,7 @@
                "userId": "5"
             }
          ],
-         "lastTradeId": 131
+         "lastTradeId": 125
       },
       {
          "baseAsset": "PEPE",
@@ -1739,11 +1779,11 @@
          "5",
          {
             "USDC": {
-               "available": 1551000,
+               "available": 1000000,
                "locked": 500000
             },
             "SOL": {
-               "available": 999950,
+               "available": 1000000,
                "locked": 500000
             },
             "PEPE": {
@@ -1788,11 +1828,11 @@
          "47854",
          {
             "USDC": {
-               "available": -551000,
-               "locked": 1500000
+               "available": 1000000,
+               "locked": 500000
             },
             "SOL": {
-               "available": 1000050,
+               "available": 1000000,
                "locked": 500000
             },
             "PEPE": {

@@ -35,7 +35,15 @@ export class OrderService {
          quantity,
          filled: 0
       });
-      this.balanceService.updateBalanceAfterTrade(fills, market, side, userId);
+      this.balanceService.updateBalanceAfterTrade(
+         fills,
+         market,
+         side,
+         userId,
+         executedQty,
+         price,
+         quantity
+      );
 
       this.marketDataService.sendOrderPlaced(clientId, {
          type: 'ORDER_PLACED',

@@ -1,0 +1,36 @@
+{
+  "name": "suitcase-exchange",
+  "version": "1.0.0",
+  "description": "Suitcase Exchange - Trading Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"API,ENGINE,WEBSOCKET,WEB\" --prefix-colors \"red,blue,green,magenta\" \"cd api && bun run dev\" \"cd engine && bun run dev\" \"cd websocket && bun run dev\" \"cd web && bun run dev\"",
+    "format": "bun run format:api && bun run format:engine && bun run format:websocket && bun run format:web",
+    "format:api": "cd api && bun run format",
+    "format:engine": "cd engine && bun run format",
+    "format:websocket": "cd websocket && bun run format",
+    "format:web": "cd web && bun run format",
+    "build:web": "cd web && bun run build",
+    "start:web": "cd web && bun run start",
+    "lint:web": "cd web && bun run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "workspaces": [
+    "api",
+    "engine",
+    "websocket",
+    "web"
+  ],
+  "keywords": [
+    "trading",
+    "exchange",
+    "crypto",
+    "orderbook",
+    "websocket",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC"
+}

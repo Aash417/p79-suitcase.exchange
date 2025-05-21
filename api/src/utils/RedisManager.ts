@@ -32,7 +32,7 @@ export class RedisManager {
          timeout = setTimeout(() => {
             this.client.unsubscribe(id); // Ensure we unsubscribe to avoid resource leaks
             reject(
-               new Error(`Timeout: No response received within ${timeoutMs}ms`)
+               new Error(`Timeout: No response received within ${timeoutMs}ms`),
             );
          }, timeoutMs);
 
@@ -45,7 +45,7 @@ export class RedisManager {
          // Publish the message to the Redis queue
          this.publisher.lPush(
             'messages',
-            JSON.stringify({ clientId: id, message })
+            JSON.stringify({ clientId: id, message }),
          );
       });
    }

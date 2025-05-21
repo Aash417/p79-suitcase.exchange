@@ -23,6 +23,7 @@ export class BalanceService {
          if (userBalance[asset].available < totalAmount) {
             throw new Error('INSUFFICIENT_FUNDS');
          }
+         console.log(`Locking ${totalAmount} ${asset} for user ${userId}`);
 
          userBalance[asset].available -= totalAmount;
          userBalance[asset].locked += totalAmount;
@@ -52,21 +53,55 @@ export class BalanceService {
       fills: Fill[],
       market: string,
       side: 'buy' | 'sell',
-      userId: string
+      userId: string,
+      executedQty: number = 0,
+      price: number = 0,
+      quantity: number = 0
    ) {
       const [baseAsset, quoteAsset] = market.split('_');
       fills.forEach((fill) => {
          const buyerId = side === 'buy' ? userId : fill.otherUserId;
          const sellerId = side === 'sell' ? userId : fill.otherUserId;
 
-         // Update quote asset (USDC)
-         this.adjustBalance(buyerId, quoteAsset, -fill.price * fill.quantity);
-         this.adjustBalance(sellerId, quoteAsset, fill.price * fill.quantity);
+         // Update locked asset
+         this.adjustLockedBalance(
+            buyerId,
+            quoteAsset,
+            fill.price * fill.quantity
+         );
+         this.adjustLockedBalance(sellerId, baseAsset, fill.quantity);
 
-         // Update base asset (SOL)
-         this.adjustBalance(sellerId, baseAsset, -fill.quantity);
-         this.adjustBalance(buyerId, baseAsset, fill.quantity);
+         // Update available asset
+         this.adjustAvailableBalance(buyerId, baseAsset, fill.quantity);
+         this.adjustAvailableBalance(
+            sellerId,
+            quoteAsset,
+            fill.price * fill.quantity
+         );
       });
+
+      if (side === 'buy' && executedQty === quantity) {
+         // Calculate the total actual cost of the executed portion
+         const totalActualCost = fills.reduce(
+            (sum, f) => sum + f.price * f.quantity,
+            0
+         );
+
+         const costAtLimitPriceForExecutedPortion = price * executedQty;
+
+         // The difference is the savings due to price improvement
+         const savingsOnExecutedPortion =
+            costAtLimitPriceForExecutedPortion - totalActualCost;
+         console.log('savingsOnExecutedPortion :', savingsOnExecutedPortion);
+
+         if (savingsOnExecutedPortion > 0) {
+            // Unlock these savings from the user's locked quote asset balance and add them to their available balance.
+            this.unlockFunds(userId, quoteAsset, savingsOnExecutedPortion);
+            console.log(
+               `Refunded ${savingsOnExecutedPortion} ${quoteAsset} to user ${userId} due to price improvement.`
+            );
+         }
+      }
    }
 
    getUserBalances(userId: string, clientId: string) {
@@ -126,7 +161,16 @@ export class BalanceService {
       return this.balances.get(userId)!;
    }
 
-   private adjustBalance(userId: string, asset: string, delta: number) {
+   private adjustLockedBalance(userId: string, asset: string, delta: number) {
+      const balance = this.getUserBalance(userId);
+      balance[asset].locked -= delta;
+   }
+
+   private adjustAvailableBalance(
+      userId: string,
+      asset: string,
+      delta: number
+   ) {
       const balance = this.getUserBalance(userId);
       balance[asset].available += delta;
    }
