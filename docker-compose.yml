@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+   redis:
+      image: redis:7.2-alpine
+      container_name: turbo-suitcase-redis
+      ports:
+         - '127.0.0.1:6379:6379'
+      networks:
+         - suitcase-network
+      volumes:
+         - redis-data:/data
+      restart: always
+      healthcheck:
+         test: ['CMD', 'redis-cli', 'ping']
+         interval: 5s
+         timeout: 3s
+         retries: 3
+      command: redis-server --appendonly yes
+      deploy:
+         resources:
+            limits:
+               cpus: '1'
+               memory: 2G
+            reservations:
+               cpus: '0.5'
+               memory: 512M
+
+   api:
+      build:
+         context: .
+         dockerfile: ./apps/api/Dockerfile
+      container_name: turbo-suitcase-api
+      depends_on:
+         redis:
+            condition: service_healthy
+      environment:
+         - REDIS_URL=redis://redis:6379
+         - NODE_ENV=production
+      ports:
+         - '3001:3001'
+      networks:
+         - suitcase-network
+      restart: always
+      healthcheck:
+         test: ['CMD-SHELL', 'bun --version || exit 1']
+         interval: 30s
+         timeout: 10s
+         retries: 3
+      deploy:
+         resources:
+            limits:
+               cpus: '1'
+               memory: 1G
+            reservations:
+               cpus: '0.5'
+               memory: 512M
+
+   engine:
+      build:
+         context: .
+         dockerfile: ./apps/engine/Dockerfile
+      container_name: turbo-suitcase-engine
+      depends_on:
+         redis:
+            condition: service_healthy
+      environment:
+         - REDIS_URL=redis://redis:6379
+         - NODE_ENV=production
+      networks:
+         - suitcase-network
+      restart: always
+      volumes:
+         - engine-data:/app/data
+      healthcheck:
+         test: ['CMD-SHELL', 'bun --version || exit 1']
+         interval: 30s
+         timeout: 10s
+         retries: 3
+      deploy:
+         resources:
+            limits:
+               cpus: '1'
+               memory: 2G
+            reservations:
+               cpus: '0.5'
+               memory: 512M
+
+   websocket:
+      build:
+         context: .
+         dockerfile: ./apps/websocket/Dockerfile
+      container_name: turbo-suitcase-websocket
+      depends_on:
+         redis:
+            condition: service_healthy
+      environment:
+         - REDIS_URL=redis://redis:6379
+      ports:
+         - '3003:3003'
+      networks:
+         - suitcase-network
+      restart: always
+      healthcheck:
+         test: ['CMD-SHELL', 'bun --version || exit 1']
+         interval: 30s
+         timeout: 10s
+         retries: 3
+      deploy:
+         resources:
+            limits:
+               cpus: '1'
+               memory: 1G
+            reservations:
+               cpus: '0.5'
+               memory: 512M
+   
+
+networks:
+   suitcase-network:
+      driver: bridge
+
+volumes:
+   redis-data:
+   engine-data:

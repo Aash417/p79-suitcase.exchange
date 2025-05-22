@@ -1,36 +1,29 @@
 {
-  "name": "suitcase-exchange",
-  "version": "1.0.0",
-  "description": "Suitcase Exchange - Trading Platform",
+  "name": "suitcase.exchange",
   "private": true,
   "scripts": {
-    "dev": "concurrently --names \"API,ENGINE,WEBSOCKET,WEB\" --prefix-colors \"red,blue,green,magenta\" \"cd api && bun run dev\" \"cd engine && bun run dev\" \"cd websocket && bun run dev\" \"cd web && bun run dev\"",
-    "format": "bun run format:api && bun run format:engine && bun run format:websocket && bun run format:web",
-    "format:api": "cd api && bun run format",
-    "format:engine": "cd engine && bun run format",
-    "format:websocket": "cd websocket && bun run format",
-    "format:web": "cd web && bun run format",
-    "build:web": "cd web && bun run build",
-    "start:web": "cd web && bun run start",
-    "lint:web": "cd web && bun run lint"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:restart": "docker compose restart"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "typescript": "5.8.2"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.8",
   "workspaces": [
-    "api",
-    "engine",
-    "websocket",
-    "web"
-  ],
-  "keywords": [
-    "trading",
-    "exchange",
-    "crypto",
-    "orderbook",
-    "websocket",
-    "api"
-  ],
-  "author": "",
-  "license": "ISC"
+    "apps/*",
+    "packages/*"
+  ]
 }

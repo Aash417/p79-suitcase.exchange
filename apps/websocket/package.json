@@ -1,0 +1,17 @@
+{
+  "name": "websocket",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "prod": "bun run src/index.ts",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "redis": "^4.7.0",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.10"
+  }
+}
