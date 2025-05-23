@@ -10,15 +10,16 @@ import {
 import { getTickers } from '@/lib/http-clients';
 import { formatPrice, formatVolume } from '@/lib/utils';
 import Link from 'next/link';
+
 export default async function Markets() {
    const tickerData = await getTickers();
 
    return (
-      <div className="w-full p-6">
+      <div className="w-full p-2">
          <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
             <div className="flex flex-col flex-1 gap-8">
-               <div className="flex flex-col mx-auto w-full max-w-7xl flex-1 gap-4 px-3 sm:px-6">
-                  <div className="flex flex-col gap-4">
+               <div className="flex flex-col mx-auto w-full max-w-7xl flex-1 gap-4 px-3 sm:px-3">
+                  <div className="flex flex-col">
                      {/* upper analytics */}
                      <div className=""></div>
 

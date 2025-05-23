@@ -1,10 +1,15 @@
+import { auth } from '@/lib/auth';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default function Page() {
+export default async function Page() {
    WebSocketManager.getInstance();
+   const session = await auth.api.getSession({
+      headers: await headers()
+   });
 
    return (
       <div className="bg-gradient-to-b from-[#101212] relative to-[#08201D]">
@@ -31,7 +36,7 @@ export default function Page() {
 
                   <div className="lg:flex lg:items-center lg:justify-end lg:space-x-6 sm:ml-auto">
                      <Link
-                        href="/markets"
+                        href={session ? '/markets' : '/auth'}
                         title=""
                         className="inline-flex items-center justify-center px-3 sm:px-5 py-2.5 text-sm sm:text-base font-semibold transition-all duration-200 text-white bg-white/20 hover:bg-white/40 focus:bg-white/40 rounded-lg"
                      >
@@ -87,7 +92,7 @@ export default function Page() {
                   </h1>
 
                   <Link
-                     href="/markets"
+                     href={session ? '/markets' : '/auth'}
                      title=""
                      className="inline-flex items-center px-6 py-4 mt-8 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg sm:mt-16 hover:bg-blue-700 focus:bg-blue-700"
                   >
