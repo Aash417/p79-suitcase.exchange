@@ -1,28 +1,19 @@
 'use client';
 
+import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuTrigger
+} from './ui/dropdown-menu';
 
 export default function Appbar() {
+   const { data: session } = authClient.useSession();
    const route = usePathname();
-   // const [isLocal, setIsLocal] = useState(false);
-   // const { apiBaseUrl, wsBaseUrl, setApiBaseUrl, setWsBaseUrl } = useApiStore();
-
-   // const handleSwitchChange = useCallback(
-   //    (checked: boolean) => {
-   //       setIsLocal(checked);
-   //       if (checked) {
-   //          setApiBaseUrl(API_URL);
-   //          setWsBaseUrl(WS_URL);
-   //       } else {
-   //          setApiBaseUrl(API_URL_BACKPACK);
-   //          setWsBaseUrl(WS_URL_BACKPACK);
-   //       }
-   //       console.log('API URL:', apiBaseUrl);
-   //       console.log('WS URL:', wsBaseUrl);
-   //    },
-   //    [setApiBaseUrl, setWsBaseUrl, apiBaseUrl, wsBaseUrl]
-   // );
+   const router = useRouter();
 
    return (
       <div className="relative flex h-14 w-full flex-row justify-between">
@@ -45,20 +36,42 @@ export default function Appbar() {
                Trade
             </div>
          </div>
+
          <div className="flex items-center pr-4">
-            {/* <div className="flex items-center space-x-2">
-               <Switch
-                  id="local-backend"
-                  checked={isLocal}
-                  onCheckedChange={handleSwitchChange}
-               />
-               <label
-                  htmlFor="local-backend"
-                  className="text-sm text-zinc-400 cursor-pointer peer-checked:text-zinc-100 transition-colors"
-               >
-                  Backend
-               </label>
-            </div> */}
+            <div className="flex items-center space-x-2">
+               <DropdownMenu>
+                  <DropdownMenuTrigger className="cursor-pointer">
+                     <div className="size-8 mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
+                        <img
+                           src={session?.user?.image ?? '/user.png'}
+                           alt=""
+                           className="object-cover w-full h-full"
+                        />
+                     </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                     align="end"
+                     side="bottom"
+                     sideOffset={10}
+                     className="bg-base-background-l2 border-[#9DA3B3]"
+                  >
+                     <DropdownMenuItem
+                        className="cursor-pointer text-center"
+                        onClick={() =>
+                           authClient.signOut({
+                              fetchOptions: {
+                                 onSuccess: () => {
+                                    router.push('/');
+                                 }
+                              }
+                           })
+                        }
+                     >
+                        Logout
+                     </DropdownMenuItem>
+                  </DropdownMenuContent>
+               </DropdownMenu>
+            </div>
          </div>
       </div>
    );

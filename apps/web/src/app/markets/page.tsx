@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import {
    Table,
    TableBody,
@@ -7,12 +6,23 @@ import {
    TableHeader,
    TableRow
 } from '@/components/ui/table';
+import { auth } from '@/lib/auth';
 import { getTickers } from '@/lib/http-clients';
 import { formatPrice, formatVolume } from '@/lib/utils';
+import { headers } from 'next/headers';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default async function Markets() {
    const tickerData = await getTickers();
+
+   const session = await auth.api.getSession({
+      headers: await headers()
+   });
+
+   if (!session) {
+      redirect('/auth');
+   }
 
    return (
       <div className="w-full p-2">

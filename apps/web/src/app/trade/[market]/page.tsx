@@ -6,7 +6,10 @@ import Orderbook from '@/features/orderbook/orderbook';
 import SwapForm from '@/features/swapUI/swap-form';
 import Ticker from '@/features/ticker/ticker';
 import Trades from '@/features/trades/trades';
+import { auth } from '@/lib/auth';
 import { getDepth, getKlines, getTicker, getTrades } from '@/lib/http-clients';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function Market({
    params
@@ -16,6 +19,14 @@ export default async function Market({
    const depthData = await getDepth(market);
    const ticker = await getTicker(market);
    const trades = await getTrades(market);
+
+   const session = await auth.api.getSession({
+      headers: await headers()
+   });
+
+   if (!session) {
+      redirect('/auth');
+   }
 
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
