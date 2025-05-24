@@ -1,5 +1,6 @@
 import { QueryProvider } from '@/components/query-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
@@ -27,7 +28,10 @@ export default function RootLayout({
    return (
       <html lang="en">
          <body className={`${geistSans.variable} ${geistMono.variable}`}>
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+               {children}
+               <ReactQueryDevtools initialIsOpen={false} />
+            </QueryProvider>
             <Toaster position="top-center" />
             <Analytics />
          </body>

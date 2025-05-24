@@ -1,9 +1,9 @@
 import { API_URL } from '@/lib/env';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
-import Balances from './balances';
-import OpenOrders from './open-orders';
+import { Balances } from './balances';
+import { OpenOrders } from './open-orders';
 
-export default function Dashboard() {
+export function Dashboard() {
    return (
       <div
          className={`w-full max-w-screen-xl mx-auto p-4 ${

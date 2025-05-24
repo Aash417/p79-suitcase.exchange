@@ -17,7 +17,7 @@ import { API_URL } from '@/lib/env';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
-export default function DepositForm() {
+export function DepositForm() {
    const [quantity, setQuantity] = useState(''); // for calculations
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [asset, setAsset] = useState('USDC'); // for calculations

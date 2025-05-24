@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { WS_URL } from '@/lib/env';
 
 type Callback = {
    id: string;
-   callback: (data: any) => void;
+   callback: (data: unknown) => void;
 };
 type CallbackMap = Record<string, Callback[]>;
 
 export class WebSocketManager {
    private static instance: WebSocketManager;
    private readonly ws: WebSocket;
-   private bufferedMessages: any[] = [];
+   private bufferedMessages: unknown[] = [];
    private callbacks: CallbackMap = {};
    private messageId = 1;
    private initialized = false;

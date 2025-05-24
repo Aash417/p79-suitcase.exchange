@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 import {
    Table,
    TableBody,
@@ -7,14 +9,13 @@ import {
    TableRow
 } from '@/components/ui/table';
 import { auth } from '@/lib/auth';
-import { getTickers } from '@/lib/http-clients';
-import { formatPrice, formatVolume } from '@/lib/utils';
+import { formatPrice, formatVolume, getTickers } from '@/lib/utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function Markets() {
-   const tickerData = await getTickers();
+   const tickersData = await getTickers();
 
    const session = await auth.api.getSession({
       headers: await headers()
@@ -84,77 +85,79 @@ export default async function Markets() {
                               </TableHeader>
 
                               <TableBody className="gap-2 divide-y">
-                                 {tickerData.map((crypto: any, idx: number) => (
-                                    <TableRow
-                                       key={idx + 1}
-                                       className="border-b border-[#1C1F26] hover:bg-[#1C1F26] transition-colors"
-                                    >
-                                       <TableCell className="py-4">
-                                          <Link
-                                             href={`/trade/${crypto.symbol}`}
-                                          >
-                                             <div className="flex items-center">
-                                                <div className="size-8 mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
-                                                   <img
-                                                      src={crypto.imageUrl}
-                                                      alt=""
-                                                      className="object-cover w-full h-full"
-                                                   />
-                                                </div>
-                                                <div>
-                                                   <div className="font-semibold text-[#F7F8F8]">
-                                                      {crypto.name}
-                                                   </div>
-                                                   <div className="text-[#9DA3B3] text-sm">
-                                                      {
-                                                         crypto.symbol.split(
-                                                            '_'
-                                                         )[0]
-                                                      }
-                                                      /
-                                                      {
-                                                         crypto.symbol.split(
-                                                            '_'
-                                                         )[1]
-                                                      }
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </Link>
-                                       </TableCell>
-                                       <TableCell className="text-right font-medium text-[#F7F8F8]">
-                                          {Number(crypto.price) > 0.1 ? (
-                                             formatPrice(crypto.price)
-                                          ) : (
-                                             <span>$ {crypto.price}</span>
-                                          )}
-                                       </TableCell>
-                                       <TableCell className="text-right text-[#9DA3B3]">
-                                          ${formatVolume(crypto.volume)}
-                                       </TableCell>
-                                       <TableCell
-                                          className={`${
-                                             crypto.change > 0
-                                                ? 'text-[#00C278]'
-                                                : 'text-[#FF3B3B]'
-                                          } text-right font-medium`}
+                                 {tickersData.map(
+                                    (crypto: any, idx: number) => (
+                                       <TableRow
+                                          key={idx + 1}
+                                          className="border-b border-[#1C1F26] hover:bg-[#1C1F26] transition-colors"
                                        >
-                                          {crypto.change > 0 ? '+' : ''}
-                                          {crypto.change}%
-                                       </TableCell>
-                                       <TableCell className="text-right pr-6">
-                                          {crypto.change > 0 ? (
-                                             <span className="text-[#00C278]">
-                                                ↑
-                                             </span>
-                                          ) : (
-                                             <span className="text-[#FF3B3B]">
-                                                ↓
-                                             </span>
-                                          )}
-                                       </TableCell>
-                                    </TableRow>
-                                 ))}
+                                          <TableCell className="py-4">
+                                             <Link
+                                                href={`/trade/${crypto.symbol}`}
+                                             >
+                                                <div className="flex items-center">
+                                                   <div className="size-8 mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
+                                                      <img
+                                                         src={crypto.imageUrl}
+                                                         alt=""
+                                                         className="object-cover w-full h-full"
+                                                      />
+                                                   </div>
+                                                   <div>
+                                                      <div className="font-semibold text-[#F7F8F8]">
+                                                         {crypto.name}
+                                                      </div>
+                                                      <div className="text-[#9DA3B3] text-sm">
+                                                         {
+                                                            crypto.symbol.split(
+                                                               '_'
+                                                            )[0]
+                                                         }
+                                                         /
+                                                         {
+                                                            crypto.symbol.split(
+                                                               '_'
+                                                            )[1]
+                                                         }
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </Link>
+                                          </TableCell>
+                                          <TableCell className="text-right font-medium text-[#F7F8F8]">
+                                             {Number(crypto.price) > 0.1 ? (
+                                                formatPrice(crypto.price)
+                                             ) : (
+                                                <span>$ {crypto.price}</span>
+                                             )}
+                                          </TableCell>
+                                          <TableCell className="text-right text-[#9DA3B3]">
+                                             ${formatVolume(crypto.volume)}
+                                          </TableCell>
+                                          <TableCell
+                                             className={`${
+                                                crypto.change > 0
+                                                   ? 'text-[#00C278]'
+                                                   : 'text-[#FF3B3B]'
+                                             } text-right font-medium`}
+                                          >
+                                             {crypto.change > 0 ? '+' : ''}
+                                             {crypto.change}%
+                                          </TableCell>
+                                          <TableCell className="text-right pr-6">
+                                             {crypto.change > 0 ? (
+                                                <span className="text-[#00C278]">
+                                                   ↑
+                                                </span>
+                                             ) : (
+                                                <span className="text-[#FF3B3B]">
+                                                   ↓
+                                                </span>
+                                             )}
+                                          </TableCell>
+                                       </TableRow>
+                                    )
+                                 )}
                               </TableBody>
                            </Table>
                         </div>

@@ -3,10 +3,10 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetUserBalances } from '@/hooks';
 
-export default function Balances() {
+export function Balances() {
    const { data, isLoading, error } = useGetUserBalances();
 
-   let balances: any[] = [];
+   let balances: [string, { available: number; locked: number }][] = [];
    if (data) {
       balances = Object.entries(data);
    }

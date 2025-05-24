@@ -10,14 +10,12 @@ import { useExecuteOrder, useGetUserBalances } from '@/hooks';
 import { SYMBOLS_MAP } from '@/lib/constants';
 import { API_URL } from '@/lib/env';
 import { formatComma } from '@/lib/utils';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-type Props = {
-   market: string;
-};
-
-export default function SwapForm({ market }: Readonly<Props>) {
+export function SwapForm() {
+   const market = useParams<{ market: string }>().market || '';
    const [activeTab, setActiveTab] = useState('buy');
    const [price, setPrice] = useState('');
    const [priceFormatted, setPriceFormatted] = useState('');

@@ -4,7 +4,7 @@ import { useGetUserOpenOrders } from '@/hooks';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useParams } from 'next/navigation';
 
-export default function OpenOrders() {
+export function OpenOrders() {
    const { market } = useParams<{ market: string }>();
    const { data, isLoading, error } = useGetUserOpenOrders(market);
 

@@ -1,10 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { MessageLoading } from '@/components/ui/message-loading';
+import { useGetTicker } from '@/hooks';
 import { type Ticker } from '@/lib/types';
 import { formatComma, formatPrice } from '@/lib/utils';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 type TickerUpdate = {
@@ -20,13 +22,15 @@ type TickerUpdate = {
 };
 
 type Props = {
-   ticker?: Ticker & { change: string; name: string; imageUrl: string };
+   ticker?: Ticker & { [key: string]: string };
 };
 
-export default function Ticker({ ticker }: Readonly<Props>) {
+export function Ticker() {
+   const market = useParams<{ market: string }>().market || '';
+   const { data: ticker, isLoading } = useGetTicker(market);
+
    const [newTicker, setNewTicker] = useState<Props['ticker']>();
    const [isPriceUp, setIsPriceUp] = useState(false);
-   const market = ticker?.symbol;
 
    useEffect(() => {
       setNewTicker(ticker);
@@ -75,10 +79,14 @@ export default function Ticker({ ticker }: Readonly<Props>) {
          });
          wsManager.deRegisterCallback('ticker', callbackId);
       };
-   }, []);
+   }, [market, ticker, newTicker]);
 
-   if (!newTicker) {
-      return <div className="text-white">Loading...</div>;
+   if (isLoading || !newTicker) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <MessageLoading />
+         </div>
+      );
    }
 
    return (

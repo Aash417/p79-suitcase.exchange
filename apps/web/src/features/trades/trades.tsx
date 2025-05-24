@@ -1,20 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
+import { MessageLoading } from '@/components/ui/message-loading';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useGetTrades } from '@/hooks';
 import { type Trades } from '@/lib/types';
 import { WebSocketManager } from '@/lib/websocket-manager';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-type Props = { trades: Trades[] };
-
-export default function Trades({ trades }: Readonly<Props>) {
+export function Trades() {
    const [newTrades, setNewTrades] = useState<Trades[]>([]);
    const { market } = useParams<{ market: string }>();
+   const { data: trades, isLoading } = useGetTrades(market);
 
    useEffect(() => {
-      setNewTrades(trades);
+      setNewTrades(trades ?? []);
 
       function handleTradeUpdate(data: Trades) {
          const newTrade = {
@@ -44,10 +44,14 @@ export default function Trades({ trades }: Readonly<Props>) {
          });
          wsManager.deRegisterCallback('trade', callbackId);
       };
-   }, []);
+   }, [market, trades]);
 
-   if (!newTrades) {
-      return <div className="text-white">Loading...</div>;
+   if (isLoading) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <MessageLoading />
+         </div>
+      );
    }
 
    return (

@@ -87,7 +87,7 @@
       "asks": [
         {
           "price": 11000,
-          "quantity": 5,
+          "quantity": 10,
           "orderId": "0196948a-700c-7000-b380-d7ea901df201",
           "filled": 0,
           "side": "sell",
@@ -174,7 +174,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 127
+      "lastTradeId": 125
     },
     {
       "baseAsset": "PEPE",
@@ -962,17 +962,17 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
+        },
+        {
+          "userId": "47854",
+          "orderId": "b35ec0d7-4b3c-44b7-a29f-f698a719e07b",
+          "side": "buy",
+          "price": 11000,
+          "quantity": 4,
+          "filled": 0
         }
       ],
       "asks": [
-        {
-          "price": 11000,
-          "quantity": 1,
-          "orderId": "0196948a-700c-7000-b380-d7ea901df201",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
         {
           "price": 11010,
           "quantity": 1,
@@ -1054,7 +1054,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 125
+      "lastTradeId": 127
     },
     {
       "baseAsset": "SHIB",
@@ -1779,12 +1779,12 @@
       "5",
       {
         "USDC": {
-          "available": 1055000,
+          "available": 1011000,
           "locked": 500000
         },
         "SOL": {
           "available": 1000000,
-          "locked": 499995
+          "locked": 500000
         },
         "PEPE": {
           "available": 1000000,
@@ -1804,7 +1804,7 @@
         },
         "LINK": {
           "available": 1000000,
-          "locked": 500000
+          "locked": 499999
         },
         "SHIB": {
           "available": 1000000,
@@ -1828,11 +1828,11 @@
       "47854",
       {
         "USDC": {
-          "available": 945000,
-          "locked": 500000
+          "available": 1000000,
+          "locked": 544000
         },
         "SOL": {
-          "available": 1000005,
+          "available": 1000000,
           "locked": 500000
         },
         "PEPE": {
@@ -1852,7 +1852,7 @@
           "locked": 500000
         },
         "LINK": {
-          "available": 1000000,
+          "available": 1000001,
           "locked": 500000
         },
         "SHIB": {

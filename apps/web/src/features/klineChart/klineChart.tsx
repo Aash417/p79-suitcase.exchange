@@ -1,15 +1,15 @@
 'use client';
 
+import { MessageLoading } from '@/components/ui/message-loading';
 import { ChartManager } from '@/features/klineChart/utils/chart-manager';
+import { useGetKline } from '@/hooks';
+import { useParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { KLine } from './utils/types';
 
-type Props = {
-   market: string;
-   klineData: KLine[];
-};
+export function KlineChart() {
+   const market = useParams<{ market: string }>().market || '';
+   const { data: klineData, isLoading } = useGetKline(market);
 
-export default function KlineChart({ market, klineData }: Readonly<Props>) {
    const chartRef = useRef<HTMLDivElement>(null);
    const chartManagerRef = useRef<ChartManager>(null);
 
@@ -22,7 +22,7 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
 
             const chartManager = new ChartManager(
                chartRef.current,
-               klineData
+               (klineData ?? [])
                   .map((x) => ({
                      close: parseFloat(x.close),
                      high: parseFloat(x.high),
@@ -35,6 +35,7 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
             chartManagerRef.current = chartManager;
          }
       };
+
       init();
 
       return () => {
@@ -45,14 +46,22 @@ export default function KlineChart({ market, klineData }: Readonly<Props>) {
       };
    }, [market, chartRef, klineData]);
 
+   if (isLoading) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <MessageLoading />
+         </div>
+      );
+   }
+
    return (
       <div
          ref={chartRef}
          style={{
             display: 'block',
-            height: '100%', // Full height
-            width: '100%', // Full width
-            minHeight: '400px' // Minimum height for better visibility}}
+            height: '100%',
+            width: '100%',
+            minHeight: '400px'
          }}
       ></div>
    );

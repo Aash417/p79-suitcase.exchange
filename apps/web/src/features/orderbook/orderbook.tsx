@@ -1,32 +1,28 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { Ticker } from '@/lib/types';
+import { MessageLoading } from '@/components/ui/message-loading';
+import { useGetDepth, useGetTicker } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { AskTable } from './components/ask-table';
 import { BidTable } from './components/bid-table';
 import { LastTradePrice } from './components/last-trade-price';
 import { TableHeader } from './components/table-header';
-import { Depth } from './utils/types';
 
-type Props = {
-   market: string;
-   ticker?: Ticker & { change: string; name: string; imageUrl: string };
-   depthData: Depth;
-};
+export function Orderbook() {
+   const market = useParams<{ market: string }>().market || '';
+   const { data: depthData, isLoading } = useGetDepth(market);
+   const { data: ticker } = useGetTicker(market);
 
-export default function Orderbook({
-   market,
-   depthData,
-   ticker
-}: Readonly<Props>) {
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
 
    useEffect(() => {
-      setBids(depthData.bids);
-      setAsks(depthData.asks);
+      if (depthData) {
+         setBids(depthData.bids);
+         setAsks(depthData.asks);
+      }
 
       function handleDepthUpdate(data: {
          bids: [string, string][];
@@ -54,10 +50,18 @@ export default function Orderbook({
          });
          wsManager.deRegisterCallback('depth', `depth.1000ms.${market}`);
       };
-   }, []);
+   }, [depthData, ticker, market]);
 
    const topBids = useMemo(() => bids.slice(0, 10), [bids]);
    const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
+
+   if (isLoading) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <MessageLoading />
+         </div>
+      );
+   }
 
    return (
       <div className="flex flex-col h-full grow overflow-x-hidden">
