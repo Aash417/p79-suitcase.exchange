@@ -157,7 +157,8 @@ export class BalanceService {
 
    addNewUser(userId: string, clientId: string) {
       if (this.balances.has(userId)) {
-         throw new Error('USER_ALREADY_EXISTS');
+         this.marketDataService.sendUserAlreadyExists(clientId, userId);
+         return;
       }
       // Initialize user balance with default values
       const initialBalance: UserBalance = {
@@ -166,7 +167,6 @@ export class BalanceService {
 
       this.balances.set(userId, initialBalance);
       this.marketDataService.sendAddNewUserSuccess(clientId, userId);
-      console.log(`Added new user with ID: ${userId}`);
    }
 
    private getUserBalance(userId: string): UserBalance {

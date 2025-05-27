@@ -1,17 +1,23 @@
 'use client';
 
+import { MessageLoading } from '@/components/ui/message-loading';
 import { useGetUserOpenOrders } from '@/hooks';
+import { authClient } from '@/lib/auth-client';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useParams } from 'next/navigation';
 
 export function OpenOrders() {
    const { market } = useParams<{ market: string }>();
-   const { data, isLoading, error } = useGetUserOpenOrders(market);
+   const { data: session } = authClient.useSession();
+   const { data, isLoading, error } = useGetUserOpenOrders(
+      market,
+      session?.user.id ?? '0'
+   );
 
    if (isLoading)
       return (
-         <div className="flex justify-center items-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-zinc-400"></div>
+         <div className="flex justify-center items-center h-[40vh]">
+            <MessageLoading />
          </div>
       );
 

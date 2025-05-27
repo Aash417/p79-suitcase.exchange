@@ -82,12 +82,20 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
+        },
+        {
+          "userId": "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
+          "orderId": "605ec0c6-9f33-4791-83b8-c9b7b7db9044",
+          "side": "buy",
+          "price": 5000,
+          "quantity": 5,
+          "filled": 0
         }
       ],
       "asks": [
         {
           "price": 11000,
-          "quantity": 10,
+          "quantity": 8,
           "orderId": "0196948a-700c-7000-b380-d7ea901df201",
           "filled": 0,
           "side": "sell",
@@ -174,7 +182,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 125
+      "lastTradeId": 128
     },
     {
       "baseAsset": "PEPE",
@@ -1784,7 +1792,7 @@
         },
         "SOL": {
           "available": 1000000,
-          "locked": 500000
+          "locked": 499998
         },
         "PEPE": {
           "available": 1000000,
@@ -1828,7 +1836,7 @@
       "47854",
       {
         "USDC": {
-          "available": 1050000,
+          "available": 1000000,
           "locked": 500000
         },
         "SOL": {
@@ -1877,8 +1885,8 @@
       "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
       {
         "USDC": {
-          "available": 100000,
-          "locked": 0
+          "available": 435000,
+          "locked": 43000
         }
       }
     ],
@@ -1886,7 +1894,7 @@
       "EY7QFgi9xF4fQofzIRN3izMOQfboR5lt",
       {
         "USDC": {
-          "available": 100000,
+          "available": 500000,
           "locked": 0
         }
       }

@@ -60,7 +60,6 @@ export class Engine {
       clientId: string;
       message: MessageFromApi;
    }) {
-      console.log(`Processing message from client ${clientId}:`, message.type);
       try {
          switch (message.type) {
             case CREATE_ORDER:
@@ -85,7 +84,6 @@ export class Engine {
                this.orderService.getUserOpenOrders(message.data, clientId);
                break;
             case ADD_NEW_USER: {
-               console.log(`Adding new user: ${message.data.userId}`);
                this.balanceService.addNewUser(message.data.userId, clientId);
                break;
             }

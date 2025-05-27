@@ -12,15 +12,17 @@ import {
    SelectValue
 } from '@/components/ui/select';
 import { useDepositAsset } from '@/hooks';
+import { authClient } from '@/lib/auth-client';
 import { SYMBOLS } from '@/lib/constants';
 import { API_URL } from '@/lib/env';
 import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
 export function DepositForm() {
+   const { data: session } = authClient.useSession();
    const [quantity, setQuantity] = useState(''); // for calculations
    const [quantityFormatted, setQuantityFormatted] = useState('');
-   const [asset, setAsset] = useState('USDC'); // for calculations
+   const [asset, setAsset] = useState('USDC');
    const { mutate } = useDepositAsset();
 
    function handleQuantityChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -48,7 +50,7 @@ export function DepositForm() {
       const data = {
          asset,
          quantity: String(Number(quantity) * 100),
-         userId: '47854'
+         userId: session?.user.id ?? '0'
       };
 
       try {

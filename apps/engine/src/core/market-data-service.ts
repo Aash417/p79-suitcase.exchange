@@ -95,6 +95,13 @@ export class MarketDataService {
       });
    }
 
+   sendUserAlreadyExists(clientId: string, userId: string) {
+      RedisPublisher.getInstance().sendToClient(clientId, {
+         type: 'USER_ALREADY_EXISTS',
+         payload: { userId }
+      });
+   }
+
    // Send messages to WebSocket
    publishDepthUpdate(
       market: string,

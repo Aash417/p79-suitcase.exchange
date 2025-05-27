@@ -37,7 +37,7 @@ export function useExecuteOrder(market: string) {
       },
       onSuccess: () => {
          toast.success('Order created successfully', { duration: 1300 });
-         queryClient.invalidateQueries({ queryKey: ['UserBalance'] });
+         queryClient.invalidateQueries({ queryKey: ['userBalance'] });
          queryClient.invalidateQueries({ queryKey: [market] });
       },
       onError: (error) => {
@@ -105,7 +105,7 @@ export function useGetUserBalances(userId: string) {
    });
 }
 
-export function useGetUserOpenOrders(market: string) {
+export function useGetUserOpenOrders(market: string, userId: string) {
    return useQuery<
       {
          id: string;
@@ -115,7 +115,7 @@ export function useGetUserOpenOrders(market: string) {
       }[]
    >({
       queryKey: [market],
-      queryFn: () => fetchUserOpenOrders(market),
+      queryFn: () => fetchUserOpenOrders(market, userId),
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30000
@@ -206,9 +206,9 @@ export async function fetchUserBalance(userId: string) {
    return data;
 }
 
-export async function fetchUserOpenOrders(market: string) {
+export async function fetchUserOpenOrders(market: string, userId: string) {
    const response = await fetch(
-      `${API_URL}/order/open?symbol=${market}&userId=47854`
+      `${API_URL}/order/open?symbol=${market}&userId=${userId}`
    );
    if (!response.ok) {
       throw new Error('Failed to fetch user balances');

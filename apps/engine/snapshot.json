@@ -1882,6 +1882,24 @@
                "locked": 500000
             }
          }
+      ],
+      [
+         "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
+         {
+            "USDC": {
+               "available": 500000,
+               "locked": 0
+            }
+         }
+      ],
+      [
+         "EY7QFgi9xF4fQofzIRN3izMOQfboR5lt",
+         {
+            "USDC": {
+               "available": 500000,
+               "locked": 0
+            }
+         }
       ]
    ]
 }
