@@ -23,7 +23,7 @@ export default async function Market() {
 
    await queryClient.prefetchQuery({
       queryKey: ['userBalance'],
-      queryFn: fetchUserBalance
+      queryFn: () => fetchUserBalance(session.user.id)
    });
 
    const depthPrefetchPromises = SYMBOLS.map(({ symbol }) =>

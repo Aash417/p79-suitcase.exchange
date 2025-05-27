@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useExecuteOrder, useGetUserBalances } from '@/hooks';
+import { authClient } from '@/lib/auth-client';
 import { SYMBOLS_MAP } from '@/lib/constants';
 import { API_URL } from '@/lib/env';
 import { formatComma } from '@/lib/utils';
@@ -16,6 +17,8 @@ import { toast } from 'sonner';
 
 export function SwapForm() {
    const market = useParams<{ market: string }>().market || '';
+   const { data: session } = authClient.useSession();
+
    const [activeTab, setActiveTab] = useState('buy');
    const [price, setPrice] = useState('');
    const [priceFormatted, setPriceFormatted] = useState('');
@@ -23,7 +26,9 @@ export function SwapForm() {
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
    const { mutate } = useExecuteOrder(market);
-   const { data: balance, isLoading } = useGetUserBalances();
+   const { data: balance, isLoading } = useGetUserBalances(
+      session?.user.id ?? '0'
+   );
 
    const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {
@@ -60,7 +65,7 @@ export function SwapForm() {
          price: String(Number(price) * 100),
          quantity,
          side: activeTab,
-         userId: '47854'
+         userId: session?.user.id ?? '0'
       };
 
       try {

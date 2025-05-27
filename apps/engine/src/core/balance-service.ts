@@ -155,6 +155,20 @@ export class BalanceService {
       console.log(`On-ramped ${quantity} ${asset} for user ${userId}`);
    }
 
+   addNewUser(userId: string, clientId: string) {
+      if (this.balances.has(userId)) {
+         throw new Error('USER_ALREADY_EXISTS');
+      }
+      // Initialize user balance with default values
+      const initialBalance: UserBalance = {
+         [QUOTE_ASSET]: { available: 100000, locked: 0 }
+      };
+
+      this.balances.set(userId, initialBalance);
+      this.marketDataService.sendAddNewUserSuccess(clientId, userId);
+      console.log(`Added new user with ID: ${userId}`);
+   }
+
    private getUserBalance(userId: string): UserBalance {
       if (!this.balances.has(userId)) throw new Error('USER_NOT_FOUND');
 

@@ -5,7 +5,6 @@ import { RedisPublisher } from './redis-publisher';
 export class MarketDataService {
    constructor(private orderbooks: OrderBookService[]) {}
 
-   // Add method to update orderbooks reference
    updateOrderbooks(orderbooks: OrderBookService[]) {
       this.orderbooks = orderbooks;
    }
@@ -87,6 +86,13 @@ export class MarketDataService {
 
    sendUserBalance(clientId: string, data) {
       RedisPublisher.getInstance().sendToClient(clientId, data);
+   }
+
+   sendAddNewUserSuccess(clientId: string, userId: string) {
+      RedisPublisher.getInstance().sendToClient(clientId, {
+         type: 'ADD_NEW_USER_SUCCESS',
+         payload: { userId }
+      });
    }
 
    // Send messages to WebSocket

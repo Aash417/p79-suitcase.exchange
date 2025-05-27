@@ -52,3 +52,17 @@ export async function getTickers() {
 
    return tickersData;
 }
+
+export async function addNewUser(userId: string) {
+   const res = await fetch(`${API_URL}/user/add`, {
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId })
+   });
+
+   if (!res.ok) throw new Error('Failed to add new user');
+
+   return res.json();
+}

@@ -7,6 +7,7 @@ import orderRouter from './routes/order';
 import tickerRouter from './routes/ticker';
 import tickersRouter from './routes/tickers';
 import tradesRouter from './routes/trades';
+import userRouter from './routes/user';
 
 const app = new Hono();
 
@@ -25,6 +26,7 @@ app.route('/api/v1/ticker', tickerRouter);
 app.route('/api/v1/tickers', tickersRouter);
 app.route('/api/v1/capital', capitalRouter);
 app.route('/api/v1/trades', tradesRouter);
+app.route('/api/v1/user', userRouter);
 
 app.get('/', (c) => {
    return c.text('Hello Hono!');

@@ -9,21 +9,22 @@ import {
    TableRow
 } from '@/components/ui/table';
 import { auth } from '@/lib/auth';
-import { formatPrice, formatVolume, getTickers } from '@/lib/utils';
+import { addNewUser, formatPrice, formatVolume, getTickers } from '@/lib/utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function Markets() {
-   const tickersData = await getTickers();
-
    const session = await auth.api.getSession({
       headers: await headers()
    });
+   if (!session) redirect('/auth');
 
-   if (!session) {
-      redirect('/auth');
-   }
+   const userId = session?.user.id;
+   console.log('userId :', userId);
+   await addNewUser(userId);
+
+   const tickersData = await getTickers();
 
    return (
       <div className="w-full p-2">

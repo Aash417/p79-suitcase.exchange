@@ -2,9 +2,13 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetUserBalances } from '@/hooks';
+import { authClient } from '@/lib/auth-client';
 
 export function Balances() {
-   const { data, isLoading, error } = useGetUserBalances();
+   const { data: session } = authClient.useSession();
+   const { data, isLoading, error } = useGetUserBalances(
+      session?.user.id ?? '0'
+   );
 
    let balances: [string, { available: number; locked: number }][] = [];
    if (data) {

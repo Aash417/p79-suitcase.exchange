@@ -95,10 +95,10 @@ type userBalRes = {
    };
 };
 
-export function useGetUserBalances() {
+export function useGetUserBalances(userId: string) {
    return useQuery<userBalRes>({
       queryKey: ['userBalance'],
-      queryFn: fetchUserBalance,
+      queryFn: () => fetchUserBalance(userId),
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30000 // Consider data fresh for 30 seconds
@@ -198,8 +198,8 @@ export function useGetTrades(market: string) {
 
 //helpers
 
-export async function fetchUserBalance() {
-   const response = await fetch(`${API_URL}/capital`);
+export async function fetchUserBalance(userId: string) {
+   const response = await fetch(`${API_URL}/capital?userId=${userId}`);
    if (!response.ok) throw new Error('Failed to fetch user balances');
 
    const data = await response.json();

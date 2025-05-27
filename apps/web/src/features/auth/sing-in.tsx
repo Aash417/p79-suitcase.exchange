@@ -33,7 +33,7 @@ export default function SignIn() {
                      }}
                   >
                      <FcGoogle className="mr-2 size-5" />
-                     Login with Google
+                     Signin with Google
                   </Button>
                </div>
             </CardContent>

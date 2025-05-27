@@ -1,4 +1,5 @@
 import {
+   ADD_NEW_USER,
    CANCEL_ORDER,
    CREATE_ORDER,
    GET_CAPITAL,
@@ -59,6 +60,7 @@ export class Engine {
       clientId: string;
       message: MessageFromApi;
    }) {
+      console.log(`Processing message from client ${clientId}:`, message.type);
       try {
          switch (message.type) {
             case CREATE_ORDER:
@@ -82,6 +84,11 @@ export class Engine {
             case GET_OPEN_ORDERS:
                this.orderService.getUserOpenOrders(message.data, clientId);
                break;
+            case ADD_NEW_USER: {
+               console.log(`Adding new user: ${message.data.userId}`);
+               this.balanceService.addNewUser(message.data.userId, clientId);
+               break;
+            }
          }
       } catch (error) {
          this.errorService.handleError(error, clientId);

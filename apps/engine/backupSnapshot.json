@@ -962,17 +962,17 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
-        },
-        {
-          "userId": "47854",
-          "orderId": "b35ec0d7-4b3c-44b7-a29f-f698a719e07b",
-          "side": "buy",
-          "price": 11000,
-          "quantity": 4,
-          "filled": 0
         }
       ],
       "asks": [
+        {
+          "price": 11000,
+          "quantity": 1,
+          "orderId": "0196948a-700c-7000-b380-d7ea901df201",
+          "filled": 0,
+          "side": "sell",
+          "userId": "5"
+        },
         {
           "price": 11010,
           "quantity": 1,
@@ -1054,7 +1054,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 127
+      "lastTradeId": 125
     },
     {
       "baseAsset": "SHIB",
@@ -1779,7 +1779,7 @@
       "5",
       {
         "USDC": {
-          "available": 1011000,
+          "available": 1000000,
           "locked": 500000
         },
         "SOL": {
@@ -1804,7 +1804,7 @@
         },
         "LINK": {
           "available": 1000000,
-          "locked": 499999
+          "locked": 500000
         },
         "SHIB": {
           "available": 1000000,
@@ -1828,8 +1828,8 @@
       "47854",
       {
         "USDC": {
-          "available": 1000000,
-          "locked": 544000
+          "available": 1050000,
+          "locked": 500000
         },
         "SOL": {
           "available": 1000000,
@@ -1852,7 +1852,7 @@
           "locked": 500000
         },
         "LINK": {
-          "available": 1000001,
+          "available": 1000000,
           "locked": 500000
         },
         "SHIB": {
@@ -1870,6 +1870,24 @@
         "TRUMP": {
           "available": 1000000,
           "locked": 500000
+        }
+      }
+    ],
+    [
+      "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
+      {
+        "USDC": {
+          "available": 100000,
+          "locked": 0
+        }
+      }
+    ],
+    [
+      "EY7QFgi9xF4fQofzIRN3izMOQfboR5lt",
+      {
+        "USDC": {
+          "available": 100000,
+          "locked": 0
         }
       }
     ]

@@ -6,6 +6,7 @@ export const ON_RAMP = 'ON_RAMP';
 export const GET_OPEN_ORDERS = 'GET_OPEN_ORDERS';
 export const GET_DEPTH = 'GET_DEPTH';
 export const GET_CAPITAL = 'GET_CAPITAL';
+export const ADD_NEW_USER = 'ADD_NEW_USER';
 
 export type MessageFromOrderbook =
    | {
@@ -91,6 +92,12 @@ export type MessageToEngine =
      }
    | {
         type: typeof GET_CAPITAL;
+        data: {
+           userId: string;
+        };
+     }
+   | {
+        type: typeof ADD_NEW_USER;
         data: {
            userId: string;
         };
