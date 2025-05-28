@@ -16,6 +16,8 @@ export default function Appbar() {
    const route = usePathname();
    const router = useRouter();
 
+   const name = session?.user?.name.split(' ')[0].charAt(0).toUpperCase();
+
    return (
       <div className="relative flex h-14 w-full flex-row justify-between">
          <div className="flex items-center flex-row">
@@ -43,11 +45,17 @@ export default function Appbar() {
                <DropdownMenu>
                   <DropdownMenuTrigger className="cursor-pointer">
                      <div className="size-8 mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
-                        <img
-                           src={session?.user?.image ?? '/user.png'}
-                           alt=""
-                           className="object-cover w-full h-full"
-                        />
+                        {name ? (
+                           <div className="flex items-center justify-center h-full w-full text-white">
+                              {name}
+                           </div>
+                        ) : (
+                           <img
+                              src={'/user.png'}
+                              alt=""
+                              className="object-cover w-full h-full"
+                           />
+                        )}
                      </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent

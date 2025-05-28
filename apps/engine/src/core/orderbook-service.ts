@@ -44,22 +44,29 @@ export class OrderBookService {
 
       const remainingQty = order.quantity - executedQty;
 
-      const updatedAsks = isBuy
-         ? affectedPrice
-         : remainingQty > 0
-           ? [[order.price, remainingQty]]
-           : [];
+      let updatedAsks: [number, number][] = [];
+      let updatedBids: [number, number][] = [];
 
-      const updatedBids = isBuy
-         ? remainingQty > 0
-            ? [[order.price, remainingQty]]
-            : []
-         : affectedPrice;
+      if (isBuy) {
+         updatedAsks = affectedPrice;
+         if (remainingQty > 0) {
+            updatedBids = [[order.price, remainingQty]];
+         } else {
+            updatedBids = [];
+         }
+      } else {
+         updatedBids = affectedPrice;
+         if (remainingQty > 0) {
+            updatedAsks = [[order.price, remainingQty]];
+         } else {
+            updatedAsks = [];
+         }
+      }
 
       const updatedDepth = {
          a: updatedAsks,
          b: updatedBids
-      } as { a: [number, number][]; b: [number, number][] };
+      };
 
       if (remainingQty > 0) {
          this.insertOrder({

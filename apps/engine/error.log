@@ -183,3 +183,11 @@
     "stack": "TypeError: undefined is not an object (evaluating 'balance[asset].available')\n    at adjustAvailableBalance (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:189:15)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:75:15)\n    at forEach (native:1:11)\n    at updateBalanceAfterTrade (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:62:13)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\order-service.ts:38:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\engine.ts:66:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\index.ts:17:17)\n    at processTicksAndRejections (native:7:39)"
   }
 }
+{
+  "timestamp": "2025-05-31T09:14:36.900Z",
+  "error": {
+    "name": "TypeError",
+    "message": "undefined is not an object (evaluating 'balance[asset].available')",
+    "stack": "TypeError: undefined is not an object (evaluating 'balance[asset].available')\n    at adjustAvailableBalance (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:189:15)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:75:15)\n    at forEach (native:1:11)\n    at updateBalanceAfterTrade (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\balance-service.ts:62:13)\n    at createOrder (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\order-service.ts:38:27)\n    at process (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\core\\engine.ts:66:34)\n    at <anonymous> (D:\\Code\\p79-suitcase.exchange\\apps\\engine\\src\\index.ts:17:17)\n    at processTicksAndRejections (native:7:39)"
+  }
+}

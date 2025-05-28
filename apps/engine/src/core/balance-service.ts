@@ -23,7 +23,7 @@ export class BalanceService {
          if (userBalance[asset].available < totalAmount) {
             throw new Error('INSUFFICIENT_FUNDS');
          }
-         console.log(`Locking ${totalAmount} ${asset} for user ${userId}`);
+         // console.log(`Locking ${totalAmount} ${asset} for user ${userId}`);
 
          userBalance[asset].available -= totalAmount;
          userBalance[asset].locked += totalAmount;
@@ -59,6 +59,12 @@ export class BalanceService {
       quantity: number = 0
    ) {
       const [baseAsset, quoteAsset] = market.split('_');
+
+      // check if user has base asset if not, initialize it first before buying
+      if (!this.balances.get(userId)?.[baseAsset]) {
+         this.balances.get(userId)![baseAsset] = { available: 0, locked: 0 };
+      }
+
       fills.forEach((fill) => {
          const buyerId = side === 'buy' ? userId : fill.otherUserId;
          const sellerId = side === 'sell' ? userId : fill.otherUserId;
@@ -69,10 +75,10 @@ export class BalanceService {
             quoteAsset,
             fill.price * fill.quantity
          );
-         this.adjustLockedBalance(sellerId, baseAsset, fill.quantity);
+         this.adjustLockedBalance(sellerId, baseAsset, fill.quantity * 100);
 
          // Update available asset
-         this.adjustAvailableBalance(buyerId, baseAsset, fill.quantity);
+         this.adjustAvailableBalance(buyerId, baseAsset, fill.quantity * 100);
          this.adjustAvailableBalance(
             sellerId,
             quoteAsset,
@@ -86,27 +92,20 @@ export class BalanceService {
             (sum, f) => sum + f.price * f.quantity,
             0
          );
-
          const costAtLimitPriceForExecutedPortion = price * executedQty;
 
          // The difference is the savings due to price improvement
          const savingsOnExecutedPortion =
             costAtLimitPriceForExecutedPortion - totalActualCost;
-         console.log('savingsOnExecutedPortion :', savingsOnExecutedPortion);
 
-         if (savingsOnExecutedPortion > 0) {
-            // Unlock these savings from the user's locked quote asset balance and add them to their available balance.
+         // Unlock these savings from the user's locked quote asset balance and add them to their available balance.
+         if (savingsOnExecutedPortion > 0)
             this.unlockFunds(userId, quoteAsset, savingsOnExecutedPortion);
-            console.log(
-               `Refunded ${savingsOnExecutedPortion} ${quoteAsset} to user ${userId} due to price improvement.`
-            );
-         }
       }
    }
 
    getUserBalances(userId: string, clientId: string) {
       const userBalance = this.balances.get(userId);
-
       this.marketDataService.sendUserBalance(clientId, userBalance);
    }
 
@@ -123,15 +122,15 @@ export class BalanceService {
          [
             '123',
             {
-               [QUOTE_ASSET]: { available: 100_0000, locked: 0 },
-               SOL: { available: 50, locked: 0 } // 50 SOL
+               [QUOTE_ASSET]: { available: 10000, locked: 0 },
+               SOL: { available: 5000, locked: 0 }
             }
          ],
          [
             '231',
             {
-               [QUOTE_ASSET]: { available: 50_0000, locked: 0 },
-               SOL: { available: 25, locked: 0 }
+               [QUOTE_ASSET]: { available: 5000, locked: 0 },
+               SOL: { available: 2500, locked: 0 }
             }
          ]
       ]);
@@ -188,4 +187,6 @@ export class BalanceService {
       const balance = this.getUserBalance(userId);
       balance[asset].available += delta;
    }
+
+   private initializeAssetForUser() {}
 }

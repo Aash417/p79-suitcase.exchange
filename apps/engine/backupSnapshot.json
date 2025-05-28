@@ -82,20 +82,12 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
-        },
-        {
-          "userId": "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
-          "orderId": "605ec0c6-9f33-4791-83b8-c9b7b7db9044",
-          "side": "buy",
-          "price": 5000,
-          "quantity": 5,
-          "filled": 0
         }
       ],
       "asks": [
         {
           "price": 11000,
-          "quantity": 8,
+          "quantity": 10,
           "orderId": "0196948a-700c-7000-b380-d7ea901df201",
           "filled": 0,
           "side": "sell",
@@ -182,7 +174,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 128
+      "lastTradeId": 125
     },
     {
       "baseAsset": "PEPE",
@@ -622,46 +614,6 @@
       ],
       "asks": [
         {
-          "price": 11000,
-          "quantity": 1,
-          "orderId": "0196948a-700c-7000-b380-d7ea901df201",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11010,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac28",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11020,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac29",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11030,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2a",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
-          "price": 11040,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2b",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
-        {
           "price": 11050,
           "quantity": 1,
           "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac2c",
@@ -710,7 +662,7 @@
           "userId": "5"
         }
       ],
-      "lastTradeId": 125
+      "lastTradeId": 131
     },
     {
       "baseAsset": "USDT",
@@ -1787,12 +1739,12 @@
       "5",
       {
         "USDC": {
-          "available": 1000000,
+          "available": 1055100,
           "locked": 500000
         },
         "SOL": {
           "available": 1000000,
-          "locked": 499998
+          "locked": 500000
         },
         "PEPE": {
           "available": 1000000,
@@ -1804,7 +1756,7 @@
         },
         "ETH": {
           "available": 1000000,
-          "locked": 500000
+          "locked": 499500
         },
         "USDT": {
           "available": 1000000,
@@ -1885,8 +1837,12 @@
       "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
       {
         "USDC": {
-          "available": 435000,
-          "locked": 43000
+          "available": 444900,
+          "locked": 0
+        },
+        "ETH": {
+          "available": 500,
+          "locked": 0
         }
       }
     ],
