@@ -1,11 +1,11 @@
 import { QUOTE_ASSET } from '../utils/constants';
-import { Fill, On_Ramp, UserBalance } from '../utils/types';
+import type { Fill, On_Ramp, UserBalance } from '../utils/types';
 import { MarketDataService } from './market-data-service';
 
 export class BalanceService {
    private balances = new Map<string, UserBalance>();
 
-   constructor(public readonly marketDataService: MarketDataService) {}
+   constructor(public marketDataService: MarketDataService) {}
 
    lockFunds(
       market: string,
@@ -14,39 +14,40 @@ export class BalanceService {
       price: number,
       quantity: number
    ) {
-      const BaseAsset = market.split('_')[0];
+      const BaseAsset = market.split('_')[0] as string;
       const userBalance = this.getUserBalance(userId);
       const asset = side === 'buy' ? QUOTE_ASSET : BaseAsset;
 
+      const specificAssetBalance = userBalance[asset];
+      if (!specificAssetBalance) throw new Error(`ASSET_NOT_FOUND: ${asset}`);
+
       if (side === 'buy') {
          const totalAmount = price * quantity;
-         if (userBalance[asset].available < totalAmount) {
+         if (specificAssetBalance.available < totalAmount)
             throw new Error('INSUFFICIENT_FUNDS');
-         }
-         // console.log(`Locking ${totalAmount} ${asset} for user ${userId}`);
 
-         userBalance[asset].available -= totalAmount;
-         userBalance[asset].locked += totalAmount;
+         specificAssetBalance.available -= totalAmount;
+         specificAssetBalance.locked += totalAmount;
       } else {
-         if (userBalance[asset].available < quantity) {
+         if (specificAssetBalance.available < quantity)
             throw new Error('INSUFFICIENT_FUNDS');
-         }
-         userBalance[asset].available -= quantity * 100;
-         userBalance[asset].locked += quantity * 100;
+
+         specificAssetBalance.available -= quantity * 100;
+         specificAssetBalance.locked += quantity * 100;
       }
    }
 
    unlockFunds(userId: string, asset: string, amount: number) {
       const userBalance = this.getUserBalance(userId);
 
-      if (userBalance[asset].locked < amount) {
+      const specificAssetBalance = userBalance[asset];
+      if (!specificAssetBalance) throw new Error(`ASSET_NOT_FOUND: ${asset}`);
+
+      if (specificAssetBalance.locked < amount)
          throw new Error('INSUFFICIENT_LOCKED_FUNDS');
-      }
 
-      userBalance[asset].locked -= amount;
-      userBalance[asset].available += amount;
-
-      console.log(`Unlocked ${amount} ${asset} for user ${userId}`);
+      specificAssetBalance.locked -= amount;
+      specificAssetBalance.available += amount;
    }
 
    updateBalanceAfterTrade(
@@ -57,13 +58,12 @@ export class BalanceService {
       executedQty: number = 0,
       price: number = 0,
       quantity: number = 0
-   ) {
-      const [baseAsset, quoteAsset] = market.split('_');
+   ): void {
+      const [baseAsset, quoteAsset] = market.split('_') as [string, string];
 
       // check if user has base asset if not, initialize it first before buying
-      if (!this.balances.get(userId)?.[baseAsset]) {
-         this.balances.get(userId)![baseAsset] = { available: 0, locked: 0 };
-      }
+      const userBalance = this.getUserBalance(userId);
+      userBalance[baseAsset] ??= { available: 0, locked: 0 };
 
       fills.forEach((fill) => {
          const buyerId = side === 'buy' ? userId : fill.otherUserId;
@@ -104,8 +104,8 @@ export class BalanceService {
       }
    }
 
-   getUserBalances(userId: string, clientId: string) {
-      const userBalance = this.balances.get(userId);
+   getUserBalances(userId: string, clientId: string): void {
+      const userBalance = this.getUserBalance(userId);
       this.marketDataService.sendUserBalance(clientId, userBalance);
    }
 
@@ -117,7 +117,7 @@ export class BalanceService {
       this.balances = new Map(balances);
    }
 
-   setDefaultBalances() {
+   setDefaultBalances(): void {
       this.balances = new Map([
          [
             '123',
@@ -136,25 +136,19 @@ export class BalanceService {
       ]);
    }
 
-   onRamp(data: On_Ramp['data'], clientId: string) {
+   onRamp(data: On_Ramp['data'], clientId: string): void {
       const { userId, quantity, asset } = data;
       // Get or create user balance
-      const userBalance = this.balances.get(userId) || {
-         [QUOTE_ASSET]: { available: 0, locked: 0 }
-      };
-      // Initialize asset if not exists
-      if (!userBalance[asset]) {
-         userBalance[asset] = { available: 0, locked: 0 };
-      }
+      const userBalance = this.getUserBalance(userId);
+      userBalance[asset] ??= { available: 0, locked: 0 };
 
       userBalance[asset].available += quantity;
+
       this.balances.set(userId, userBalance);
       this.marketDataService.sendOnRampSuccess(clientId, data);
-
-      console.log(`On-ramped ${quantity} ${asset} for user ${userId}`);
    }
 
-   addNewUser(userId: string, clientId: string) {
+   addNewUser(userId: string, clientId: string): void {
       if (this.balances.has(userId)) {
          this.marketDataService.sendUserAlreadyExists(clientId, userId);
          return;
@@ -170,23 +164,31 @@ export class BalanceService {
 
    private getUserBalance(userId: string): UserBalance {
       if (!this.balances.has(userId)) throw new Error('USER_NOT_FOUND');
+      const userBalance = this.balances.get(userId);
+      if (!userBalance) throw new Error('USER_BALANCE_NOT_FOUND');
 
-      return this.balances.get(userId)!;
+      return userBalance;
    }
 
-   private adjustLockedBalance(userId: string, asset: string, delta: number) {
-      const balance = this.getUserBalance(userId);
-      balance[asset].locked -= delta;
+   private adjustLockedBalance(
+      userId: string,
+      asset: string,
+      delta: number
+   ): void {
+      const userBalance = this.getUserBalance(userId);
+      if (!userBalance[asset]) throw new Error(`ASSET_NOT_FOUND: ${asset}`);
+
+      userBalance[asset].locked -= delta;
    }
 
    private adjustAvailableBalance(
       userId: string,
       asset: string,
       delta: number
-   ) {
-      const balance = this.getUserBalance(userId);
-      balance[asset].available += delta;
-   }
+   ): void {
+      const userBalance = this.getUserBalance(userId);
+      if (!userBalance[asset]) throw new Error(`ASSET_NOT_FOUND: ${asset}`);
 
-   private initializeAssetForUser() {}
+      userBalance[asset].available += delta;
+   }
 }

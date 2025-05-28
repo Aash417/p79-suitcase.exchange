@@ -12,7 +12,7 @@ capital.get('/', async (c) => {
       data: { userId }
    });
 
-   return c.json(response);
+   return c.json(response.payload);
 });
 
 export default capital;

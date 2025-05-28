@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import { QUOTE_ASSET } from '../utils/constants';
-import {
+import type {
    Cancel_order,
    Create_order,
    GET_OPEN_ORDERS,
@@ -12,9 +12,9 @@ import { OrderBookService } from './orderbook-service';
 
 export class OrderService {
    constructor(
-      private balanceService: BalanceService,
+      private readonly balanceService: BalanceService,
       private orderbooks: OrderBookService[] = [],
-      private marketDataService: MarketDataService
+      private readonly marketDataService: MarketDataService
    ) {}
 
    updateOrderbooks(orderbooks: OrderBookService[]) {
@@ -46,8 +46,9 @@ export class OrderService {
       );
 
       this.marketDataService.sendOrderPlaced(clientId, {
-         type: 'ORDER_PLACED',
-         payload: { fills, orderId, executedQty }
+         fills,
+         orderId,
+         executedQty
       });
       this.marketDataService.publishDepthUpdate(market, updatedDepth);
       this.marketDataService.publishTrades(market, side, fills);
@@ -66,7 +67,6 @@ export class OrderService {
       this.unlockFunds(order.order);
 
       this.marketDataService.sendOrderCancelled(clientId, orderId);
-      // this.marketDataService.publishDepthUpdate(market);
    }
 
    getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {

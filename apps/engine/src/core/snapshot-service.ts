@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { SNAPSHOT_PATH } from '../utils/constants';
-import { Order, UserBalance } from '../utils/types';
+import type { Order, UserBalance } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { OrderBookService } from './orderbook-service';
 
@@ -17,8 +17,8 @@ type Snapshot = {
 export class SnapshotService {
    constructor(
       private orderbooks: OrderBookService[],
-      private balanceService: BalanceService,
-      private setOrderbooks?: (orderbooks: OrderBookService[]) => void
+      private readonly balanceService: BalanceService,
+      private readonly setOrderbooks?: (orderbooks: OrderBookService[]) => void
    ) {}
 
    save() {
@@ -63,7 +63,6 @@ export class SnapshotService {
          this.balanceService.setBalances(new Map(snapshot.balances));
 
          console.log('Snapshot loaded successfully');
-         console.log(this.orderbooks.length);
          return true;
       } catch (error) {
          console.error('Snapshot load failed:', error);

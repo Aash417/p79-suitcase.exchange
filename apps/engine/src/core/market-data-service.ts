@@ -1,4 +1,10 @@
-import { Fill, On_Ramp, Order, ORDER_SIDE, OrderPlaced } from '../utils/types';
+import type {
+   Fill,
+   On_Ramp,
+   Order,
+   ORDER_SIDE,
+   UserBalance
+} from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisPublisher } from './redis-publisher';
 
@@ -10,7 +16,10 @@ export class MarketDataService {
    }
 
    // Send messages to clients
-   sendOrderPlaced(clientId: string, order: OrderPlaced) {
+   sendOrderPlaced(
+      clientId: string,
+      order: { fills: Fill[]; orderId: number; executedQty: number }
+   ) {
       RedisPublisher.getInstance().sendToClient(clientId, {
          type: 'ORDER_PLACED',
          payload: order
@@ -84,8 +93,11 @@ export class MarketDataService {
       });
    }
 
-   sendUserBalance(clientId: string, data) {
-      RedisPublisher.getInstance().sendToClient(clientId, data);
+   sendUserBalance(clientId: string, data: UserBalance) {
+      RedisPublisher.getInstance().sendToClient(clientId, {
+         type: 'USER_BALANCE',
+         payload: data
+      });
    }
 
    sendAddNewUserSuccess(clientId: string, userId: string) {

@@ -1,5 +1,5 @@
 import { QUOTE_ASSET } from '../utils/constants';
-import { Fill, Order, ORDER_SIDE } from '../utils/types';
+import type { Fill, Order, ORDER_SIDE } from '../utils/types';
 
 export class OrderBookService {
    private bids = new Map<number, Order[]>();

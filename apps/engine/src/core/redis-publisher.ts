@@ -1,4 +1,4 @@
-import { RedisClientType, createClient } from 'redis';
+import { type RedisClientType, createClient } from 'redis';
 
 type WsMessage = {
    stream: string;
@@ -17,12 +17,17 @@ type DbMessage = {
 
 export class RedisPublisher {
    private static instance: RedisPublisher;
-   private client: RedisClientType;
+   private readonly client: RedisClientType;
 
    private constructor() {
-      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-      console.log(`Redis publisher connecting to ${redisUrl}`);
+      const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
       this.client = createClient({ url: redisUrl });
+
+      // Set up event handlers
+      this.client.on('error', (err) => {
+         console.error('Redis connection error:', err);
+      });
+
       this.client.connect();
    }
 
@@ -33,9 +38,13 @@ export class RedisPublisher {
       return this.instance;
    }
 
-   async sendToClient(clientId: string, message: ApiMessage, retries = 3) {
+   async sendToClient(
+      clientId: string,
+      message: ApiMessage,
+      retries = 3
+   ): Promise<boolean> {
       try {
-         this.client.publish(clientId, JSON.stringify(message));
+         await this.client.publish(clientId, JSON.stringify(message));
          return true;
       } catch (error) {
          if (retries > 0) {
@@ -49,11 +58,11 @@ export class RedisPublisher {
       }
    }
 
-   sendToWs(channel: string, message: WsMessage) {
-      this.client.publish(channel, JSON.stringify(message));
+   async sendToWs(channel: string, message: WsMessage): Promise<void> {
+      await this.client.publish(channel, JSON.stringify(message));
    }
 
-   sendToDb(message: DbMessage) {
-      this.client.lPush('db_processor', JSON.stringify(message));
+   async sendToDb(message: DbMessage): Promise<void> {
+      await this.client.lPush('db_processor', JSON.stringify(message));
    }
 }

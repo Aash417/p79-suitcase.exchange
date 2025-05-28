@@ -5,7 +5,7 @@ import {
    GET_CAPITAL,
    GET_DEPTH,
    GET_OPEN_ORDERS,
-   MessageFromApi,
+   type MessageFromApi,
    ON_RAMP
 } from '../utils/types';
 import { BalanceService } from './balance-service';
@@ -16,12 +16,12 @@ import { OrderBookService } from './orderbook-service';
 import { SnapshotService } from './snapshot-service';
 
 export class Engine {
-   private snapshotService: SnapshotService;
-   private orderService: OrderService;
-   private balanceService: BalanceService;
-   private marketDataService: MarketDataService;
+   private readonly snapshotService: SnapshotService;
+   private readonly orderService: OrderService;
+   private readonly balanceService: BalanceService;
+   private readonly marketDataService: MarketDataService;
    private orderbooks: OrderBookService[] = [];
-   private errorService: ErrorService;
+   private readonly errorService: ErrorService;
 
    constructor() {
       this.errorService = new ErrorService();
@@ -89,7 +89,7 @@ export class Engine {
             }
          }
       } catch (error) {
-         this.errorService.handleError(error, clientId);
+         this.errorService.handleError(error as Error, clientId);
       }
    }
 

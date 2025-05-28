@@ -16,8 +16,8 @@ export class ErrorService {
    private createErrorMessage(error: any) {
       return {
          type: 'Error',
-         code: error.code || 'UNSPECIFIED',
-         message: error.message || 'An error occurred',
+         code: error.code ?? 'UNSPECIFIED',
+         message: error.message ?? 'An error occurred',
          timestamp: Date.now(),
          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       };

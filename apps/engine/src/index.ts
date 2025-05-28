@@ -3,12 +3,11 @@ import { Engine } from './core/engine';
 
 async function main() {
    const engine = new Engine();
-   const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+   const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
    console.log(`Connecting to Redis at ${redisUrl}`);
    const redisClient = createClient({ url: redisUrl });
    await redisClient.connect();
 
-   console.log('connected to redis');
    console.log('engine running');
 
    while (true) {
