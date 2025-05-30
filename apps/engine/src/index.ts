@@ -1,21 +1,35 @@
-import { createClient } from 'redis';
 import { Engine } from './core/engine';
+import { ErrorService } from './core/error-service';
+import { RedisService } from './core/redis-service';
+
+const errorService = new ErrorService();
 
 async function main() {
    const engine = new Engine();
-   const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
-   console.log(`Connecting to Redis at ${redisUrl}`);
-   const redisClient = createClient({ url: redisUrl });
-   await redisClient.connect();
+   const redisService = RedisService.getInstance();
 
-   console.log('engine running');
+   try {
+      // Ensure Redis connection is established
+      await redisService.ensureConnection();
+      console.log('Engine running');
 
-   while (true) {
-      const response = await redisClient.rPop('messages' as string);
-      if (response) {
-         engine.process(JSON.parse(response));
+      // Process messages from the queue
+      for await (const message of redisService.processQueue('messages')) {
+         try {
+            const parsedMessage = JSON.parse(message);
+            engine.process(parsedMessage);
+         } catch (parseError) {
+            console.error('Error parsing message:', parseError);
+         }
       }
+   } catch (error) {
+      console.error('Fatal error in main processing loop:', error);
    }
 }
 
-main();
+main().catch(async (error) => {
+   console.error('Unhandled error in main function:', error);
+   errorService.logError(error);
+   await RedisService.getInstance().shutdown();
+   process.exit(1);
+});

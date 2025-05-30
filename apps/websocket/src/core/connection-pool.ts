@@ -4,7 +4,7 @@ import { ClientConnection } from './client-connection';
 
 export class ConnectionPool {
    private static instance: ConnectionPool;
-   private connections: Map<string, ClientConnection> = new Map();
+   private readonly connections: Map<string, ClientConnection> = new Map();
    private constructor() {}
 
    static getInstance() {

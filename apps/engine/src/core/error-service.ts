@@ -1,11 +1,11 @@
 import { appendFile } from 'node:fs/promises';
-import { RedisPublisher } from './redis-publisher';
+import { RedisService } from './redis-service';
 
 export class ErrorService {
    handleError(error: Error, clientId: string) {
       const errorMessage = this.createErrorMessage(error);
 
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'ERROR',
          payload: errorMessage
       });
@@ -23,7 +23,7 @@ export class ErrorService {
       };
    }
 
-   private logError(error: any) {
+   logError(error: any) {
       const logEntry = {
          timestamp: new Date().toISOString(),
          error: {

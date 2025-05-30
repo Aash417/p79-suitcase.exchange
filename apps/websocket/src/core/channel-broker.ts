@@ -1,5 +1,9 @@
-import { createClient, RedisClientType } from 'redis';
-import { ChannelName, ConnectionId, OutgoingMessage } from '../utils/types';
+import { createClient, type RedisClientType } from 'redis';
+import type {
+   ChannelName,
+   ConnectionId,
+   OutgoingMessage
+} from '../utils/types';
 import { ConnectionPool } from './connection-pool';
 
 export class ChannelBroker {
@@ -7,11 +11,12 @@ export class ChannelBroker {
    private redisClient: RedisClientType;
 
    // Tracks connections to channels
-   private connectionSubscriptions: Map<ConnectionId, ChannelName[]> =
+   private readonly connectionSubscriptions: Map<ConnectionId, ChannelName[]> =
       new Map();
 
    // Tracks subscribers per channel
-   private channelSubscribers: Map<ChannelName, ConnectionId[]> = new Map();
+   private readonly channelSubscribers: Map<ChannelName, ConnectionId[]> =
+      new Map();
 
    private constructor() {
       this.initializeRedisClient();
@@ -52,10 +57,8 @@ export class ChannelBroker {
    }
 
    private initializeRedisClient(): void {
-      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-      console.log(
-         `WebSocket channel broker connecting to Redis at ${redisUrl}`
-      );
+      const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
+
       this.redisClient = createClient({ url: redisUrl });
       this.redisClient
          .connect()
@@ -63,10 +66,12 @@ export class ChannelBroker {
          .catch((err) => console.error('Redis connection error:', err));
    }
 
-   private handleChannelMessage = (message: string, channel: string) => {
+   private readonly handleChannelMessage = (
+      message: string,
+      channel: string
+   ) => {
       const parsedMessage: OutgoingMessage = JSON.parse(message);
 
-      // console.log(parsedMessage);
       const subscribers = this.channelSubscribers.get(channel) || [];
 
       subscribers.forEach((connectionId) => {

@@ -29,15 +29,10 @@ export function LastTradePrice({ ticker }: Readonly<Props>) {
       if (!market) return;
 
       const handleTickerUpdate = (data: TickerUpdate) => {
-         try {
-            if (data.lastPrice) {
-               setTickerPrice(data.lastPrice);
-               const isUp = Number(data.firstPrice) < Number(data.lastPrice);
-               setIsPriceUp(isUp);
-            }
-         } catch (error) {
-            // Handle error silently or log to error tracking service
-            console.log('Error parsing ticker data:', error);
+         if (data.lastPrice) {
+            setTickerPrice(data.lastPrice);
+            const isUp = Number(data.firstPrice) < Number(data.lastPrice);
+            setIsPriceUp(isUp);
          }
       };
 

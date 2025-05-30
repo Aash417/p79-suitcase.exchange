@@ -11,7 +11,7 @@ interface ClientMessage {
 export class ClientConnection {
    constructor(
       public readonly id: string,
-      private socket: WebSocket
+      private readonly socket: WebSocket
    ) {
       this.setupMessageHandler();
    }

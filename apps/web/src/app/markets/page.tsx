@@ -21,7 +21,6 @@ export default async function Markets() {
    if (!session) redirect('/auth');
 
    const userId = session?.user.id;
-   console.log('userId :', userId);
    await addNewUser(userId);
 
    const tickersData = await getTickers();

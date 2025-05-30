@@ -6,7 +6,7 @@ import type {
    UserBalance
 } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
-import { RedisPublisher } from './redis-publisher';
+import { RedisService } from './redis-service';
 
 export class MarketDataService {
    constructor(private orderbooks: OrderBookService[]) {}
@@ -20,21 +20,21 @@ export class MarketDataService {
       clientId: string,
       order: { fills: Fill[]; orderId: number; executedQty: number }
    ) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'ORDER_PLACED',
          payload: order
       });
    }
 
    sendOrderCancelled(clientId: string, orderId: string) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'ORDER_CANCELLED',
          payload: { orderId }
       });
    }
 
    sendError(clientId: string, message: string, error: any) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: message,
          payload: error
       });
@@ -52,7 +52,7 @@ export class MarketDataService {
          }
       };
 
-      RedisPublisher.getInstance().sendToClient(clientId, payload);
+      RedisService.getInstance().sendToClient(clientId, payload);
    }
 
    sendOnRampSuccess(clientId: string, data: On_Ramp['data']): void {
@@ -65,7 +65,7 @@ export class MarketDataService {
          }
       };
 
-      RedisPublisher.getInstance().sendToClient(clientId, payload);
+      RedisService.getInstance().sendToClient(clientId, payload);
    }
 
    sendOnRampFailure(clientId: string, data: On_Ramp['data']): void {
@@ -78,11 +78,11 @@ export class MarketDataService {
          }
       };
 
-      RedisPublisher.getInstance().sendToClient(clientId, payload);
+      RedisService.getInstance().sendToClient(clientId, payload);
    }
 
    sendOpenOrders(clientId: string, orders: Order[]) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'OPEN_ORDERS',
          payload: orders.map((o) => ({
             id: o.orderId,
@@ -94,21 +94,21 @@ export class MarketDataService {
    }
 
    sendUserBalance(clientId: string, data: UserBalance) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'USER_BALANCE',
          payload: data
       });
    }
 
    sendAddNewUserSuccess(clientId: string, userId: string) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'ADD_NEW_USER_SUCCESS',
          payload: { userId }
       });
    }
 
    sendUserAlreadyExists(clientId: string, userId: string) {
-      RedisPublisher.getInstance().sendToClient(clientId, {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'USER_ALREADY_EXISTS',
          payload: { userId }
       });
@@ -122,7 +122,7 @@ export class MarketDataService {
          b: [number, number][];
       }
    ) {
-      RedisPublisher.getInstance().sendToWs(`depth.1000ms.${market}`, {
+      RedisService.getInstance().sendToWs(`depth.1000ms.${market}`, {
          stream: 'depth',
          data: {
             a: this.formatPaisaToRupeeLevels(updatedDepth.a),
@@ -135,7 +135,7 @@ export class MarketDataService {
 
    publishTrades(market: string, side: ORDER_SIDE, fills: Fill[]) {
       fills.forEach((fill) => {
-         RedisPublisher.getInstance().sendToWs(`trade.${market}`, {
+         RedisService.getInstance().sendToWs(`trade.${market}`, {
             stream: `trade.${market}`,
             data: {
                e: 'trade',

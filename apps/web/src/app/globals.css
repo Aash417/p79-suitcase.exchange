@@ -204,3 +204,7 @@ body {
    background: var(--error-bg) !important;
    color: var(--error-text) !important;
 }
+
+::-webkit-scrollbar {
+   display: none; /* Hide scrollbar */
+}
