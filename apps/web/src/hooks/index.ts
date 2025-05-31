@@ -1,8 +1,7 @@
 import { KLine } from '@/features/klineChart/utils/types';
-import { Depth } from '@/features/orderbook/utils/types';
 import { SYMBOLS_MAP } from '@/lib/constants';
 import { API_URL } from '@/lib/env';
-import { Ticker, Trades } from '@/lib/types';
+import { Depth, Ticker, Trades } from '@/lib/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WS_URL } from '@/lib/env';
+import {
+   ClientToWebSocketMessage,
+   WebSocketToClientMessage
+} from '@suitcase/shared-types/messages/client-websocket';
 
 type Callback = {
    id: string;
@@ -27,7 +31,7 @@ export class WebSocketManager {
       return WebSocketManager.instance;
    }
 
-   sendMessage(message: any) {
+   sendMessage(message: ClientToWebSocketMessage) {
       const messageToSend = { ...message, id: this.messageId++ };
 
       if (!this.initialized) {
@@ -78,7 +82,7 @@ export class WebSocketManager {
    }
 
    private handleMessage(rawData: string) {
-      const message = JSON.parse(rawData);
+      const message: WebSocketToClientMessage = JSON.parse(rawData);
       const type = message.data.e;
       const callbacks = this.callbacks[type];
       if (!callbacks) return;

@@ -1,5 +1,5 @@
 {
-  "name": "db",
+  "name": "@suitcase/db",
   "module": "index.ts",
   "type": "module",
   "private": true,
