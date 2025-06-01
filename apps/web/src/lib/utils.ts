@@ -1,8 +1,8 @@
+import type { Tickers } from '@suitcase/shared-types/messages/client-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { SYMBOLS_MAP } from './constants';
 import { API_URL } from './env';
-import { Ticker } from './types';
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -33,9 +33,9 @@ export const formatComma = (value: string | number): string => {
 
 export async function getTickers() {
    const res = await fetch(`${API_URL}/tickers`);
-   const data: Ticker[] = await res.json();
+   const data: Tickers = await res.json();
 
-   const tickersData = data.reduce((acc: unknown[], ticker: Ticker) => {
+   const tickersData = data.reduce((acc: unknown[], ticker) => {
       const symbolInfo = SYMBOLS_MAP.get(ticker.symbol);
       if (symbolInfo) {
          acc.push({

@@ -1,25 +1,14 @@
 'use client';
 
-import { Ticker } from '@/lib/types';
+import { useGetTicker } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-type TickerUpdate = {
-   firstPrice: string;
-   lastPrice: string;
-   high: string;
-   low: string;
-   volume: string;
-   quoteVolume: string;
-   symbol: string;
-};
+export function LastTradePrice() {
+   const market = useParams<{ market: string }>().market || '';
+   const { data: ticker } = useGetTicker(market);
 
-type Props = {
-   ticker?: Ticker & { change: string; name: string; imageUrl: string };
-};
-
-export function LastTradePrice({ ticker }: Readonly<Props>) {
-   const market = ticker?.symbol;
    const [tickerPrice, setTickerPrice] = useState<string | undefined>(
       ticker?.lastPrice
    );
@@ -28,7 +17,10 @@ export function LastTradePrice({ ticker }: Readonly<Props>) {
    useEffect(() => {
       if (!market) return;
 
-      const handleTickerUpdate = (data: TickerUpdate) => {
+      const handleTickerUpdate = (data: {
+         lastPrice: string;
+         firstPrice: string;
+      }) => {
          if (data.lastPrice) {
             setTickerPrice(data.lastPrice);
             const isUp = Number(data.firstPrice) < Number(data.lastPrice);

@@ -1,7 +1,7 @@
 'use client';
 
 import { MessageLoading } from '@/components/ui/message-loading';
-import { useGetDepth, useGetTicker } from '@/hooks';
+import { useGetDepth } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,7 +13,6 @@ import { TableHeader } from './components/table-header';
 export function Orderbook() {
    const market = useParams<{ market: string }>().market || '';
    const { data: depthData, isLoading } = useGetDepth(market);
-   const { data: ticker } = useGetTicker(market);
 
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
@@ -50,7 +49,7 @@ export function Orderbook() {
          });
          wsManager.deRegisterCallback('depth', `depth.1000ms.${market}`);
       };
-   }, [depthData, ticker, market]);
+   }, [depthData, market]);
 
    const topBids = useMemo(() => bids.slice(0, 10), [bids]);
    const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
@@ -69,7 +68,7 @@ export function Orderbook() {
 
          <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto pb-1">
             <AskTable asks={topAsks} />
-            <LastTradePrice ticker={ticker} />
+            <LastTradePrice />
             <BidTable bids={topBids} />
          </div>
 

@@ -32,7 +32,7 @@ export function SwapForm() {
 
    const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {
-      if (!balance || !balance[asset]) return 0;
+      if (!balance?.[asset]) return 0;
       return balance[asset].available / 100;
    };
 

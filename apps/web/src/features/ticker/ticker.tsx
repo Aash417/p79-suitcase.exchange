@@ -3,9 +3,9 @@
 
 import { MessageLoading } from '@/components/ui/message-loading';
 import { useGetTicker } from '@/hooks';
-import { type Ticker } from '@/lib/types';
 import { formatComma, formatPrice } from '@/lib/utils';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import type { Ticker } from '@suitcase/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -17,19 +17,15 @@ type TickerUpdate = {
    volume: string;
    quoteVolume: string;
    symbol: string;
-} & {
-   [key: string]: string;
-};
-
-type Props = {
-   ticker?: Ticker & { [key: string]: string };
 };
 
 export function Ticker() {
    const market = useParams<{ market: string }>().market || '';
    const { data: ticker, isLoading } = useGetTicker(market);
 
-   const [newTicker, setNewTicker] = useState<Props['ticker']>();
+   const [newTicker, setNewTicker] = useState<
+      Ticker & { [key: string]: string }
+   >();
    const [isPriceUp, setIsPriceUp] = useState(false);
 
    useEffect(() => {

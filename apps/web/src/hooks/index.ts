@@ -1,23 +1,23 @@
-import { KLine } from '@/features/klineChart/utils/types';
 import { SYMBOLS_MAP } from '@/lib/constants';
 import { API_URL } from '@/lib/env';
-import { Depth, Ticker, Trades } from '@/lib/types';
+import type {
+   Balances,
+   Candlesticks,
+   Depth,
+   ExecuteOrder,
+   OnRamp,
+   OpenOrders,
+   Ticker,
+   Trades
+} from '@suitcase/shared-types/messages/client-api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 // Mutations
 
-type OrderReq = {
-   market: string;
-   price: string;
-   quantity: string;
-   side: string;
-   userId: string;
-};
-
 export function useExecuteOrder(market: string) {
    const queryClient = useQueryClient();
-   const mutation = useMutation<ResponseType, Error, OrderReq>({
+   const mutation = useMutation<ResponseType, Error, ExecuteOrder>({
       mutationFn: async (data) => {
          const response = await fetch(`${API_URL}/order`, {
             method: 'POST',
@@ -48,15 +48,9 @@ export function useExecuteOrder(market: string) {
    return mutation;
 }
 
-type DepositReq = {
-   asset: string;
-   quantity: string;
-   userId: string;
-};
-
 export function useDepositAsset() {
    const queryClient = useQueryClient();
-   const mutation = useMutation<ResponseType, Error, DepositReq>({
+   const mutation = useMutation<ResponseType, Error, OnRamp>({
       mutationFn: async (data) => {
          const response = await fetch(`${API_URL}/order/on-ramp`, {
             method: 'POST',
@@ -87,15 +81,8 @@ export function useDepositAsset() {
 
 // Query
 
-type userBalRes = {
-   [key: string]: {
-      available: number;
-      locked: number;
-   };
-};
-
 export function useGetUserBalances(userId: string) {
-   return useQuery<userBalRes>({
+   return useQuery({
       queryKey: ['userBalance'],
       queryFn: () => fetchUserBalance(userId),
       retry: 2,
@@ -105,14 +92,7 @@ export function useGetUserBalances(userId: string) {
 }
 
 export function useGetUserOpenOrders(market: string, userId: string) {
-   return useQuery<
-      {
-         id: string;
-         price: string;
-         quantity: string;
-         side: string;
-      }[]
-   >({
+   return useQuery({
       queryKey: [market],
       queryFn: () => fetchUserOpenOrders(market, userId),
       retry: 2,
@@ -122,17 +102,17 @@ export function useGetUserOpenOrders(market: string, userId: string) {
 }
 
 export function useGetKline(market: string) {
-   return useQuery<KLine[]>({
+   return useQuery({
       queryKey: ['kline', market],
       queryFn: () => fetchKline(market),
       retry: 2,
       refetchOnWindowFocus: false,
-      staleTime: 60000 // Consider data fresh for 1 minute
+      staleTime: 60000
    });
 }
 
 export function useGetDepth(market: string) {
-   return useQuery<Depth>({
+   return useQuery({
       queryKey: ['depth', market],
       queryFn: () => fetchMarketDepth(market),
       retry: 2,
@@ -142,6 +122,15 @@ export function useGetDepth(market: string) {
 }
 
 export function useGetTickers() {
+   type accType = {
+      symbol: string;
+      price: string;
+      volume: string;
+      change: string;
+      name: string;
+      imageUrl: string;
+   };
+
    return useQuery({
       queryKey: ['tickers'],
       queryFn: async () => {
@@ -152,7 +141,7 @@ export function useGetTickers() {
 
          const data: Ticker[] = await response.json();
 
-         const tickerData = data.reduce((acc: unknown[], ticker: Ticker) => {
+         const tickerData = data.reduce((acc: accType[], ticker: Ticker) => {
             const symbolInfo = SYMBOLS_MAP.get(ticker.symbol);
             if (symbolInfo) {
                acc.push({
@@ -171,7 +160,7 @@ export function useGetTickers() {
       },
       retry: 2,
       refetchOnWindowFocus: true,
-      staleTime: 30000 // Consider data fresh for 30 seconds
+      staleTime: 30000
    });
 }
 
@@ -186,7 +175,7 @@ export function useGetTicker(market: string) {
 }
 
 export function useGetTrades(market: string) {
-   return useQuery<Trades[]>({
+   return useQuery({
       queryKey: ['trades', market],
       queryFn: () => fetchTrades(market),
       retry: 2,
@@ -201,7 +190,7 @@ export async function fetchUserBalance(userId: string) {
    const response = await fetch(`${API_URL}/capital?userId=${userId}`);
    if (!response.ok) throw new Error('Failed to fetch user balances');
 
-   const data = await response.json();
+   const data: Balances = await response.json();
    return data;
 }
 
@@ -213,7 +202,7 @@ export async function fetchUserOpenOrders(market: string, userId: string) {
       throw new Error('Failed to fetch user balances');
    }
 
-   const data = await response.json();
+   const data: OpenOrders = await response.json();
    return data;
 }
 
@@ -225,7 +214,7 @@ export async function fetchKline(market: string) {
       throw new Error('Failed to fetch klines');
    }
 
-   const klineData: KLine[] = await response.json();
+   const klineData: Candlesticks = await response.json();
    return klineData.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
 }
 
@@ -235,7 +224,7 @@ export async function fetchMarketDepth(market: string) {
       throw new Error('Failed to fetch depth');
    }
 
-   const depthData = await response.json();
+   const depthData: Depth = await response.json();
    const final = {
       ...depthData,
       bids: [...depthData.bids].reverse(), // Highest first
@@ -267,6 +256,6 @@ export async function fetchTrades(market: string) {
       throw new Error('Failed to fetch trades');
    }
 
-   const data: Trades[] = await response.json();
+   const data: Trades = await response.json();
    return data;
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WS_URL } from '@/lib/env';
-import {
+import type {
    ClientToWebSocketMessage,
    WebSocketToClientMessage
 } from '@suitcase/shared-types/messages/client-websocket';

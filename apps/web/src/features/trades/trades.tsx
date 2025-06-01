@@ -3,20 +3,20 @@
 import { MessageLoading } from '@/components/ui/message-loading';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetTrades } from '@/hooks';
-import { type Trades } from '@/lib/types';
 import { WebSocketManager } from '@/lib/websocket-manager';
+import { Trade } from '@suitcase/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export function Trades() {
-   const [newTrades, setNewTrades] = useState<Trades[]>([]);
+   const [newTrades, setNewTrades] = useState<Trade[]>([]);
    const { market } = useParams<{ market: string }>();
    const { data: trades, isLoading } = useGetTrades(market);
 
    useEffect(() => {
       setNewTrades(trades ?? []);
 
-      function handleTradeUpdate(data: Trades) {
+      function handleTradeUpdate(data: Trade) {
          const newTrade = {
             id: data.id,
             price: data.price,
