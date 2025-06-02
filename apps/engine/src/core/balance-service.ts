@@ -1,5 +1,6 @@
+import type { OnRamp } from '@suitcase/shared-types/messages/api-engine';
 import { QUOTE_ASSET } from '../utils/constants';
-import type { Fill, On_Ramp, UserBalance } from '../utils/types';
+import type { Fill, UserBalance } from '../utils/types';
 import { MarketDataService } from './market-data-service';
 
 export class BalanceService {
@@ -136,7 +137,7 @@ export class BalanceService {
       ]);
    }
 
-   onRamp(data: On_Ramp['data'], clientId: string): void {
+   onRamp(data: OnRamp['data'], clientId: string): void {
       const { userId, quantity, asset } = data;
       // Get or create user balance
       const userBalance = this.getUserBalance(userId);

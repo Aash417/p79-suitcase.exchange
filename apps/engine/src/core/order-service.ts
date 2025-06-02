@@ -1,11 +1,11 @@
+import type {
+   CancelOrder,
+   CreateOrder,
+   GetOpenOrders
+} from '@suitcase/shared-types/messages/api-engine';
 import { randomUUID } from 'crypto';
 import { QUOTE_ASSET } from '../utils/constants';
-import type {
-   Cancel_order,
-   Create_order,
-   GET_OPEN_ORDERS,
-   Order
-} from '../utils/types';
+import type { Order } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
 import { OrderBookService } from './orderbook-service';
@@ -21,7 +21,7 @@ export class OrderService {
       this.orderbooks = orderbooks;
    }
 
-   createOrder(order: Create_order['data'], clientId: string) {
+   createOrder(order: CreateOrder['data'], clientId: string) {
       const { market, price, quantity, side, userId } = order;
       const orderbook = this.getOrderBook(market);
 
@@ -54,7 +54,7 @@ export class OrderService {
       this.marketDataService.publishTrades(market, side, fills);
    }
 
-   cancelOrder(data: Cancel_order['data'], clientId: string) {
+   cancelOrder(data: CancelOrder['data'], clientId: string) {
       const { orderId, market } = data;
 
       const orderbook = this.getOrderBook(market);
@@ -69,7 +69,7 @@ export class OrderService {
       this.marketDataService.sendOrderCancelled(clientId, orderId);
    }
 
-   getUserOpenOrders(data: GET_OPEN_ORDERS['data'], clientId: string) {
+   getUserOpenOrders(data: GetOpenOrders['data'], clientId: string) {
       const { userId, symbol } = data;
       const relevantBooks = symbol
          ? [this.getOrderBook(symbol)]

@@ -1,5 +1,6 @@
+import type { OrderSide } from '@suitcase/shared-types/messages/api-engine';
 import { QUOTE_ASSET } from '../utils/constants';
-import type { Fill, Order, ORDER_SIDE } from '../utils/types';
+import type { Fill, Order } from '../utils/types';
 
 export class OrderBookService {
    private bids = new Map<number, Order[]>();
@@ -78,7 +79,7 @@ export class OrderBookService {
       return { orderId: ++this.lastTradeId, fills, executedQty, updatedDepth };
    }
 
-   cancelOrder(orderId: string, side: ORDER_SIDE): boolean {
+   cancelOrder(orderId: string, side: OrderSide): boolean {
       if (side === 'buy') return this.cancelBid(orderId);
       else return this.cancelAsk(orderId);
    }
@@ -93,7 +94,7 @@ export class OrderBookService {
       };
    }
 
-   findOrder(orderId: string): { order: Order; side: ORDER_SIDE } | undefined {
+   findOrder(orderId: string): { order: Order; side: OrderSide } | undefined {
       for (const ordersAtPrice of this.bids.values()) {
          const order = ordersAtPrice.find((o) => o.orderId === orderId);
          if (order) return { order, side: 'buy' };

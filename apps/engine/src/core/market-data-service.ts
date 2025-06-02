@@ -1,10 +1,8 @@
 import type {
-   Fill,
-   On_Ramp,
-   Order,
-   ORDER_SIDE,
-   UserBalance
-} from '../utils/types';
+   OnRamp,
+   OrderSide
+} from '@suitcase/shared-types/messages/api-engine';
+import type { Fill, Order, UserBalance } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisService } from './redis-service';
 
@@ -55,7 +53,7 @@ export class MarketDataService {
       RedisService.getInstance().sendToClient(clientId, payload);
    }
 
-   sendOnRampSuccess(clientId: string, data: On_Ramp['data']): void {
+   sendOnRampSuccess(clientId: string, data: OnRamp['data']): void {
       const payload = {
          type: 'ON_RAMP_SUCCESS',
          payload: {
@@ -68,7 +66,7 @@ export class MarketDataService {
       RedisService.getInstance().sendToClient(clientId, payload);
    }
 
-   sendOnRampFailure(clientId: string, data: On_Ramp['data']): void {
+   sendOnRampFailure(clientId: string, data: OnRamp['data']): void {
       const payload = {
          type: 'ON_RAMP_FAILED',
          payload: {
@@ -133,7 +131,7 @@ export class MarketDataService {
       });
    }
 
-   publishTrades(market: string, side: ORDER_SIDE, fills: Fill[]) {
+   publishTrades(market: string, side: OrderSide, fills: Fill[]) {
       fills.forEach((fill) => {
          RedisService.getInstance().sendToWs(`trade.${market}`, {
             stream: `trade.${market}`,

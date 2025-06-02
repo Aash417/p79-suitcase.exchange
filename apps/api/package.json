@@ -6,6 +6,7 @@
       "format": "prettier --write ."
    },
    "dependencies": {
+      "@suitcase/shared-types": "*",
       "@hono/zod-validator": "^0.4.3",
       "hono": "^4.7.5",
       "redis": "^4.7.0",

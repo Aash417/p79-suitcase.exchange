@@ -356,14 +356,6 @@
       "baseAsset": "BTC",
       "bids": [
         {
-          "price": 10100,
-          "quantity": 1,
-          "orderId": "01969489-49dc-7000-a6e1-57739037d8da",
-          "filled": 0,
-          "side": "buy",
-          "userId": "5"
-        },
-        {
           "price": 10090,
           "quantity": 1,
           "orderId": "01969489-49dc-7000-a6e1-57739037d8d9",
@@ -434,17 +426,17 @@
           "filled": 0,
           "side": "buy",
           "userId": "5"
+        },
+        {
+          "userId": "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
+          "orderId": "11b79e1d-6166-4047-b210-5010d25c1d71",
+          "side": "buy",
+          "price": 2300,
+          "quantity": 1,
+          "filled": 0
         }
       ],
       "asks": [
-        {
-          "price": 11010,
-          "quantity": 1,
-          "orderId": "0196948a-cd0d-7000-954c-65b2ef61ac28",
-          "filled": 0,
-          "side": "sell",
-          "userId": "5"
-        },
         {
           "price": 11020,
           "quantity": 1,
@@ -516,9 +508,17 @@
           "filled": 0,
           "side": "sell",
           "userId": "5"
+        },
+        {
+          "userId": "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
+          "orderId": "462aad19-0dff-43d9-995f-603c21edb719",
+          "side": "sell",
+          "price": 50000,
+          "quantity": 1,
+          "filled": 0
         }
       ],
-      "lastTradeId": 127
+      "lastTradeId": 133
     },
     {
       "baseAsset": "ETH",
@@ -1771,8 +1771,8 @@
       "5",
       {
         "USDC": {
-          "available": 1011000,
-          "locked": 500000
+          "available": 1022010,
+          "locked": 489900
         },
         "SOL": {
           "available": 1000000,
@@ -1783,8 +1783,8 @@
           "locked": 500000
         },
         "BTC": {
-          "available": 1000000,
-          "locked": 499900
+          "available": 1000100,
+          "locked": 499800
         },
         "ETH": {
           "available": 1000000,
@@ -1869,12 +1869,12 @@
       "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
       {
         "USDC": {
-          "available": 489000,
-          "locked": 0
+          "available": 485790,
+          "locked": 2300
         },
         "BTC": {
           "available": 100,
-          "locked": 0
+          "locked": 100
         }
       }
     ],

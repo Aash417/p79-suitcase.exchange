@@ -9,6 +9,7 @@
       "format": "prettier --write ."
    },
    "dependencies": {
+      "@suitcase/shared-types": "*",
       "redis": "^4.7.0"
    },
    "devDependencies": {

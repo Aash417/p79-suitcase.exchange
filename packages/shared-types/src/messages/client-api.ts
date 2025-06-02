@@ -35,7 +35,7 @@ export type Depth = {
    lastUpdateId: string; // Update ID (as string)
    timestamp: number; // Timestamp in ms
 };
-export type kline = {
+export type KLine = {
    start: string;
    end: string;
    open: string;
@@ -46,7 +46,7 @@ export type kline = {
    quoteVolume: string;
    trades: string;
 };
-export type Candlesticks = kline[];
+export type Candlesticks = KLine[];
 export type Ticker = {
    symbol: string;
    firstPrice: string;

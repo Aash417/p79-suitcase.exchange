@@ -1,4 +1,4 @@
- {
+{
   "compilerOptions": {
     // Environment setup & latest features
     "lib": [
@@ -28,9 +28,10 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+    "baseUrl": ".",
     "paths": {
-      "@suitcase/shared-types": [
-        "./src/index.ts"
+      "@suitcase/shared-types/*": [
+        "../../packages/shared-types/src/*"
       ]
     }
   },

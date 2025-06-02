@@ -1,13 +1,4 @@
-import {
-   ADD_NEW_USER,
-   CANCEL_ORDER,
-   CREATE_ORDER,
-   GET_CAPITAL,
-   GET_DEPTH,
-   GET_OPEN_ORDERS,
-   type MessageFromApi,
-   ON_RAMP
-} from '../utils/types';
+import type { ApiToEngineMessage } from '@suitcase/shared-types/messages/api-engine';
 import { BalanceService } from './balance-service';
 import { ErrorService } from './error-service';
 import { MarketDataService } from './market-data-service';
@@ -58,35 +49,34 @@ export class Engine {
       message
    }: {
       clientId: string;
-      message: MessageFromApi;
+      message: ApiToEngineMessage;
    }) {
       try {
          switch (message.type) {
-            case CREATE_ORDER:
+            case 'CREATE_ORDER':
                this.orderService.createOrder(message.data, clientId);
                break;
-            case CANCEL_ORDER:
+            case 'CANCEL_ORDER':
                this.orderService.cancelOrder(message.data, clientId);
                break;
-            case ON_RAMP:
+            case 'ON_RAMP':
                this.balanceService.onRamp(message.data, clientId);
                break;
-            case GET_DEPTH:
+            case 'GET_DEPTH':
                this.marketDataService.sendDepth(message.data.market, clientId);
                break;
-            case GET_CAPITAL:
+            case 'GET_CAPITAL':
                this.balanceService.getUserBalances(
                   message.data.userId,
                   clientId
                );
                break;
-            case GET_OPEN_ORDERS:
+            case 'GET_OPEN_ORDERS':
                this.orderService.getUserOpenOrders(message.data, clientId);
                break;
-            case ADD_NEW_USER: {
+            case 'ADD_NEW_USER':
                this.balanceService.addNewUser(message.data.userId, clientId);
                break;
-            }
          }
       } catch (error) {
          this.errorService.handleError(error as Error, clientId);

@@ -1,5 +1,5 @@
+import type { KLine } from '@suitcase/shared-types/messages/client-api';
 import { Hono } from 'hono';
-import { KLine } from '../utils/types';
 
 const kline = new Hono();
 
@@ -10,7 +10,7 @@ kline.get('/', async (c) => {
       const kline = await fetch(
          `https://api.backpack.exchange/api/v1/klines?symbol=${symbol}&interval=1d&startTime=1714865400`
       );
-      const klineData: KLine[] = await kline.json();
+      const klineData = (await kline.json()) as KLine[];
 
       return c.json(klineData);
    } catch (err) {

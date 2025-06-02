@@ -1,6 +1,9 @@
+import type {
+   ApiToEngineMessage,
+   EngineToApiMessage
+} from '@suitcase/shared-types/messages/api-engine';
 import { randomUUID } from 'crypto';
-import { RedisClientType, createClient } from 'redis';
-import { MessageFromOrderbook, MessageToEngine } from './types';
+import { type RedisClientType, createClient } from 'redis';
 
 export class RedisManager {
    private readonly client: RedisClientType;
@@ -8,7 +11,7 @@ export class RedisManager {
    private static instance: RedisManager;
 
    private constructor() {
-      const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+      const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
       console.log(`API Redis manager connecting to ${redisUrl}`);
       this.client = createClient({ url: redisUrl });
       this.client.connect();
@@ -24,8 +27,8 @@ export class RedisManager {
       return this.instance;
    }
 
-   public sendAndAwait(message: MessageToEngine, timeoutMs: number = 5000) {
-      return new Promise<MessageFromOrderbook>((resolve, reject) => {
+   public sendAndAwait(message: ApiToEngineMessage, timeoutMs: number = 5000) {
+      return new Promise<EngineToApiMessage>((resolve, reject) => {
          const id = randomUUID();
          let timeout: NodeJS.Timeout;
 

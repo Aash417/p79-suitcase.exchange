@@ -6,6 +6,9 @@ const depth = new Hono();
 
 depth.get('/', async (c) => {
    const { symbol } = c.req.query();
+   if (!symbol) {
+      return c.json({ error: 'Missing symbol parameter' }, 400);
+   }
    const response = await RedisManager.getInstance().sendAndAwait({
       type: GET_DEPTH,
       data: {

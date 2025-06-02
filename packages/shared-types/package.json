@@ -13,23 +13,28 @@
     "./messages/client-api": {
       "bun": "./src/messages/client-api.ts",
       "import": "./src/messages/client-api.ts",
+      "require": "./src/messages/client-api.ts",
       "types": "./src/messages/client-api.ts"
     },
     "./messages/api-engine": {
       "bun": "./src/messages/api-engine.ts",
       "import": "./src/messages/api-engine.ts",
+      "require": "./src/messages/api-engine.ts",
       "types": "./src/messages/api-engine.ts"
     },
     "./messages/websocket-engine": {
       "bun": "./src/messages/websocket-engine.ts",
       "import": "./src/messages/websocket-engine.ts",
+      "require": "./src/messages/websocket-engine.ts",
       "types": "./src/messages/websocket-engine.ts"
     },
     "./messages/client-websocket": {
       "bun": "./src/messages/client-websocket.ts",
       "import": "./src/messages/client-websocket.ts",
+      "require": "./src/messages/client-websocket.ts",
       "types": "./src/messages/client-websocket.ts"
-    }
+    },
+    "./src/*": "./src/*"
   },
   "scripts": {
     "typecheck": "bun tsc --noEmit"

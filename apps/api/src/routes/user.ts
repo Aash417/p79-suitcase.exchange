@@ -16,6 +16,11 @@ user.post(
    ),
    async (c) => {
       const { userId } = c.req.valid('json');
+
+      if (!userId) {
+         return c.json({ error: 'User ID is required' }, 400);
+      }
+
       const response = await RedisManager.getInstance().sendAndAwait({
          type: ADD_NEW_USER,
          data: {
