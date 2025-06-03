@@ -1,9 +1,5 @@
 import { createClient, type RedisClientType } from 'redis';
-import type {
-   ChannelName,
-   ConnectionId,
-   OutgoingMessage
-} from '../utils/types';
+import type { ChannelName, ConnectionId } from '../utils/types';
 import { ConnectionPool } from './connection-pool';
 
 export class ChannelBroker {
@@ -70,7 +66,7 @@ export class ChannelBroker {
       message: string,
       channel: string
    ) => {
-      const parsedMessage: OutgoingMessage = JSON.parse(message);
+      const parsedMessage = JSON.parse(message);
 
       const subscribers = this.channelSubscribers.get(channel) || [];
 

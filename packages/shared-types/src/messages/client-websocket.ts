@@ -5,7 +5,7 @@ export type WebSocketToClientMessage =
    | TradeUpdateMessage;
 
 export type TickerUpdateMessage = {
-   type: 'ticker';
+   stream: string;
    data: {
       e: 'ticker'; // Event type
       E?: number; // Event time in microseconds
@@ -21,7 +21,7 @@ export type TickerUpdateMessage = {
 };
 
 export type DepthUpdateMessage = {
-   type: 'depth';
+   stream: string;
    data: {
       e: 'depth'; // Event type
       E?: number; // Event time in microseconds
@@ -35,7 +35,7 @@ export type DepthUpdateMessage = {
 };
 
 export type TradeUpdateMessage = {
-   type: 'trade';
+   stream: string;
    data: {
       e: 'trade'; // Event type
       E?: number; // Event time in microseconds
@@ -44,7 +44,7 @@ export type TradeUpdateMessage = {
       q: string; // Quantity
       b?: string; // Buyer order ID
       a?: string; // Seller order ID
-      t: number; // Trade ID
+      t?: number; // Trade ID
       T: number; // Engine timestamp in microseconds
       m: boolean; // Is the buyer the maker?
    };

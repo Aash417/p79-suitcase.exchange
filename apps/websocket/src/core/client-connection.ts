@@ -1,5 +1,4 @@
 import { WebSocket } from 'ws';
-import { OutgoingMessage } from '../utils/types';
 import { ChannelBroker } from './channel-broker';
 
 interface ClientMessage {
@@ -16,7 +15,7 @@ export class ClientConnection {
       this.setupMessageHandler();
    }
 
-   send(message: OutgoingMessage): void {
+   send(message): void {
       if (this.socket.readyState === this.socket.OPEN) {
          this.socket.send(JSON.stringify(message));
       }

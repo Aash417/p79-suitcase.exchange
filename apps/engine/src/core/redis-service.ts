@@ -1,19 +1,6 @@
+import type { EngineToApiMessage } from '@suitcase/shared-types/messages/api-engine';
+import type { WebSocketToClientMessage } from '@suitcase/shared-types/messages/client-websocket';
 import { type RedisClientType, createClient } from 'redis';
-
-type WsMessage = {
-   stream: string;
-   data: Record<string, any>;
-};
-
-type ApiMessage = {
-   type: string;
-   payload: any;
-};
-
-type DbMessage = {
-   type: string;
-   data: any;
-};
 
 export class RedisService {
    private static instance: RedisService;
@@ -60,7 +47,7 @@ export class RedisService {
    // Publishing methods
    async sendToClient(
       clientId: string,
-      message: ApiMessage,
+      message: EngineToApiMessage,
       retries = 3
    ): Promise<boolean> {
       await this.ensureConnection();
@@ -80,12 +67,15 @@ export class RedisService {
       }
    }
 
-   async sendToWs(channel: string, message: WsMessage): Promise<void> {
+   async sendToWs(
+      channel: string,
+      message: WebSocketToClientMessage
+   ): Promise<void> {
       await this.ensureConnection();
       await this.client.publish(channel, JSON.stringify(message));
    }
 
-   async sendToDb(message: DbMessage): Promise<void> {
+   async sendToDb(message: { type: string; data: any }): Promise<void> {
       await this.ensureConnection();
       await this.client.lPush('db_processor', JSON.stringify(message));
    }

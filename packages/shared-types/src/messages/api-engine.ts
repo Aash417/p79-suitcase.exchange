@@ -3,12 +3,23 @@ export type EngineToApiMessage =
    | Depth
    | OrderPlaced
    | OrderCancelled
-   | OpenOrders;
+   | OpenOrders
+   | OnRampSuccess
+   | UserBalance
+   | AddNewUserSuccess
+   | UserAlreadyExits;
 
+export type Fill = {
+   price: number;
+   quantity: number;
+   tradeId: number;
+   otherUserId: string;
+   markerOrderId: string;
+};
 export type Depth = {
    type: 'DEPTH';
    payload: {
-      market: string;
+      timestamp: number;
       bids: [string, string][];
       asks: [string, string][];
    };
@@ -16,35 +27,54 @@ export type Depth = {
 export type OrderPlaced = {
    type: 'ORDER_PLACED';
    payload: {
-      orderId: string;
+      orderId: number;
       executedQty: number;
-      fills: [
-         {
-            price: number;
-            qty: number;
-            tradeId: number;
-         }
-      ];
+      fills: Fill[];
    };
 };
 export type OrderCancelled = {
    type: 'ORDER_CANCELLED';
    payload: {
       orderId: string;
-      executedQty: number;
-      remainingQty: number;
    };
 };
 export type OpenOrders = {
    type: 'OPEN_ORDERS';
    payload: {
-      orderId: string;
-      executedQty: number;
-      price: number;
-      quantity: number;
+      id: string;
+      price: string;
+      quantity: string;
       side: OrderSide;
-      userId: string;
    }[];
+};
+export type OnRampSuccess = {
+   type: 'ON_RAMP_SUCCESS';
+   payload: {
+      amount: number;
+      asset: string;
+      timestamp: number;
+   };
+};
+export type UserBalance = {
+   type: 'USER_BALANCE';
+   payload: {
+      [asset: string]: {
+         available: number;
+         locked: number;
+      };
+   };
+};
+export type AddNewUserSuccess = {
+   type: 'ADD_NEW_USER_SUCCESS';
+   payload: {
+      userId: string;
+   };
+};
+export type UserAlreadyExits = {
+   type: 'USER_ALREADY_EXISTS';
+   payload: {
+      userId: string;
+   };
 };
 
 // types coming from the api to the engine server
@@ -56,15 +86,6 @@ export type ApiToEngineMessage =
    | GetOpenOrders
    | GetCapital
    | AddNewUser;
-
-export type OperationTypes =
-   | 'CREATE_ORDER'
-   | 'CANCEL_ORDER'
-   | 'ON_RAMP'
-   | 'GET_DEPTH'
-   | 'GET_OPEN_ORDERS'
-   | 'GET_CAPITAL'
-   | 'ADD_NEW_USER';
 
 export type OrderSide = 'buy' | 'sell';
 

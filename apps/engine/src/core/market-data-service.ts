@@ -1,8 +1,9 @@
 import type {
+   Fill,
    OnRamp,
    OrderSide
 } from '@suitcase/shared-types/messages/api-engine';
-import type { Fill, Order, UserBalance } from '../utils/types';
+import type { Order, UserBalance } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisService } from './redis-service';
 
@@ -31,52 +32,29 @@ export class MarketDataService {
       });
    }
 
-   sendError(clientId: string, message: string, error: any) {
-      RedisService.getInstance().sendToClient(clientId, {
-         type: message,
-         payload: error
-      });
-   }
-
    sendDepth(market: string, clientId: string) {
       const orderbook = this.getOrderBook(market);
       const { bids, asks } = orderbook.getDepth();
-      const payload = {
+
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'DEPTH',
          payload: {
             bids: this.formatPaisaToRupeeLevels(bids),
             asks: this.formatPaisaToRupeeLevels(asks),
             timestamp: Date.now()
          }
-      };
-
-      RedisService.getInstance().sendToClient(clientId, payload);
+      });
    }
 
    sendOnRampSuccess(clientId: string, data: OnRamp['data']): void {
-      const payload = {
+      RedisService.getInstance().sendToClient(clientId, {
          type: 'ON_RAMP_SUCCESS',
          payload: {
             amount: data.quantity,
             asset: data.asset,
             timestamp: Date.now()
          }
-      };
-
-      RedisService.getInstance().sendToClient(clientId, payload);
-   }
-
-   sendOnRampFailure(clientId: string, data: OnRamp['data']): void {
-      const payload = {
-         type: 'ON_RAMP_FAILED',
-         payload: {
-            amount: data.quantity,
-            asset: data.asset,
-            timestamp: Date.now()
-         }
-      };
-
-      RedisService.getInstance().sendToClient(clientId, payload);
+      });
    }
 
    sendOpenOrders(clientId: string, orders: Order[]) {
@@ -125,8 +103,7 @@ export class MarketDataService {
          data: {
             a: this.formatPaisaToRupeeLevels(updatedDepth.a),
             b: this.formatPaisaToRupeeLevels(updatedDepth.b),
-            e: 'depth',
-            t: Date.now()
+            e: 'depth'
          }
       });
    }
