@@ -7,11 +7,11 @@ export class RedisService {
    private readonly client: RedisClientType;
    private isConnected = false;
    private connectionAttempts = 0;
-   private readonly baseReconnectDelay: number;
+   private readonly baseReconnectDelay = 1000;
 
    private constructor() {
       const redisUrl = process.env.REDIS_URL ?? 'redis://localhost:6379';
-      this.baseReconnectDelay = 1000;
+      console.log(`RedisService connecting to ${redisUrl}`);
 
       this.client = createClient({ url: redisUrl });
       this.setupEventHandlers();
@@ -37,10 +37,11 @@ export class RedisService {
          );
 
          const delay =
-            this.baseReconnectDelay * Math.pow(2, this.connectionAttempts - 1);
+            this.baseReconnectDelay *
+            Math.pow(2, Math.min(this.connectionAttempts - 1, 6));
          console.log(`Retrying in ${delay / 1000} seconds...`);
          await new Promise((resolve) => setTimeout(resolve, delay));
-         return this.ensureConnection(); // Keep retrying until connected
+         return this.ensureConnection();
       }
    }
 
@@ -56,12 +57,14 @@ export class RedisService {
          await this.client.publish(clientId, JSON.stringify(message));
          return true;
       } catch (error) {
+         console.error(`Error sending to client ${clientId}:`, error);
+
          if (retries > 0) {
-            await new Promise((resolve) =>
-               setTimeout(resolve, 100 * (4 - retries))
-            );
+            const delay = 100 * (4 - retries);
+            await new Promise((resolve) => setTimeout(resolve, delay));
             return this.sendToClient(clientId, message, retries - 1);
          }
+
          console.error(`Failed to send to ${clientId} after 3 attempts`);
          throw error;
       }
@@ -72,12 +75,27 @@ export class RedisService {
       message: WebSocketToClientMessage
    ): Promise<void> {
       await this.ensureConnection();
-      await this.client.publish(channel, JSON.stringify(message));
+
+      try {
+         await this.client.publish(channel, JSON.stringify(message));
+      } catch (error) {
+         console.error(
+            `Failed to send to WebSocket channel ${channel}:`,
+            error
+         );
+         throw error;
+      }
    }
 
    async sendToDb(message: { type: string; data: any }): Promise<void> {
       await this.ensureConnection();
-      await this.client.lPush('db_processor', JSON.stringify(message));
+
+      try {
+         await this.client.lPush('db_processor', JSON.stringify(message));
+      } catch (error) {
+         console.error('Failed to send to database queue:', error);
+         throw error;
+      }
    }
 
    // Consumer methods
@@ -86,7 +104,13 @@ export class RedisService {
       timeoutMs = 2000
    ): Promise<string | null> {
       await this.ensureConnection();
-      return await this.client.rPop(queueName);
+
+      try {
+         return await this.client.rPop(queueName);
+      } catch (error) {
+         console.error(`Error popping from queue ${queueName}:`, error);
+         throw error;
+      }
    }
 
    async *processQueue(
@@ -101,7 +125,7 @@ export class RedisService {
                await new Promise((resolve) => setTimeout(resolve, 100));
             }
          } catch (error) {
-            console.error('Error processing queue:', error);
+            console.error(`Error processing queue ${queueName}:`, error);
             await new Promise((resolve) => setTimeout(resolve, 2000));
          }
       }
@@ -109,33 +133,33 @@ export class RedisService {
 
    async shutdown(): Promise<void> {
       try {
-         if (this.client.isOpen) {
+         if (this.client?.isOpen) {
             await this.client.disconnect();
          }
       } catch (error) {
-         console.error('Error during Redis shutdown:', error);
+         console.error('Error during RedisService shutdown:', error);
       }
    }
 
    private setupEventHandlers(): void {
-      this.client.on('error', (err) => {
-         console.error('Redis connection error');
+      this.client.on('error', () => {
+         console.error('RedisService connection error');
          this.isConnected = false;
       });
 
       this.client.on('connect', () => {
-         console.log('Redis connection established');
+         console.log('RedisService connection established');
          this.isConnected = true;
          this.connectionAttempts = 0;
       });
 
       this.client.on('reconnecting', () => {
-         console.log('Redis client reconnecting...');
+         console.log('RedisService client reconnecting...');
          this.isConnected = false;
       });
 
       this.client.on('end', () => {
-         console.log('Redis connection closed');
+         console.log('RedisService connection closed');
          this.isConnected = false;
       });
    }

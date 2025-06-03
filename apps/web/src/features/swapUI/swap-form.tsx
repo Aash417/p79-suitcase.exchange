@@ -19,7 +19,7 @@ export function SwapForm() {
    const market = useParams<{ market: string }>().market || '';
    const { data: session } = authClient.useSession();
 
-   const [activeTab, setActiveTab] = useState('buy');
+   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
    const [price, setPrice] = useState('');
    const [priceFormatted, setPriceFormatted] = useState('');
    const [quantity, setQuantity] = useState('');
@@ -33,7 +33,7 @@ export function SwapForm() {
    const calculatedTotal = (Number(price) * Number(quantity)).toFixed(2);
    const getAssetBalance = (asset: string) => {
       if (!balance?.[asset]) return 0;
-      return balance[asset].available / 100;
+      return Number(balance[asset].available) / 100;
    };
 
    const [baseAsset, quoteAsset] = market.split('_');
@@ -55,6 +55,12 @@ export function SwapForm() {
 
       if (Number(calculatedTotal) > currentBalance && activeTab === 'buy') {
          toast.error('Insufficient funds for transaction.!', {
+            duration: 2000
+         });
+         return;
+      }
+      if (Number(quantity) < currentBalance && activeTab === 'sell') {
+         toast.error('Insufficient quantity for transaction.!', {
             duration: 2000
          });
          return;
@@ -150,7 +156,7 @@ export function SwapForm() {
    return (
       <Tabs
          value={activeTab}
-         onValueChange={setActiveTab}
+         onValueChange={(value) => setActiveTab(value as 'buy' | 'sell')}
          className={`w-full ${
             API_URL === 'https://api.backpack.exchange/api/v1'
                ? 'opacity-40 pointer-events-none'
