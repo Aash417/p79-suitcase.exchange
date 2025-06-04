@@ -1,6 +1,8 @@
 {
-  "name": "@suitcase/shared-types",
+  "name": "@repo/shared-types",
   "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -45,5 +47,8 @@
   },
   "dependencies": {
     "zod": "^3.25.48"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

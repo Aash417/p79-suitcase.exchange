@@ -1,5 +1,5 @@
-import type { EngineToApiMessage } from '@suitcase/shared-types/messages/api-engine';
-import type { WebSocketToClientMessage } from '@suitcase/shared-types/messages/client-websocket';
+import type { EngineToApiMessage } from '@repo/shared-types/messages/api-engine';
+import type { WebSocketToClientMessage } from '@repo/shared-types/messages/client-websocket';
 import { type RedisClientType, createClient } from 'redis';
 
 export class RedisService {

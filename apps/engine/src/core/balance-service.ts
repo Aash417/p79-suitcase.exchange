@@ -1,4 +1,4 @@
-import type { Fill, OnRamp } from '@suitcase/shared-types/messages/api-engine';
+import type { Fill, OnRamp } from '@repo/shared-types/messages/api-engine';
 import { QUOTE_ASSET } from '../utils/constants';
 import type { UserBalance } from '../utils/types';
 import { MarketDataService } from './market-data-service';

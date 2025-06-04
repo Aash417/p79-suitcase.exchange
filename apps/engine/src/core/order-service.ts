@@ -2,7 +2,7 @@ import type {
    CancelOrder,
    CreateOrder,
    GetOpenOrders
-} from '@suitcase/shared-types/messages/api-engine';
+} from '@repo/shared-types/messages/api-engine';
 import { randomUUID } from 'crypto';
 import { QUOTE_ASSET } from '../utils/constants';
 import type { Order } from '../utils/types';

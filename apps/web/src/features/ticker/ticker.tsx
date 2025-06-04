@@ -5,7 +5,7 @@ import { MessageLoading } from '@/components/ui/message-loading';
 import { useGetTicker } from '@/hooks';
 import { formatComma, formatPrice } from '@/lib/utils';
 import { WebSocketManager } from '@/lib/websocket-manager';
-import type { Ticker } from '@suitcase/shared-types/messages/client-api';
+import type { Ticker } from '@repo/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

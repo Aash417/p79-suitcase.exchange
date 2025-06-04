@@ -9,7 +9,7 @@ import type {
    OpenOrders,
    Ticker,
    Trades
-} from '@suitcase/shared-types/messages/client-api';
+} from '@repo/shared-types/messages/client-api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

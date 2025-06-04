@@ -356,6 +356,14 @@
       "baseAsset": "BTC",
       "bids": [
         {
+          "price": 10100,
+          "quantity": 1,
+          "orderId": "01969489-49dc-7000-a6e1-57739037d8da",
+          "filled": 0,
+          "side": "buy",
+          "userId": "5"
+        },
+        {
           "price": 10090,
           "quantity": 1,
           "orderId": "01969489-49dc-7000-a6e1-57739037d8d9",
@@ -508,17 +516,9 @@
           "filled": 0,
           "side": "sell",
           "userId": "5"
-        },
-        {
-          "userId": "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
-          "orderId": "6531c1c6-a9e2-4649-98b7-138cee855074",
-          "side": "sell",
-          "price": 444700,
-          "quantity": 4,
-          "filled": 0
         }
       ],
-      "lastTradeId": 130
+      "lastTradeId": 127
     },
     {
       "baseAsset": "ETH",
@@ -1772,7 +1772,7 @@
       {
         "USDC": {
           "available": 1011000,
-          "locked": 489900
+          "locked": 500000
         },
         "SOL": {
           "available": 1000000,
@@ -1783,7 +1783,7 @@
           "locked": 500000
         },
         "BTC": {
-          "available": 1000100,
+          "available": 1000000,
           "locked": 499900
         },
         "ETH": {
@@ -1869,12 +1869,12 @@
       "t4jtPyoeDaTpSGnXi56MDtYzz9x6SAGV",
       {
         "USDC": {
-          "available": 499100,
+          "available": 489000,
           "locked": 0
         },
         "BTC": {
-          "available": 0,
-          "locked": 400
+          "available": 100,
+          "locked": 0
         }
       }
     ],

@@ -1,4 +1,4 @@
-import type { ApiToEngineMessage } from '@suitcase/shared-types/messages/api-engine';
+import type { ApiToEngineMessage } from '@repo/shared-types/messages/api-engine';
 import { BalanceService } from './balance-service';
 import { ErrorService } from './error-service';
 import { MarketDataService } from './market-data-service';

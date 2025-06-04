@@ -4,7 +4,7 @@ import { MessageLoading } from '@/components/ui/message-loading';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetTrades } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
-import { Trade } from '@suitcase/shared-types/messages/client-api';
+import { Trade } from '@repo/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

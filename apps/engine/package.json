@@ -9,10 +9,11 @@
       "format": "prettier --write ."
    },
    "dependencies": {
-      "@suitcase/shared-types": "*",
+      "@repo/shared-types": "*",
       "redis": "^4.7.0"
    },
    "devDependencies": {
+      "@repo/typescript-config": "*",
       "@types/bun": "^1.2.9",
       "@types/node": "^22.14.1"
    }

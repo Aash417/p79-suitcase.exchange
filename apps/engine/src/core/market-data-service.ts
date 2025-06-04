@@ -2,7 +2,7 @@ import type {
    Fill,
    OnRamp,
    OrderSide
-} from '@suitcase/shared-types/messages/api-engine';
+} from '@repo/shared-types/messages/api-engine';
 import type { Order, UserBalance } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisService } from './redis-service';

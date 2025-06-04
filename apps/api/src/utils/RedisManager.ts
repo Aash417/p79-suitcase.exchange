@@ -1,7 +1,7 @@
 import type {
    ApiToEngineMessage,
    EngineToApiMessage
-} from '@suitcase/shared-types/messages/api-engine';
+} from '@repo/shared-types/messages/api-engine';
 import { randomUUID } from 'crypto';
 import { type RedisClientType, createClient } from 'redis';
 
@@ -81,7 +81,9 @@ export class RedisManager {
             .catch(async (error) => {
                clearTimeout(timeout);
                await cleanup();
-               reject(error);
+               reject(
+                  error instanceof Error ? error : new Error(String(error))
+               );
             });
       });
    }

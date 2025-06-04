@@ -10,14 +10,13 @@ COPY turbo.json ./
 
 # Copy package.json files for dependency resolution
 COPY apps/api/package.json ./apps/api/
-COPY packages/*/package.json ./packages/*/
+COPY packages/ ./packages/
 
 # Install dependencies
 RUN bun install 
 
 # Copy source code
 COPY apps/api/ ./apps/api/
-COPY packages/ ./packages/
 
 # Expose port
 EXPOSE 3001

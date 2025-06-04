@@ -6,13 +6,14 @@
       "format": "prettier --write ."
    },
    "dependencies": {
-      "@suitcase/shared-types": "*",
+      "@repo/shared-types": "*",
       "@hono/zod-validator": "^0.4.3",
       "hono": "^4.7.5",
       "redis": "^4.7.0",
       "zod": "^3.24.2"
    },
    "devDependencies": {
+      "@repo/typescript-config": "*",
       "@types/bun": "latest"
    }
 }

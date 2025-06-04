@@ -3,7 +3,7 @@ import { WS_URL } from '@/lib/env';
 import type {
    ClientToWebSocketMessage,
    WebSocketToClientMessage
-} from '@suitcase/shared-types/messages/client-websocket';
+} from '@repo/shared-types/messages/client-websocket';
 
 type Callback = {
    id: string;

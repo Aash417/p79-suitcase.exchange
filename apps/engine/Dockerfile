@@ -10,14 +10,13 @@ COPY turbo.json ./
 
 # Copy package.json files for dependency resolution
 COPY apps/engine/package.json ./apps/engine/
-COPY packages/*/package.json ./packages/*/
+COPY packages/ ./packages/
 
 # Install dependencies
 RUN bun install 
 
 # Copy source code
 COPY apps/engine/ ./apps/engine/
-COPY packages/ ./packages/
 
 
 # Create data directory

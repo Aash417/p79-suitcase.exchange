@@ -1,4 +1,4 @@
-import type { Tickers } from '@suitcase/shared-types/messages/client-api';
+import type { Tickers } from '@repo/shared-types/messages/client-api';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { SYMBOLS_MAP } from './constants';

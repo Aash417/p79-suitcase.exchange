@@ -1,4 +1,4 @@
-import type { KLine } from '@suitcase/shared-types/messages/client-api';
+import type { KLine } from '@repo/shared-types/messages/client-api';
 import { Hono } from 'hono';
 
 const kline = new Hono();

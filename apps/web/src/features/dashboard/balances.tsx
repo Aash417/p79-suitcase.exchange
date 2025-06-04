@@ -13,7 +13,19 @@ export function Balances() {
 
    let balances: [string, { available: number; locked: number }][] = [];
    if (data) {
-      balances = Object.entries(data);
+      balances = Object.entries(data).map(([asset, balance]) => [
+         asset,
+         {
+            available:
+               typeof balance.available === 'string'
+                  ? Number(balance.available)
+                  : balance.available,
+            locked:
+               typeof balance.locked === 'string'
+                  ? Number(balance.locked)
+                  : balance.locked
+         }
+      ]);
    }
 
    if (isLoading)

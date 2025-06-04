@@ -1,4 +1,4 @@
-import type { OrderSide } from '@suitcase/shared-types/messages/api-engine';
+import type { OrderSide } from '@repo/shared-types/messages/api-engine';
 
 export interface UserBalance {
    [asset: string]: {

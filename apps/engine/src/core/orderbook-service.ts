@@ -1,7 +1,4 @@
-import type {
-   Fill,
-   OrderSide
-} from '@suitcase/shared-types/messages/api-engine';
+import type { Fill, OrderSide } from '@repo/shared-types/messages/api-engine';
 import { QUOTE_ASSET } from '../utils/constants';
 import type { Order } from '../utils/types';
 

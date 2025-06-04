@@ -12,6 +12,7 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@repo/typescript-config": "*",
     "@types/bun": "^1.2.10"
   }
 }

@@ -59,7 +59,7 @@ export function SwapForm() {
          });
          return;
       }
-      if (Number(quantity) < currentBalance && activeTab === 'sell') {
+      if (Number(quantity) > currentBalance && activeTab === 'sell') {
          toast.error('Insufficient quantity for transaction.!', {
             duration: 2000
          });
