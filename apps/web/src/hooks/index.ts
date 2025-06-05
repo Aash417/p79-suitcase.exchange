@@ -37,7 +37,9 @@ export function useExecuteOrder(market: string) {
       onSuccess: () => {
          toast.success('Order created successfully', { duration: 1300 });
          queryClient.invalidateQueries({ queryKey: ['userBalance'] });
-         queryClient.invalidateQueries({ queryKey: [market] });
+         queryClient.invalidateQueries({
+            queryKey: ['userOpenOrders', market]
+         });
       },
       onError: (error) => {
          toast.error(error.message || 'Failed to create order', {
@@ -83,17 +85,18 @@ export function useDepositAsset() {
 
 export function useGetUserBalances(userId: string) {
    return useQuery({
-      queryKey: ['userBalance'],
+      queryKey: ['userBalance', userId],
       queryFn: () => fetchUserBalance(userId),
+      enabled: !!userId,
       retry: 2,
       refetchOnWindowFocus: true,
-      staleTime: 30000 // Consider data fresh for 30 seconds
+      staleTime: 30_000
    });
 }
 
 export function useGetUserOpenOrders(market: string, userId: string) {
    return useQuery({
-      queryKey: [market],
+      queryKey: ['userOpenOrders', market],
       queryFn: () => fetchUserOpenOrders(market, userId),
       retry: 2,
       refetchOnWindowFocus: true,

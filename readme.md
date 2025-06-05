@@ -1,94 +1,111 @@
 # Crypto Trading Platform
 
-## Brief Overview
-
-A high-performance cryptocurrency trading platform built for low-latency execution and seamless real-time trading. It combines modern frontend frameworks with optimized backend services for an efficient trading experience.
+A high-performance cryptocurrency trading platform designed for low-latency execution and seamless real-time trading. The system leverages modern frontend frameworks, a Bun-powered backend, and a modular architecture for scalability and maintainability.
 
 ## Tech Stack
 
-- **Frontend:** Next.js (Server Actions + TanStack Query)
+- **Frontend:** Next.js (App Router, Server Actions, TanStack Query)
 - **API Server:** Bun + Hono with Zod validation
 - **WebSocket Server:** ws library on Bun runtime
-- **Trading Engine:** In-memory orderbook & balances
+- **Trading Engine:** In-memory orderbook & balances (modular, class-based)
 - **Inter-service Communication:** Redis Queue & Pub/Sub
+- **Shared Types:** Centralized TypeScript types package for strict type safety across all services
 
 ## Features
 
 - Real-time trading with WebSocket updates
 - Low-latency order execution (7-20ms average response)
 - Secure API architecture with schema validation
-- Scalable service communication using Redis
-- Responsive, interactive UI built with Next.js
+- Scalable, decoupled service communication using Redis
+- Responsive, interactive UI with dynamic code-splitting
+- User asset onramping and balance management
+- Live orderbook, ticker, and candlestick (Kline) visualizations
+- Dynamic subscribe/unsubscribe for market data streams
 
 ## Architecture
 
 ![App Screenshot](./architecture.png)
 
-# Detailed Overview
+---
 
 ## 🛰 API Workflow
 
-The API server acts as a lightweight validation and routing layer. Upon receiving a request:
+The API server acts as a lightweight validation and routing layer:
 
-1. **Validation:** Each request is validated using a **Zod middleware**.
-2. **ClientID Assignment:** A unique **ClientID** is generated for the request.
-3. **Redis Queue:** The server enqueues the **ClientID + request payload** into a Redis queue.
-4. **Redis Pub/Sub Subscription:** Simultaneously, it subscribes to a **Redis Pub/Sub channel** identified by the ClientID.
-5. **Response Handling:** Once the response is received on the channel, it is forwarded back to the client.
+1. **Validation:** Each request is validated using Zod middleware.
+2. **ClientID Assignment:** A unique ClientID is generated for each request.
+3. **Redis Queue:** The server enqueues the ClientID + request payload into a Redis queue.
+4. **Redis Pub/Sub Subscription:** Subscribes to a Redis Pub/Sub channel identified by the ClientID.
+5. **Response Handling:** Forwards the response from the channel back to the client.
 
-This pattern reduces computation overhead on the API server, allowing it to focus solely on **validation and message routing**.
+This pattern minimizes computation on the API server, focusing on validation and message routing.
+
+---
 
 ## ⚙️ Trading Engine Server
 
-The core component responsible for executing all exchange business logic.
+Handles all exchange business logic:
 
-- Built with a **class-based architecture** comprising **7 services**, each with a single responsibility.
-- The **Engine class** initializes and injects dependencies for all services. No external instantiations are allowed.
-- **Engine** orchestrates message routing to relevant services.
-- Core logic handled by: **Order, OrderBook, Balance, Snapshot** services.
-- **Error** and **MarketData** services prepare outbound data for Redis.
-- A dedicated **Redis Publisher** serves as the single exit point, publishing messages to Pub/Sub channels.
+- Modular, class-based architecture with strict single-responsibility services.
+- The Engine class injects all dependencies and orchestrates message routing.
+- Core logic handled by Order, OrderBook, Balance, and Snapshot services.
+- Error and MarketData services prepare outbound data for Redis.
+- A dedicated Redis Service is the single exit point for outbound messages.
 
-This modular design ensures maintainability and scalability of trading operations.
+---
 
 ## 🔌 WebSocket Server (Real-Time Updates)
 
-This server enables real-time data delivery via WebSockets and Redis Pub/Sub.
+Enables real-time data delivery via WebSockets and Redis Pub/Sub:
 
-### Key Components:
+- **Connection Pool:** Tracks all active client connections.
+- **Client Connection:** Represents individual WebSocket sessions and manages subscriptions.
+- **Channel Broker:** Manages Redis Pub/Sub subscriptions and routes published messages to clients.
 
-- **Connection Pool:** Tracks all active client connections with unique IDs.
-- **Client Connection:** Represents individual WebSocket sessions, handling subscriptions.
-- **Channel Broker:** Manages Redis Pub/Sub subscriptions, routing published messages to subscribed clients.
+**Workflow:**
 
-### Workflow:
+- New connections are added to the Connection Pool.
+- Client Connections register subscriptions via the Broker.
+- The Broker listens for Redis Pub/Sub messages and dispatches updates to clients.
 
-- New connections are added to the **Connection Pool**.
-- **Client Connection** registers subscriptions via the **Broker**.
-- The **Broker** listens for Redis Pub/Sub messages and dispatches updates to clients.
-
-This architecture ensures efficient and scalable real-time broadcasting.
+---
 
 ## 🖥 Frontend (Next.js Client)
 
-The client interface is built with **Next.js**, optimized for performance and real-time interactivity.
+The client interface is built with Next.js and optimized for performance and real-time interactivity:
 
-- **Server-side Prefetching:** Ticker data is fetched and prefetched on the server.
-- **WebSocket Manager Class:** Manages live market data streams.
-- Dynamic **subscribe/unsubscribe** behavior ensures only the active market's data is fetched.
+- **Server-side Prefetching:** Ticker and depth data are prefetched on the server.
+- **WebSocket Manager:** Manages live market data streams and dynamic subscribe/unsubscribe.
+- **Strict Type Safety:** Uses a shared-types package for consistent types across frontend and backend.
+- **React Query:** Handles data fetching, caching, and background updates.
 
-### Features:
+### Key Features
 
-- Placing orders
-- Live market orderbook & ticker
-- User's open orders & asset balances
-- Kline (candlestick) & ticker visualizations
+- Place/cancel orders with real-time feedback
+- Live market orderbook, ticker, and trade history
+- User’s open orders and asset balances
+- Kline (candlestick) and ticker visualizations
 - Onramping initial assets for users
+- Optimized bundle size and performance
 
-The frontend architecture ensures a seamless, responsive trading experience while optimizing resource usage.
+---
 
 ## 🐳 Docker Setup
 
 Docker is used to run a Redis instance on port 6379 for inter-service queues and Pub/Sub messaging.
+
+```sh
+docker run -d -p 6379:6379 redis
+```
+
+---
+
+## 🛠️ Development Notes
+
+- **Bun Native:** All backend services and scripts run on Bun for maximum performance.
+- **Shared Types:** All services import types from the shared-types package for consistency.
+- **TypeScript Optimization:** Type-only exports and careful type design prevent deep type instantiation issues.
+- **Error Boundaries:** The frontend uses error boundaries and suspense for robust UX.
+- **Performance Monitoring:** Bundle analysis and React Query Devtools are available in development.
 
 ---

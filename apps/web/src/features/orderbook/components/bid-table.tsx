@@ -19,7 +19,7 @@ export const BidTable = ({ bids }: { bids: [string, string][] }) => {
    }, [bids]);
 
    return (
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 min-h-[35vh]">
          <div className="flex justify-start flex-col h-full w-full">
             {bidsWithTotal.map(([price, quantity, total]) => (
                <Bid
@@ -49,7 +49,7 @@ function Bid({
    const widthPercentage = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
 
    return (
-      <div className="flex h-[25px] items-center">
+      <div className="flex h-[3.5vh] items-center">
          <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 border-t hover:border-base-border-focus/50 border-dashed border-transparent">
             {/* background effect  */}
             <div

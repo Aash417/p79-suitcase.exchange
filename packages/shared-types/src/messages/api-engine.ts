@@ -7,8 +7,18 @@ export type EngineToApiMessage =
    | OnRampSuccess
    | UserBalance
    | AddNewUserSuccess
-   | UserAlreadyExits;
+   | UserAlreadyExits
+   | ErrorMessage;
 
+export type ErrorMessage = {
+   type: 'ERROR';
+   payload: {
+      code: string;
+      message: string;
+      timestamp: number;
+      stack?: string;
+   };
+};
 export type Fill = {
    price: number;
    quantity: number;

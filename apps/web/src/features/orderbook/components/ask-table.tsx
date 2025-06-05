@@ -18,9 +18,14 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
       return { asksWithTotal, maxTotal };
    }, [asks]);
 
+   // Calculate how many empty rows to add
+   const minRows = 10;
+   const emptyRows = Math.max(0, minRows - asksWithTotal.length);
+
    return (
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 min-h-[35vh]">
          <div className="flex justify-end h-full w-full flex-col-reverse">
+            {/* Render asks */}
             {asksWithTotal.map(([price, quantity, total]) => (
                <Ask
                   maxTotal={maxTotal}
@@ -29,6 +34,10 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
                   price={price}
                   quantity={quantity}
                />
+            ))}
+            {/* Render empty rows at the top */}
+            {Array.from({ length: emptyRows }).map((_, i) => (
+               <div key={`empty-ask-${i}`} className="flex h-[3.5vh]"></div>
             ))}
          </div>
       </div>
@@ -49,7 +58,7 @@ function Ask({
    const widthPercentage = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
 
    return (
-      <div className="flex h-[25px] items-center">
+      <div className="flex h-[3.5vh] items-center">
          <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 border-t hover:border-base-border-focus/50 border-dashed border-transparent">
             {/* background effect  */}
             <div
