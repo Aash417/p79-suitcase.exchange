@@ -16,7 +16,7 @@ export type ApiToClientMessage =
    | Balances
    | OpenOrders
    | OpenOrder
-   | Ticker
+   | TickerType
    | Trade;
 
 export type Trade = {
@@ -47,7 +47,7 @@ export type KLine = {
    trades: string;
 };
 export type Candlesticks = KLine[];
-export type Ticker = {
+export type TickerType = {
    symbol: string;
    firstPrice: string;
    lastPrice: string;
@@ -59,7 +59,7 @@ export type Ticker = {
    quoteVolume: string;
    trades: string;
 };
-export type Tickers = Ticker[];
+export type Tickers = TickerType[];
 export type Balance = {
    available: string;
    locked: string;

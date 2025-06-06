@@ -7,7 +7,7 @@ import type {
    ExecuteOrder,
    OnRamp,
    OpenOrders,
-   Ticker,
+   TickerType,
    Trades
 } from '@repo/shared-types/messages/client-api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -142,22 +142,27 @@ export function useGetTickers() {
             throw new Error('Failed to fetch tickers');
          }
 
-         const data: Ticker[] = await response.json();
+         const data: TickerType[] = await response.json();
 
-         const tickerData = data.reduce((acc: accType[], ticker: Ticker) => {
-            const symbolInfo = SYMBOLS_MAP.get(ticker.symbol);
-            if (symbolInfo) {
-               acc.push({
-                  symbol: ticker.symbol,
-                  price: ticker.lastPrice,
-                  volume: ticker.quoteVolume,
-                  change: (Number(ticker.priceChangePercent) * 100).toFixed(2),
-                  name: symbolInfo.name,
-                  imageUrl: symbolInfo.imageUrl
-               });
-            }
-            return acc;
-         }, []);
+         const tickerData = data.reduce(
+            (acc: accType[], ticker: TickerType) => {
+               const symbolInfo = SYMBOLS_MAP.get(ticker.symbol);
+               if (symbolInfo) {
+                  acc.push({
+                     symbol: ticker.symbol,
+                     price: ticker.lastPrice,
+                     volume: ticker.quoteVolume,
+                     change: (Number(ticker.priceChangePercent) * 100).toFixed(
+                        2
+                     ),
+                     name: symbolInfo.name,
+                     imageUrl: symbolInfo.imageUrl
+                  });
+               }
+               return acc;
+            },
+            []
+         );
 
          return tickerData;
       },
@@ -242,15 +247,17 @@ export async function fetchTicker(market: string) {
       throw new Error('Failed to fetch ticker');
    }
 
-   const data: Ticker = await response.json();
-   const symbolInfo = SYMBOLS_MAP.get(data.symbol);
+   const result: TickerType = await response.json();
+   const symbolInfo = SYMBOLS_MAP.get(result.symbol);
 
-   return {
-      ...data,
-      change: (Number(data.priceChangePercent) * 100).toFixed(2),
+   const data = {
+      ...result,
+      change: (Number(result.priceChangePercent) * 100).toFixed(2),
       name: symbolInfo?.name ?? '',
       imageUrl: symbolInfo?.imageUrl ?? ''
    };
+
+   return data;
 }
 
 export async function fetchTrades(market: string) {

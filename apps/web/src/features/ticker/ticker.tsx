@@ -1,89 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { MessageLoading } from '@/components/ui/message-loading';
-import { useGetTicker } from '@/hooks';
 import { formatComma, formatPrice } from '@/lib/utils';
-import { WebSocketManager } from '@/lib/websocket-manager';
-import type { Ticker } from '@repo/shared-types/messages/client-api';
+import { TickerType } from '@repo/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
-type TickerUpdate = {
-   firstPrice: string;
-   lastPrice: string;
-   high: string;
-   low: string;
-   volume: string;
-   quoteVolume: string;
-   symbol: string;
+type Props = {
+   newTicker: TickerType & { [key: string]: string };
+   isPriceUp: boolean;
 };
-
-export function Ticker() {
+export function Ticker({ newTicker, isPriceUp }: Readonly<Props>) {
    const market = useParams<{ market: string }>().market || '';
-   const { data: ticker, isLoading } = useGetTicker(market);
-
-   const [newTicker, setNewTicker] = useState<
-      Ticker & { [key: string]: string }
-   >();
-   const [isPriceUp, setIsPriceUp] = useState(false);
-
-   useEffect(() => {
-      setNewTicker(ticker);
-
-      function handleTickerUpdate(data: TickerUpdate) {
-         try {
-            const firstPrice = parseFloat(data.firstPrice);
-            const lastPrice = parseFloat(data.lastPrice);
-            const priceChange = lastPrice - firstPrice;
-            const priceChangePercent = (priceChange / firstPrice) * 100;
-
-            setNewTicker((prev) => {
-               if (!prev) return prev;
-               return {
-                  ...prev,
-                  lastPrice: data.lastPrice,
-                  priceChange: priceChange.toFixed(2),
-                  change: priceChangePercent.toFixed(2),
-                  high: data.high,
-                  low: data.low,
-                  volume: data.volume
-               };
-            });
-
-            setIsPriceUp(priceChange > 0);
-         } catch (error) {
-            if (error instanceof Error) {
-               console.error('Ticker update error:', error.message);
-            }
-         }
-      }
-
-      const wsManager = WebSocketManager.getInstance();
-      const callbackId = `ticker.${market}`;
-
-      wsManager.registerCallback('ticker', handleTickerUpdate, callbackId);
-      wsManager.sendMessage({
-         method: 'SUBSCRIBE',
-         params: [`ticker.${market}`]
-      });
-
-      return () => {
-         wsManager.sendMessage({
-            method: 'UNSUBSCRIBE',
-            params: [`ticker.${market}`]
-         });
-         wsManager.deRegisterCallback('ticker', callbackId);
-      };
-   }, [market, ticker, newTicker]);
-
-   if (isLoading || !newTicker) {
-      return (
-         <div className="flex items-center justify-center h-full">
-            <MessageLoading />
-         </div>
-      );
-   }
 
    return (
       <div className="flex flex-row shrink-0 gap-[32px]">

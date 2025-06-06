@@ -1,59 +1,12 @@
 'use client';
 
-import { MessageLoading } from '@/components/ui/message-loading';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useGetTrades } from '@/hooks';
-import { WebSocketManager } from '@/lib/websocket-manager';
 import { Trade } from '@repo/shared-types/messages/client-api';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
-export function Trades() {
-   const [newTrades, setNewTrades] = useState<Trade[]>([]);
-   const { market } = useParams<{ market: string }>();
-   const { data: trades, isLoading } = useGetTrades(market);
-
-   useEffect(() => {
-      setNewTrades(trades ?? []);
-
-      function handleTradeUpdate(data: Trade) {
-         const newTrade = {
-            id: data.id,
-            price: data.price,
-            quantity: data.quantity,
-            quoteQuantity: '',
-            timestamp: data.timestamp,
-            isBuyerMaker: data.isBuyerMaker
-         };
-         setNewTrades((prev) => [newTrade, ...prev].slice(0, 30));
-      }
-
-      const wsManager = WebSocketManager.getInstance();
-      const callbackId = `trade.${market}`;
-
-      wsManager.registerCallback('trade', handleTradeUpdate, callbackId);
-      wsManager.sendMessage({
-         method: 'SUBSCRIBE',
-         params: [`trade.${market}`]
-      });
-
-      return () => {
-         wsManager.sendMessage({
-            method: 'UNSUBSCRIBE',
-            params: [`trade.${market}`]
-         });
-         wsManager.deRegisterCallback('trade', callbackId);
-      };
-   }, [market, trades]);
-
-   if (isLoading) {
-      return (
-         <div className="flex items-center justify-center h-full">
-            <MessageLoading />
-         </div>
-      );
-   }
-
+type Props = {
+   newTrades: Trade[];
+};
+export function Trades({ newTrades }: Readonly<Props>) {
    return (
       <div className="flex flex-col grow overflow-y-hidden">
          <div className="flex flex-col h-full px-3">
