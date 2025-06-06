@@ -1,6 +1,9 @@
 {
   "name": "suitcase.exchange",
   "private": true,
+  "prisma": {
+    "schema": "packages/database/prisma/schema.prisma"
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
