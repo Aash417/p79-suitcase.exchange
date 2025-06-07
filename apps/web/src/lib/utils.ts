@@ -50,6 +50,8 @@ export async function getTickers() {
       return acc;
    }, []);
 
+   tickersData.sort((a: any, b: any) => Number(b.price) - Number(a.price));
+
    return tickersData;
 }
 

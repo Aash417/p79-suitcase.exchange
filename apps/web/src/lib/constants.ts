@@ -10,11 +10,6 @@ export const SYMBOLS = [
       imageUrl: '/eth.webp'
    },
    {
-      name: 'USDT',
-      symbol: 'USDT_USDC',
-      imageUrl: '/usdt.webp'
-   },
-   {
       name: 'Solana',
       symbol: 'SOL_USDC',
       imageUrl: '/sol.webp'
@@ -25,29 +20,14 @@ export const SYMBOLS = [
       imageUrl: '/link.svg'
    },
    {
-      name: 'Shiba Inu',
-      symbol: 'SHIB_USDC',
-      imageUrl: '/shib.svg'
-   },
-   {
-      name: 'Pepe',
-      symbol: 'PEPE_USDC',
-      imageUrl: '/pepe.svg'
-   },
-   {
-      name: 'Uniswap',
-      symbol: 'UNI_USDC',
-      imageUrl: '/uni.webp'
-   },
-   {
-      name: 'Ondo',
-      symbol: 'ONDO_USDC',
-      imageUrl: '/ondo.svg'
-   },
-   {
       name: 'Official Trump',
       symbol: 'TRUMP_USDC',
       imageUrl: '/trump.webp'
+   },
+   {
+      name: 'Aave',
+      symbol: 'AAVE_USDC',
+      imageUrl: '/aave.svg'
    }
 ];
 

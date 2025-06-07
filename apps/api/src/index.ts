@@ -8,6 +8,7 @@ import tickerRouter from './routes/ticker';
 import tickersRouter from './routes/tickers';
 import tradesRouter from './routes/trades';
 import userRouter from './routes/user';
+import { startDataCollection } from './utils/collect-data';
 
 const app = new Hono();
 
@@ -31,6 +32,8 @@ app.route('/api/v1/user', userRouter);
 app.get('/', (c) => {
    return c.text('Hello Hono!');
 });
+
+startDataCollection(); // Start periodic data collection at server startup
 
 export default {
    port: 3001,

@@ -1,12 +1,18 @@
+import fs from 'fs/promises';
 import { Hono } from 'hono';
+import { TICKERS_FILE } from '../utils/collect-data';
 
 const ticker = new Hono();
 
 ticker.get('/', async (c) => {
-   const res = await fetch('https://api.backpack.exchange/api/v1/tickers');
-   const tickers = await res.json();
-
-   return c.json(tickers);
+   try {
+      const data = await fs.readFile(TICKERS_FILE, 'utf-8');
+      const tickers = JSON.parse(data);
+      return c.json(tickers);
+   } catch (err) {
+      console.log('Error reading tickers file:', err);
+      return c.json({ error: 'Tickers data not available' }, 500);
+   }
 });
 
 export default ticker;
