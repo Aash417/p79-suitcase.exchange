@@ -25,14 +25,24 @@ export class ErrorService {
 
    logError(error: any) {
       const logEntry = {
-         timestamp: new Date().toISOString(),
+         timestamp: new Intl.DateTimeFormat('en-IN', {
+            dateStyle: 'medium',
+            timeStyle: 'medium'
+         }).format(new Date()),
          error: {
             name: error.name,
             message: error.message,
+            // Format stack as multiline for readability
             stack: error.stack
+               ? error.stack.split('\n').map((line: string) => line.trim())
+               : undefined
          }
       };
 
-      appendFile('./error.log', '\n' + JSON.stringify(logEntry, null, 2));
+      appendFile(
+         './error.log',
+         '\n' + JSON.stringify(logEntry, null, 2),
+         'utf-8'
+      );
    }
 }

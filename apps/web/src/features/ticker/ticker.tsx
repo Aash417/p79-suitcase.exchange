@@ -2,11 +2,10 @@
 'use client';
 
 import { formatComma, formatPrice } from '@/lib/utils';
-import { TickerType } from '@repo/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 
 type Props = {
-   newTicker: TickerType & { [key: string]: string };
+   newTicker: { [key: string]: string };
    isPriceUp: boolean;
 };
 export function Ticker({ newTicker, isPriceUp }: Readonly<Props>) {

@@ -27,6 +27,7 @@
       "name": "engine",
       "version": "1.0.0",
       "dependencies": {
+        "@repo/database": "*",
         "@repo/shared-types": "*",
         "redis": "^4.7.0",
       },

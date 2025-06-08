@@ -1,6 +1,5 @@
 'use client';
 
-import { MessageLoading } from '@/components/ui/message-loading';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dashboard } from '@/features/dashboard/dashboard';
 import { KlineChart } from '@/features/klineChart/klineChart';
@@ -11,7 +10,7 @@ import { Ticker } from '@/features/ticker/ticker';
 import { Trades } from '@/features/trades/trades';
 import { useGetDepth, useGetTicker, useGetTrades } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
-import type { TickerType, Trade } from '@repo/shared-types/messages/client-api';
+import type { Trade } from '@repo/shared-types/messages/client-api';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -30,28 +29,33 @@ export function MarketsTrades() {
 
    const { data: depthData, isLoading: loadingDepth } = useGetDepth(market);
    const { data: ticker, isLoading: loadingTicker } = useGetTicker(market);
+   const { data: trades, isLoading: loadingTrades } = useGetTrades(market);
+
    const [bids, setBids] = useState<[string, string][]>([]);
    const [asks, setAsks] = useState<[string, string][]>([]);
-
-   const [newTicker, setNewTicker] = useState<
-      TickerType & { [key: string]: string }
-   >();
+   const [newTicker, setNewTicker] = useState<{ [key: string]: string }>({});
    const [isPriceUp, setIsPriceUp] = useState(false);
    const [lastPrice, setLastPrice] = useState<string | undefined>(
       ticker?.lastPrice
    );
-
    const [newTrades, setNewTrades] = useState<Trade[]>([]);
-   const { data: trades, isLoading: loadingTrades } = useGetTrades(market);
 
-   // handles orderbook updates
+   // handles initial data only
    useEffect(() => {
-      console.log('rendered ');
       if (depthData) {
          setBids(depthData.bids);
          setAsks(depthData.asks);
       }
+   }, [depthData]);
+   useEffect(() => {
+      setNewTicker(ticker ?? {});
+   }, [ticker]);
+   useEffect(() => {
+      setNewTrades(trades ?? []);
+   }, [trades]);
 
+   // handles orderbook updates
+   useEffect(() => {
       function handleDepthUpdate(data: {
          bids: [string, string][];
          asks: [string, string][];
@@ -59,37 +63,30 @@ export function MarketsTrades() {
          setBids((prevBids) => updateBids(prevBids, data.bids));
          setAsks((prevAsks) => updateAsks(prevAsks, data.asks));
       }
-
       const wsManager = WebSocketManager.getInstance();
-      wsManager.registerCallback(
-         'depth',
-         handleDepthUpdate,
-         `depth.1000ms.${market}`
-      );
+      const callbackId = `depth.1000ms.${market}`;
+      wsManager.registerCallback('depth', handleDepthUpdate, callbackId);
       wsManager.sendMessage({
          method: 'SUBSCRIBE',
          params: [`depth.1000ms.${market}`]
       });
-
       return () => {
          wsManager.sendMessage({
             method: 'UNSUBSCRIBE',
             params: [`depth.1000ms.${market}`]
          });
-         wsManager.deRegisterCallback('depth', `depth.1000ms.${market}`);
+         wsManager.deRegisterCallback('depth', callbackId);
       };
-   }, [market, depthData]);
+   }, [market]);
+
    // handles ticker updates
    useEffect(() => {
-      setNewTicker(ticker);
-
       function handleTickerUpdate(data: TickerUpdate) {
          try {
             const firstPrice = parseFloat(data.firstPrice);
             const lastPrice = parseFloat(data.lastPrice);
             const priceChange = lastPrice - firstPrice;
             const priceChangePercent = (priceChange / firstPrice) * 100;
-
             setNewTicker((prev) => {
                if (!prev) return prev;
                return {
@@ -102,7 +99,6 @@ export function MarketsTrades() {
                   volume: data.volume
                };
             });
-
             setIsPriceUp(priceChange > 0);
             setLastPrice(data.lastPrice);
          } catch (error) {
@@ -111,16 +107,13 @@ export function MarketsTrades() {
             }
          }
       }
-
       const wsManager = WebSocketManager.getInstance();
       const callbackId = `ticker.${market}`;
-
       wsManager.registerCallback('ticker', handleTickerUpdate, callbackId);
       wsManager.sendMessage({
          method: 'SUBSCRIBE',
          params: [`ticker.${market}`]
       });
-
       return () => {
          wsManager.sendMessage({
             method: 'UNSUBSCRIBE',
@@ -128,11 +121,9 @@ export function MarketsTrades() {
          });
          wsManager.deRegisterCallback('ticker', callbackId);
       };
-   }, [market, ticker]);
+   }, [market]);
    // handles trades updates
    useEffect(() => {
-      setNewTrades(trades ?? []);
-
       function handleTradeUpdate(data: Trade) {
          const newTrade = {
             id: data.id,
@@ -144,16 +135,13 @@ export function MarketsTrades() {
          };
          setNewTrades((prev) => [newTrade, ...prev].slice(0, 30));
       }
-
       const wsManager = WebSocketManager.getInstance();
       const callbackId = `trade.${market}`;
-
       wsManager.registerCallback('trade', handleTradeUpdate, callbackId);
       wsManager.sendMessage({
          method: 'SUBSCRIBE',
          params: [`trade.${market}`]
       });
-
       return () => {
          wsManager.sendMessage({
             method: 'UNSUBSCRIBE',
@@ -161,18 +149,11 @@ export function MarketsTrades() {
          });
          wsManager.deRegisterCallback('trade', callbackId);
       };
-   }, [market, trades]);
+   }, [market]);
 
    const topBids = useMemo(() => bids.slice(0, 10), [bids]);
    const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
 
-   if (loadingDepth || loadingTicker || loadingTrades) {
-      return (
-         <div className="flex items-center justify-center h-full">
-            <MessageLoading />
-         </div>
-      );
-   }
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
          <div className="flex flex-col flex-1">
@@ -185,7 +166,9 @@ export function MarketsTrades() {
                      <div className="flex items-center flex-row bg-base-background-l1 relative w-full rounded-lg">
                         <div className="flex items-center flex-row no-scrollbar mr-4 h-[72px] w-full overflow-auto pl-4">
                            <div className="flex justify-between flex-row w-full gap-4">
-                              {newTicker && (
+                              {loadingTicker ? (
+                                 <div className=""></div>
+                              ) : (
                                  <Ticker
                                     newTicker={newTicker}
                                     isPriceUp={isPriceUp}
@@ -226,18 +209,32 @@ export function MarketsTrades() {
 
                                     <TabsContent value="book">
                                        <div className="flex flex-col grow overflow-y-hidden">
-                                          <Orderbook
-                                             topAsks={topAsks}
-                                             topBids={topBids}
-                                             isPriceUp={isPriceUp}
-                                             lastPrice={lastPrice ?? '0.00'}
-                                          />
+                                          {loadingDepth ? (
+                                             <div className=""></div>
+                                          ) : (
+                                             <Orderbook
+                                                topAsks={topAsks}
+                                                topBids={topBids}
+                                                isPriceUp={isPriceUp}
+                                                lastPrice={lastPrice ?? '0.00'}
+                                             />
+                                          )}
                                        </div>
                                     </TabsContent>
 
                                     <TabsContent value="trades">
                                        <div className="flex flex-col grow overflow-y-hidden">
-                                          <Trades newTrades={newTrades} />
+                                          {loadingTrades ? (
+                                             <div className=""></div>
+                                          ) : (
+                                             <div className="flex flex-col h-full">
+                                                <div className="flex flex-col grow overflow-y-auto">
+                                                   <Trades
+                                                      newTrades={newTrades}
+                                                   />
+                                                </div>
+                                             </div>
+                                          )}
                                        </div>
                                     </TabsContent>
                                  </Tabs>

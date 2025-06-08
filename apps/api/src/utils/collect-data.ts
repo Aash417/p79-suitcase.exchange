@@ -17,10 +17,10 @@ export const SYMBOLS_ARRAY = [
 ];
 
 export function startDataCollection() {
-   fetchAndSaveTickers(); 
-   fetchAndSaveKlines(); 
-   fetchAndSaveSingleTickers(); 
-   fetchAndSaveTrades(); 
+   fetchAndSaveTickers();
+   fetchAndSaveKlines();
+   fetchAndSaveSingleTickers();
+   fetchAndSaveTrades();
 
    setInterval(
       () => {
@@ -79,7 +79,11 @@ export async function fetchAndSaveSingleTickers() {
          allTickers[symbol] = null;
       }
    }
-   await fs.writeFile(SINGLE_TICKER_FILE, JSON.stringify(allTickers, null, 2), 'utf-8');
+   await fs.writeFile(
+      SINGLE_TICKER_FILE,
+      JSON.stringify(allTickers, null, 2),
+      'utf-8'
+   );
 }
 
 export async function fetchAndSaveTrades() {

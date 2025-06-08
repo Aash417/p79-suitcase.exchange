@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 
 export function useExecuteOrder(market: string) {
    const queryClient = useQueryClient();
-   const mutation = useMutation<ResponseType, Error, ExecuteOrder>({
+   const mutation = useMutation<string, Error, ExecuteOrder>({
       mutationFn: async (data) => {
          const response = await fetch(`${API_URL}/order`, {
             method: 'POST',
@@ -32,11 +32,13 @@ export function useExecuteOrder(market: string) {
             throw new Error('Failed to execute order');
          }
 
-         return await response.json();
+         return data.userId;
       },
-      onSuccess: () => {
+      onSuccess: (userId) => {
          toast.success('Order created successfully', { duration: 1300 });
-         queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+         queryClient.invalidateQueries({
+            queryKey: ['userBalance', userId]
+         });
          queryClient.invalidateQueries({
             queryKey: ['userOpenOrders', market]
          });
@@ -52,7 +54,7 @@ export function useExecuteOrder(market: string) {
 
 export function useDepositAsset() {
    const queryClient = useQueryClient();
-   const mutation = useMutation<ResponseType, Error, OnRamp>({
+   const mutation = useMutation<string, Error, OnRamp>({
       mutationFn: async (data) => {
          const response = await fetch(`${API_URL}/order/on-ramp`, {
             method: 'POST',
@@ -66,11 +68,13 @@ export function useDepositAsset() {
             throw new Error('Failed to deposit asset');
          }
 
-         return await response.json();
+         return data.userId;
       },
-      onSuccess: () => {
+      onSuccess: (userId) => {
          toast.success('Asset added successfully', { duration: 1300 });
-         queryClient.invalidateQueries({ queryKey: ['userBalance'] });
+         queryClient.invalidateQueries({
+            queryKey: ['userBalance', userId]
+         });
       },
       onError: (error) => {
          toast.error(error.message || 'Failed to deposit asset', {
@@ -87,7 +91,6 @@ export function useGetUserBalances(userId: string) {
    return useQuery({
       queryKey: ['userBalance', userId],
       queryFn: () => fetchUserBalance(userId),
-      enabled: !!userId,
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30_000

@@ -10,6 +10,7 @@
    },
    "dependencies": {
       "@repo/shared-types": "*",
+      "@repo/database": "*",
       "redis": "^4.7.0"
    },
    "devDependencies": {

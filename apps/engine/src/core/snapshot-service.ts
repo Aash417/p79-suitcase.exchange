@@ -1,3 +1,4 @@
+import prisma from '@repo/database';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { SNAPSHOT_PATH } from '../utils/constants';
 import type { Order, UserBalance } from '../utils/types';
@@ -44,7 +45,7 @@ export class SnapshotService {
       }
    }
 
-   load() {
+   async load() {
       try {
          const data = readFileSync(SNAPSHOT_PATH, 'utf-8');
          const snapshot = JSON.parse(data) as Snapshot;
@@ -59,8 +60,11 @@ export class SnapshotService {
             this.setOrderbooks(loadedOrderbooks);
             this.orderbooks = loadedOrderbooks;
          }
+         const newUsers = await this.initiateUserFromDb();
 
-         this.balanceService.setBalances(new Map(snapshot.balances));
+         this.balanceService.setBalances(
+            new Map([...snapshot.balances, ...newUsers])
+         );
 
          console.log('Snapshot loaded successfully');
          return true;
@@ -72,5 +76,25 @@ export class SnapshotService {
 
    private getOrdersFromMap(priceMap: Map<number, Order[]>): Order[] {
       return Array.from(priceMap.values()).flat();
+   }
+
+   async initiateUserFromDb() {
+      // 1. Fetch all users from the user table
+      const users: { id: string }[] = await prisma.user.findMany({
+         select: { id: true }
+      });
+      // 2. Extract only their IDs
+      const userIds: string[] = users.map((u: { id: string }) => u.id);
+      // 3. For each user, create an entry with default USDC balance
+      const arr: [string, UserBalance][] = userIds.map((userId: string) => [
+         userId,
+         {
+            USDC: {
+               available: 100000,
+               locked: 0
+            }
+         }
+      ]);
+      return arr;
    }
 }

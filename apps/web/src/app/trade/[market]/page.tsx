@@ -1,5 +1,5 @@
 import { MarketsTrades } from '@/features/marketTrades/market-trades';
-import { fetchMarketDepth, fetchTicker, fetchUserBalance } from '@/hooks';
+import { fetchMarketDepth, fetchTicker } from '@/hooks';
 import { auth } from '@/lib/auth';
 import { SYMBOLS } from '@/lib/constants';
 import {
@@ -20,11 +20,6 @@ export default async function Market() {
    if (!session) {
       redirect('/auth');
    }
-
-   await queryClient.prefetchQuery({
-      queryKey: ['userBalance'],
-      queryFn: () => fetchUserBalance(session.user.id)
-   });
 
    const depthPrefetchPromises = SYMBOLS.map(({ symbol }) =>
       queryClient.prefetchQuery({
