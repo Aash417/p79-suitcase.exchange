@@ -5,22 +5,19 @@ FROM oven/bun:1.0.26
 WORKDIR /app
 
 # Copy workspace configuration files
-COPY package.json bun.lock* ./
-COPY turbo.json ./
+COPY package.json bun.lock* turbo.json ./
 
-# Copy package.json files for dependency resolution
-COPY apps/engine/package.json ./apps/engine/
-COPY packages/ ./packages/
+# Copy packages directory FIRST
+COPY packages ./packages
+
+# Copy app source code
+COPY apps/engine ./apps/engine
 
 # Install dependencies
 RUN bun install 
 
-# Copy source code
-COPY apps/engine/ ./apps/engine/
-
-
 # Create data directory
-RUN mkdir -p /app/data
+# RUN mkdir -p /app/data
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

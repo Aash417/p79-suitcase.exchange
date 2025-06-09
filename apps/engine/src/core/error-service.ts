@@ -1,4 +1,5 @@
 import { appendFile } from 'node:fs/promises';
+import { ERROR_LOG_PATH } from '../utils/constants';
 import { RedisService } from './redis-service';
 
 export class ErrorService {
@@ -40,7 +41,7 @@ export class ErrorService {
       };
 
       appendFile(
-         './error.log',
+         ERROR_LOG_PATH,
          '\n' + JSON.stringify(logEntry, null, 2),
          'utf-8'
       );

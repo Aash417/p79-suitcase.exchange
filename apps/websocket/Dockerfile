@@ -5,18 +5,16 @@ FROM oven/bun:1.0.26
 WORKDIR /app
 
 # Copy workspace configuration files
-COPY package.json bun.lock* ./
-COPY turbo.json ./
+COPY package.json bun.lock* turbo.json ./
 
-# Copy package.json files for dependency resolution
-COPY apps/websocket/package.json ./apps/websocket/
-COPY packages/ ./packages/
+# Copy packages directory FIRST
+COPY packages ./packages
+
+# Copy app source code
+COPY apps/websocket ./apps/websocket
 
 # Install dependencies
 RUN bun install 
-
-# Copy source code
-COPY apps/websocket/ ./apps/websocket/
 
 # Expose port
 EXPOSE 3003

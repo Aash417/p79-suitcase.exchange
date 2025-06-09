@@ -1088,10 +1088,6 @@
                "available": 1000000,
                "locked": 500000
             },
-            "PEPE": {
-               "available": 1000000,
-               "locked": 500000
-            },
             "BTC": {
                "available": 1000000,
                "locked": 500000
@@ -1100,27 +1096,11 @@
                "available": 1000000,
                "locked": 500000
             },
-            "USDT": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "LINK": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "SHIB": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "UNI": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "ONDO": {
-               "available": 1000000,
-               "locked": 500000
-            },
             "TRUMP": {
+               "available": 1000000,
+               "locked": 500000
+            },
+            "AAVE": {
                "available": 1000000,
                "locked": 500000
             }
@@ -1137,10 +1117,6 @@
                "available": 1000000,
                "locked": 500000
             },
-            "PEPE": {
-               "available": 1000000,
-               "locked": 500000
-            },
             "BTC": {
                "available": 1000000,
                "locked": 500000
@@ -1149,29 +1125,31 @@
                "available": 1000000,
                "locked": 500000
             },
-            "USDT": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "LINK": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "SHIB": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "UNI": {
-               "available": 1000000,
-               "locked": 500000
-            },
-            "ONDO": {
-               "available": 1000000,
-               "locked": 100000
-            },
             "TRUMP": {
                "available": 1000000,
                "locked": 500000
+            },
+            "AAVE": {
+               "available": 1000000,
+               "locked": 500000
+            }
+         }
+      ],
+      [
+         "9fIdkTe2UXYVbfqzfDuQy2Wvqk7ygnEs",
+         {
+            "USDC": {
+               "available": 100000,
+               "locked": 0
+            }
+         }
+      ],
+      [
+         "gFj1a44F0zA1oaz99tIbPZyAG4jj5Jzt",
+         {
+            "USDC": {
+               "available": 100000,
+               "locked": 0
             }
          }
       ]

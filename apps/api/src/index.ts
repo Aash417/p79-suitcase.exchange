@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context, type Next } from 'hono';
 import { cors } from 'hono/cors';
 import capitalRouter from './routes/capital';
 import depthRouter from './routes/depth';
@@ -12,6 +12,13 @@ import { startDataCollection } from './utils/collect-data';
 
 const app = new Hono();
 
+let requestCount = 0;
+async function requestCounter(c: Context, next: Next) {
+   requestCount++;
+   await next();
+}
+
+app.use('*', requestCounter);
 app.use(
    cors({
       origin: '*', // Allow all origins (for development only!)
@@ -31,6 +38,10 @@ app.route('/api/v1/user', userRouter);
 
 app.get('/', (c) => {
    return c.text('Hello Hono!');
+});
+
+app.get('/metrics', (c) => {
+   return c.text(`Total Requests: ${requestCount}`);
 });
 
 startDataCollection(); // Start periodic data collection at server startup

@@ -1,6 +1,5 @@
-import prisma from '@repo/database';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { SNAPSHOT_PATH } from '../utils/constants';
+import { BACKUP_FILE_PATH, SNAPSHOT_PATH } from '../utils/constants';
 import type { Order, UserBalance } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { OrderBookService } from './orderbook-service';
@@ -34,10 +33,7 @@ export class SnapshotService {
             balances: Array.from(this.balanceService.getBalances().entries())
          };
 
-         writeFileSync(
-            './backupSnapshot.json',
-            JSON.stringify(snapshot, null, 2)
-         );
+         writeFileSync(BACKUP_FILE_PATH, JSON.stringify(snapshot, null, 2));
          return true;
       } catch (error) {
          console.error('Snapshot save failed:', error);
@@ -60,11 +56,8 @@ export class SnapshotService {
             this.setOrderbooks(loadedOrderbooks);
             this.orderbooks = loadedOrderbooks;
          }
-         const newUsers = await this.initiateUserFromDb();
 
-         this.balanceService.setBalances(
-            new Map([...snapshot.balances, ...newUsers])
-         );
+         this.balanceService.setBalances(new Map(snapshot.balances));
 
          console.log('Snapshot loaded successfully');
          return true;
@@ -76,25 +69,5 @@ export class SnapshotService {
 
    private getOrdersFromMap(priceMap: Map<number, Order[]>): Order[] {
       return Array.from(priceMap.values()).flat();
-   }
-
-   async initiateUserFromDb() {
-      // 1. Fetch all users from the user table
-      const users: { id: string }[] = await prisma.user.findMany({
-         select: { id: true }
-      });
-      // 2. Extract only their IDs
-      const userIds: string[] = users.map((u: { id: string }) => u.id);
-      // 3. For each user, create an entry with default USDC balance
-      const arr: [string, UserBalance][] = userIds.map((userId: string) => [
-         userId,
-         {
-            USDC: {
-               available: 100000,
-               locked: 0
-            }
-         }
-      ]);
-      return arr;
    }
 }
