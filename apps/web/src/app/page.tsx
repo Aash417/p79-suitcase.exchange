@@ -10,7 +10,7 @@ const cryptos = [
    {
       symbol: 'BTC',
       name: 'Bitcoin',
-      price: '$67,420',
+      price: '$97,420',
       change: '+2.4%',
       positive: true
    },

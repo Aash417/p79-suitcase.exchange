@@ -1103,6 +1103,10 @@
             "AAVE": {
                "available": 1000000,
                "locked": 500000
+            },
+            "LINK": {
+               "available": 1000000,
+               "locked": 500000
             }
          }
       ],
@@ -1130,6 +1134,10 @@
                "locked": 500000
             },
             "AAVE": {
+               "available": 1000000,
+               "locked": 500000
+            },
+            "LINK": {
                "available": 1000000,
                "locked": 500000
             }

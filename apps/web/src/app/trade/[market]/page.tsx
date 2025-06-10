@@ -1,7 +1,5 @@
 import { MarketsTrades } from '@/features/marketTrades/market-trades';
-import { fetchMarketDepth, fetchTicker } from '@/hooks';
 import { auth } from '@/lib/auth';
-import { SYMBOLS } from '@/lib/constants';
 import {
    dehydrate,
    HydrationBoundary,
@@ -20,23 +18,6 @@ export default async function Market() {
    if (!session) {
       redirect('/auth');
    }
-
-   const depthPrefetchPromises = SYMBOLS.map(({ symbol }) =>
-      queryClient.prefetchQuery({
-         queryKey: ['depth', symbol],
-         queryFn: () => fetchMarketDepth(symbol)
-      })
-   );
-   const tickerPrefetchPromises = SYMBOLS.map(({ symbol }) =>
-      queryClient.prefetchQuery({
-         queryKey: ['ticker', symbol],
-         queryFn: () => fetchTicker(symbol)
-      })
-   );
-
-   // Wait for all data to be prefetched
-   await Promise.all(depthPrefetchPromises);
-   await Promise.all(tickerPrefetchPromises);
 
    return (
       <HydrationBoundary state={dehydrate(queryClient)}>

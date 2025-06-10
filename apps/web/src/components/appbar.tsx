@@ -32,16 +32,17 @@ export default function Appbar({ disable }: Readonly<{ disable?: boolean }>) {
             >
                <Link href={disable ? '#' : '/markets'}>Markets</Link>
             </div>
+            {/* Trade nav item: always disable pointer events on /markets page */}
             <div
                className={`text-sm pt-1 flex flex-col justify-center pl-8 ${
-                  disable
+                  disable || route.startsWith('/markets')
                      ? 'text-slate-400 pointer-events-none'
                      : route.startsWith('/trade')
                        ? 'text-white cursor-pointer'
                        : 'text-slate-500 cursor-pointer'
                }`}
             >
-               <Link href={disable ? '#' : '/trade'}>Trade</Link>
+               <Link href="#">Trade</Link>
             </div>
          </div>
 
