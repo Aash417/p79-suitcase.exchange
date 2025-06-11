@@ -11,6 +11,7 @@ import { Trades } from '@/features/trades/trades';
 import { useGetDepth, useGetTicker, useGetTrades } from '@/hooks';
 import { WebSocketManager } from '@/lib/websocket-manager';
 import type { Trade } from '@repo/shared-types/messages/client-api';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -39,6 +40,13 @@ export function MarketsTrades() {
       ticker?.lastPrice
    );
    const [newTrades, setNewTrades] = useState<Trade[]>([]);
+
+   // Mobile collapsible states
+   const [isOrderbookCollapsed, setIsOrderbookCollapsed] = useState(true);
+   const [isSwapCollapsed, setIsSwapCollapsed] = useState(false); // Trading should be open by default
+   const [isDepositCollapsed, setIsDepositCollapsed] = useState(true);
+   const [isDashboardCollapsed, setIsDashboardCollapsed] = useState(true);
+   const [isTradesCollapsed, setIsTradesCollapsed] = useState(true);
 
    // handles initial data only
    useEffect(() => {
@@ -157,7 +165,8 @@ export function MarketsTrades() {
    return (
       <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
          <div className="flex flex-col flex-1">
-            <div className="flex flex-row mb-4 h-screen flex-1 gap-2 overflow-hidden px-4">
+            {/* Desktop Layout (lg:) */}
+            <div className="hidden lg:flex flex-row mb-4 h-screen flex-1 gap-2 overflow-hidden px-4">
                {/* left */}
                <div className="flex flex-col flex-1 gap-2">
                   {/* upper dashboard */}
@@ -264,6 +273,203 @@ export function MarketsTrades() {
                      <div className="basis-[15vw] bg-base-background-l1 rounded-md">
                         <DepositForm />
                      </div>
+                  </div>
+               </div>
+            </div>
+
+            {/* Mobile Layout (up to lg) */}
+            <div className="lg:hidden flex flex-col gap-4 p-4 min-h-screen">
+               {/* Mobile Ticker - Always visible */}
+               <div className="flex items-center flex-row bg-base-background-l1 relative w-full rounded-lg">
+                  <div className="flex items-center flex-row no-scrollbar mr-4 h-[72px] w-full overflow-auto pl-4">
+                     <div className="flex justify-between flex-row w-full gap-4">
+                        {loadingTicker ? (
+                           <div className=""></div>
+                        ) : (
+                           <Ticker
+                              newTicker={newTicker}
+                              isPriceUp={isPriceUp}
+                           />
+                        )}
+                     </div>
+                  </div>
+               </div>
+
+               {/* Mobile Chart - Always visible */}
+               <div className="flex flex-col bg-base-background-l1 h-[300px] sm:h-[400px] overflow-hidden rounded-lg">
+                  <div className="tradingview-chart h-full">
+                     <KlineChart />
+                  </div>
+               </div>
+
+               {/* Mobile Trading Forms */}
+               <div className="flex flex-col gap-4">
+                  {/* Medium device layout - Orderbook and Swap side by side */}
+                  <div className="hidden md:flex md:gap-4">
+                     {/* Orderbook - Left side on medium+ */}
+                     <div className="bg-base-background-l1 rounded-lg flex-1">
+                        <div className="px-4 py-3">
+                           <span className="text-lg font-semibold text-high-emphasis">
+                              Order Book
+                           </span>
+                        </div>
+                        <div className="px-4 pb-4 h-[400px] overflow-hidden">
+                           {loadingDepth ? (
+                              <div className=""></div>
+                           ) : (
+                              <Orderbook
+                                 topAsks={topAsks}
+                                 topBids={topBids}
+                                 isPriceUp={isPriceUp}
+                                 lastPrice={lastPrice ?? '0.00'}
+                              />
+                           )}
+                        </div>
+                     </div>
+
+                     {/* Swap Form - Right side on medium+ */}
+                     <div className="bg-base-background-l1 rounded-lg flex-1">
+                        <div className="px-4 py-3">
+                           <span className="text-lg font-semibold text-high-emphasis">
+                              Trade
+                           </span>
+                        </div>
+                        <div className="px-4 pb-4">
+                           <SwapForm />
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Small device layout - Stacked (mobile phones) */}
+                  <div className="md:hidden flex flex-col gap-4">
+                     {/* Swap Form */}
+                     <div className="bg-base-background-l1 rounded-lg">
+                        <button
+                           onClick={() => setIsSwapCollapsed(!isSwapCollapsed)}
+                           className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
+                        >
+                           <span className="text-lg font-semibold text-high-emphasis">
+                              Trade
+                           </span>
+                           {isSwapCollapsed ? (
+                              <ChevronDown className="w-5 h-5 text-med-emphasis" />
+                           ) : (
+                              <ChevronUp className="w-5 h-5 text-med-emphasis" />
+                           )}
+                        </button>
+                        {!isSwapCollapsed && (
+                           <div className="px-4 pb-4">
+                              <SwapForm />
+                           </div>
+                        )}
+                     </div>
+
+                     {/* Orderbook */}
+                     <div className="bg-base-background-l1 rounded-lg">
+                        <button
+                           onClick={() =>
+                              setIsOrderbookCollapsed(!isOrderbookCollapsed)
+                           }
+                           className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
+                        >
+                           <span className="text-lg font-semibold text-high-emphasis">
+                              Order Book
+                           </span>
+                           {isOrderbookCollapsed ? (
+                              <ChevronDown className="w-5 h-5 text-med-emphasis" />
+                           ) : (
+                              <ChevronUp className="w-5 h-5 text-med-emphasis" />
+                           )}
+                        </button>
+                        {!isOrderbookCollapsed && (
+                           <div className="px-4 pb-4 h-[400px] overflow-hidden">
+                              {loadingDepth ? (
+                                 <div className=""></div>
+                              ) : (
+                                 <Orderbook
+                                    topAsks={topAsks}
+                                    topBids={topBids}
+                                    isPriceUp={isPriceUp}
+                                    lastPrice={lastPrice ?? '0.00'}
+                                 />
+                              )}
+                           </div>
+                        )}
+                     </div>
+                  </div>
+
+                  {/* Recent Trades */}
+                  <div className="bg-base-background-l1 rounded-lg">
+                     <button
+                        onClick={() => setIsTradesCollapsed(!isTradesCollapsed)}
+                        className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
+                     >
+                        <span className="text-lg font-semibold text-high-emphasis">
+                           Recent Trades
+                        </span>
+                        {isTradesCollapsed ? (
+                           <ChevronDown className="w-5 h-5 text-med-emphasis" />
+                        ) : (
+                           <ChevronUp className="w-5 h-5 text-med-emphasis" />
+                        )}
+                     </button>
+                     {!isTradesCollapsed && (
+                        <div className="px-4 pb-4 h-[300px] overflow-hidden">
+                           {loadingTrades ? (
+                              <div className=""></div>
+                           ) : (
+                              <Trades newTrades={newTrades} />
+                           )}
+                        </div>
+                     )}
+                  </div>
+
+                  {/* Dashboard */}
+                  <div className="bg-base-background-l1 rounded-lg">
+                     <button
+                        onClick={() =>
+                           setIsDashboardCollapsed(!isDashboardCollapsed)
+                        }
+                        className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
+                     >
+                        <span className="text-lg font-semibold text-high-emphasis">
+                           Portfolio
+                        </span>
+                        {isDashboardCollapsed ? (
+                           <ChevronDown className="w-5 h-5 text-med-emphasis" />
+                        ) : (
+                           <ChevronUp className="w-5 h-5 text-med-emphasis" />
+                        )}
+                     </button>
+                     {!isDashboardCollapsed && (
+                        <div className="px-4 pb-4">
+                           <Dashboard />
+                        </div>
+                     )}
+                  </div>
+
+                  {/* Deposit Form */}
+                  <div className="bg-base-background-l1 rounded-lg">
+                     <button
+                        onClick={() =>
+                           setIsDepositCollapsed(!isDepositCollapsed)
+                        }
+                        className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
+                     >
+                        <span className="text-lg font-semibold text-high-emphasis">
+                           Deposit
+                        </span>
+                        {isDepositCollapsed ? (
+                           <ChevronDown className="w-5 h-5 text-med-emphasis" />
+                        ) : (
+                           <ChevronUp className="w-5 h-5 text-med-emphasis" />
+                        )}
+                     </button>
+                     {!isDepositCollapsed && (
+                        <div className="px-4 pb-4">
+                           <DepositForm />
+                        </div>
+                     )}
                   </div>
                </div>
             </div>

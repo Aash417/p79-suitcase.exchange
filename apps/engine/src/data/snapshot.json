@@ -1160,6 +1160,52 @@
                "locked": 0
             }
          }
+      ],
+      [
+         "cJ1thRHAMZlCsUYvfluzuLaN6UMQVz71",
+         {
+            "USDC": {
+               "available": 868900,
+               "locked": 76960
+            },
+            "BTC": {
+               "available": 300,
+               "locked": 0
+            },
+            "LINK": {
+               "available": 0,
+               "locked": 0
+            },
+            "TRUMP": {
+               "available": 400,
+               "locked": 0
+            },
+            "SOL": {
+               "available": 100,
+               "locked": 0
+            },
+            "ETH": {
+               "available": 100,
+               "locked": 0
+            },
+            "AAVE": {
+               "available": 200,
+               "locked": 0
+            }
+         }
+      ],
+      [
+         "luL7evKViyPWY7B0oqLZeFprvZe3fz6N",
+         {
+            "USDC": {
+               "available": 119070,
+               "locked": 0
+            },
+            "BTC": {
+               "available": 0,
+               "locked": 0
+            }
+         }
       ]
    ]
 }

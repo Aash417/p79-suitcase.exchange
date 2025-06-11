@@ -27,24 +27,24 @@ export function TradingDashboardMock() {
    }, []);
 
    return (
-      <div className="bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 border border-gray-700 shadow-2xl">
-         <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-bold">BTC/USD</h3>
+      <div className="bg-gray-800/80 backdrop-blur-xl rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-700 shadow-2xl">
+         <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h3 className="text-lg sm:text-xl lg:text-xl font-bold">BTC/USD</h3>
             <div className="flex items-center space-x-2">
-               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-               <span className="text-sm text-gray-400">Live</span>
+               <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full animate-pulse"></div>
+               <span className="text-xs sm:text-sm text-gray-400">Live</span>
             </div>
          </div>
 
-         <div className="mb-6">
-            <div className="text-3xl font-bold mb-2">
+         <div className="mb-4 sm:mb-6">
+            <div className="text-2xl sm:text-3xl lg:text-3xl font-bold mb-2">
                ${currentPrice.toLocaleString()}
             </div>
             <div
                className={`flex items-center ${priceChange >= 0 ? 'text-green-400' : 'text-red-400'}`}
             >
-               <TrendingUp size={16} />
-               <span className="ml-1">
+               <TrendingUp size={14} className="sm:w-4 sm:h-4" />
+               <span className="ml-1 text-sm sm:text-base">
                   {priceChange >= 0 ? '+' : ''}
                   {priceChange.toFixed(2)}%
                </span>
@@ -52,21 +52,21 @@ export function TradingDashboardMock() {
          </div>
 
          {/* Chart Placeholder */}
-         <div className="h-32 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg mb-6 flex items-end p-4">
+         <div className="h-24 sm:h-32 lg:h-32 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg mb-4 sm:mb-6 flex items-end p-2 sm:p-4">
             {chartData.map((height, i) => (
                <div
                   key={i + 1}
-                  className="bg-gradient-to-t from-cyan-400 to-purple-400 w-4 mr-2 rounded-t"
+                  className="bg-gradient-to-t from-cyan-400 to-purple-400 w-2 sm:w-4 mr-1 sm:mr-2 rounded-t"
                   style={{ height: `${height}%` }}
                ></div>
             ))}
          </div>
 
-         <div className="grid grid-cols-2 gap-4">
-            <button className="bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
+         <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <button className="bg-green-500 hover:bg-green-600 text-white py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold transition-colors">
                Buy
             </button>
-            <button className="bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold transition-colors">
+            <button className="bg-red-500 hover:bg-red-600 text-white py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold transition-colors">
                Sell
             </button>
          </div>
