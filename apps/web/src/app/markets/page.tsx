@@ -28,26 +28,26 @@ export default async function Markets() {
    const tickersData = await getTickers();
 
    return (
-      <div className="w-full p-2 sm:p-4 lg:p-6 xl:p-8">
+      <div className="w-full p-2">
          <div className="bg-base-background-l0 text-high-emphasis flex flex-1 flex-col overflow-auto">
             <div className="flex flex-col flex-1 gap-6 lg:gap-8">
                <div className="flex flex-col w-full flex-1 gap-4 px-3">
                   <div className="flex flex-col">
                      {/* upper analytics */}
-                     <div className=""></div>
+                     {/* <div className=""></div> */}
 
                      {/* lower table */}
-                     <div className="flex flex-col bg-base-background-l1 flex-1 gap-3 rounded-xl p-4 lg:p-6">
+                     <div className="flex flex-col bg-base-background-l1 flex-1 gap-3 rounded-xl p-4 lg:p-6 2xl:p-8">
                         {/* tab */}
                         <div className="flex flex-row">
                            <div className="items-center justify-center flex-row flex gap-2">
-                              <div className="flex justify-center flex-col cursor-pointer rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-high-emphasis px-3 text-sm h-8 bg-base-background-l2">
+                              <div className="flex justify-center flex-col cursor-pointer rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-high-emphasis px-3 text-sm 2xl:text-base h-8 2xl:h-10 bg-base-background-l2">
                                  Spot
                               </div>
-                              <div className="flex justify-center flex-col rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-med-emphasis px-3 text-sm h-8 pointer-events-none">
+                              <div className="flex justify-center flex-col rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-med-emphasis px-3 text-sm 2xl:text-base h-8 2xl:h-10 pointer-events-none">
                                  Futures
                               </div>
-                              <div className="flex justify-center flex-col rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-med-emphasis px-3 text-sm h-8 pointer-events-none">
+                              <div className="flex justify-center flex-col rounded-lg py-1 font-medium outline-hidden hover:opacity-90 text-med-emphasis px-3 text-sm 2xl:text-base h-8 2xl:h-10 pointer-events-none">
                                  Lending
                               </div>
                            </div>
@@ -58,27 +58,27 @@ export default async function Markets() {
                            <Table className="min-w-full">
                               <TableHeader>
                                  <TableRow>
-                                    <TableHead className="border-b border-base-border-light px-1 py-3 text-sm font-normal text-med-emphasis first:pl-2 last:pr-6">
+                                    <TableHead className="border-b border-base-border-light px-1 py-3 2xl:py-4 text-sm 2xl:text-base font-normal text-med-emphasis first:pl-2 last:pr-6">
                                        <div className="flex flex-row items-center px-1 first:pl-0 select-none justify-start text-left">
                                           Name
                                        </div>
                                     </TableHead>
-                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 text-sm font-normal text-med-emphasis first:pl-2 last:pr-6">
+                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 2xl:py-4 text-sm 2xl:text-base font-normal text-med-emphasis first:pl-2 last:pr-6">
                                        <div className="flex flex-row items-center px-1 first:pl-0 select-none justify-end text-right">
                                           Price
                                        </div>
                                     </TableHead>
-                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 text-sm font-normal text-med-emphasis first:pl-2 last:pr-6 hidden sm:table-cell">
+                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 2xl:py-4 text-sm 2xl:text-base font-normal text-med-emphasis first:pl-2 last:pr-6 hidden sm:table-cell">
                                        <div className="flex flex-row items-center px-1 first:pl-0 select-none justify-end text-right">
                                           24h Volume
                                        </div>
                                     </TableHead>
-                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 text-sm font-normal text-med-emphasis first:pl-2 last:pr-6">
+                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 2xl:py-4 text-sm 2xl:text-base font-normal text-med-emphasis first:pl-2 last:pr-6">
                                        <div className="flex flex-row items-center px-1 first:pl-0 select-none justify-end text-right">
                                           24h Change
                                        </div>
                                     </TableHead>
-                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 text-sm font-normal text-med-emphasis first:pl-2 last:pr-6 hidden lg:table-cell">
+                                    <TableHead className="border-b border-base-border-light w-[17%] px-1 py-3 2xl:py-4 text-sm 2xl:text-base font-normal text-med-emphasis first:pl-2 last:pr-6 hidden lg:table-cell">
                                        <div className="flex flex-row items-center px-1 first:pl-0 select-none justify-end text-right">
                                           Last 7 Days
                                        </div>
@@ -93,12 +93,12 @@ export default async function Markets() {
                                           key={idx + 1}
                                           className="border-b border-[#1C1F26] hover:bg-[#1C1F26] transition-colors"
                                        >
-                                          <TableCell className="py-3 sm:py-4">
+                                          <TableCell className="py-3 sm:py-4 2xl:py-5">
                                              <Link
                                                 href={`/trade/${crypto.symbol}`}
                                              >
                                                 <div className="flex items-center">
-                                                   <div className="size-6 sm:size-8 mr-2 sm:mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
+                                                   <div className="size-6 sm:size-8 2xl:size-10 mr-2 sm:mr-3 2xl:mr-4 rounded-full overflow-hidden bg-[#1C1F26]">
                                                       <img
                                                          src={crypto.imageUrl}
                                                          alt=""
@@ -106,10 +106,10 @@ export default async function Markets() {
                                                       />
                                                    </div>
                                                    <div>
-                                                      <div className="font-semibold text-[#F7F8F8] text-sm sm:text-base">
+                                                      <div className="font-semibold text-[#F7F8F8] text-sm sm:text-base 2xl:text-lg">
                                                          {crypto.name}
                                                       </div>
-                                                      <div className="text-[#9DA3B3] text-xs sm:text-sm">
+                                                      <div className="text-[#9DA3B3] text-xs sm:text-sm 2xl:text-base">
                                                          {
                                                             crypto.symbol.split(
                                                                '_'
@@ -126,14 +126,14 @@ export default async function Markets() {
                                                 </div>
                                              </Link>
                                           </TableCell>
-                                          <TableCell className="text-right font-medium text-[#F7F8F8] text-sm sm:text-base">
+                                          <TableCell className="text-right font-medium text-[#F7F8F8] text-sm sm:text-base 2xl:text-lg">
                                              {Number(crypto.price) > 0.1 ? (
                                                 formatPrice(crypto.price)
                                              ) : (
                                                 <span>$ {crypto.price}</span>
                                              )}
                                           </TableCell>
-                                          <TableCell className="text-right text-[#9DA3B3] text-sm sm:text-base hidden sm:table-cell">
+                                          <TableCell className="text-right text-[#9DA3B3] text-sm sm:text-base 2xl:text-lg hidden sm:table-cell">
                                              ${formatVolume(crypto.volume)}
                                           </TableCell>
                                           <TableCell
@@ -141,18 +141,18 @@ export default async function Markets() {
                                                 crypto.change > 0
                                                    ? 'text-[#00C278]'
                                                    : 'text-[#FF3B3B]'
-                                             } text-right font-medium text-sm sm:text-base`}
+                                             } text-right font-medium text-sm sm:text-base 2xl:text-lg`}
                                           >
                                              {crypto.change > 0 ? '+' : ''}
                                              {crypto.change}%
                                           </TableCell>
-                                          <TableCell className="text-right pr-4 sm:pr-6 hidden lg:table-cell">
+                                          <TableCell className="text-right pr-4 sm:pr-6 2xl:pr-8 hidden lg:table-cell">
                                              {crypto.change > 0 ? (
-                                                <span className="text-[#00C278] text-lg">
+                                                <span className="text-[#00C278] text-lg 2xl:text-xl">
                                                    ↑
                                                 </span>
                                              ) : (
-                                                <span className="text-[#FF3B3B] text-lg">
+                                                <span className="text-[#FF3B3B] text-lg 2xl:text-xl">
                                                    ↓
                                                 </span>
                                              )}

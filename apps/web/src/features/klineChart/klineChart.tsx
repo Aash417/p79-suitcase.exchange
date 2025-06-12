@@ -71,6 +71,7 @@ export function KlineChart() {
    return (
       <div
          ref={chartRef}
+         className="p-3"
          style={{
             display: 'block',
             height: '100%',

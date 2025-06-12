@@ -22,7 +22,7 @@ export function Orderbook({
       <div className="flex flex-col h-full grow overflow-x-hidden">
          <TableHeader />
 
-         <div className="flex flex-col no-scrollbar h-full flex-1 overflow-y-auto pb-1">
+         <div className="flex flex-col h-full flex-1 pb-1">
             <AskTable asks={topAsks} />
             <LastTradePrice isPriceUp={isPriceUp} lastPrice={lastPrice} />
             <BidTable bids={topBids} />

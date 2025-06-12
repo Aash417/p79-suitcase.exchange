@@ -18,9 +18,9 @@ export function UserButton() {
    return (
       <DropdownMenu>
          <DropdownMenuTrigger className="cursor-pointer">
-            <div className="size-8 mr-3 rounded-full overflow-hidden bg-[#1C1F26]">
+            <div className="size-8 2xl:size-12 mr-3 2xl:mr-4 rounded-full overflow-hidden bg-[#1C1F26]">
                {name ? (
-                  <div className="flex items-center justify-center h-full w-full text-white">
+                  <div className="flex items-center justify-center h-full w-full text-white text-lg 2xl:text-2xl">
                      {name}
                   </div>
                ) : (
@@ -39,7 +39,7 @@ export function UserButton() {
             className="bg-base-background-l2 border-[#9DA3B3]"
          >
             <DropdownMenuItem
-               className="cursor-pointer text-center"
+               className="cursor-pointer text-center 2xl:text-lg 2xl:py-2"
                onClick={() =>
                   authClient.signOut({
                      fetchOptions: {

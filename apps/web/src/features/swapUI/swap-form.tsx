@@ -157,52 +157,55 @@ export function SwapForm() {
       <Tabs
          value={activeTab}
          onValueChange={(value) => setActiveTab(value as 'buy' | 'sell')}
-         className={`w-full ${
+         className={`w-full p-3 2xl:p-6 2xl:text-xl 2xl:gap-6 ${
             API_URL === 'https://api.backpack.exchange/api/v1'
                ? 'opacity-40 pointer-events-none'
                : ''
          }`}
       >
-         <TabsList className="grid w-full grid-cols-2 mb-4 bg-[#d4d4d408] text-gray-500">
+         <TabsList className="flex w-full mb-4 bg-[#d4d4d408] text-gray-500 py-5 2xl:mb-2 2xl:py-6">
             <TabsTrigger
                value="buy"
-               className=" data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500"
+               className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-500 py-4 2xl:text-2xl 2xl:px-8 2xl:py-5"
             >
                Buy
             </TabsTrigger>
             <TabsTrigger
                value="sell"
-               className=" data-[state=active]:bg-red-500/20 data-[state=active]:text-red-500"
+               className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-500 py-4 2xl:text-2xl 2xl:px-8 2xl:py-5"
             >
                Sell
             </TabsTrigger>
          </TabsList>
 
-         <div className="flex  justify-between">
-            <Label className=" text-gray-400 text-xs underline">Balance</Label>
-
+         <div className="flex justify-between">
+            <Label className="text-gray-400 text-xs 2xl:text-xl underline">
+               Balance
+            </Label>
             {isLoading ? (
-               <span className="text-xs text-gray-400">...</span>
+               <span className="text-xs 2xl:text-xl text-gray-400">...</span>
             ) : (
-               <span className="text-xs text-gray-400">
+               <span className="text-xs 2xl:text-xl text-gray-400">
                   {formatComma(currentBalance)}{' '}
                   {activeTab === 'buy' ? 'USDC' : baseAsset}
                </span>
             )}
          </div>
 
-         <div className="space-y-3">
+         <div className="space-y-3 2xl:space-y-6">
             <div>
-               <Label className=" text-gray-400 text-xs">Price</Label>
+               <Label className="text-gray-400 text-xs 2xl:text-xl">
+                  Price
+               </Label>
                <div className="relative">
                   <Input
                      type="text"
                      value={priceFormatted}
                      onChange={handlePriceChange}
                      placeholder="0"
-                     className="mt-1"
+                     className="mt-1 2xl:mt-2 2xl:text-2xl 2xl:px-8 2xl:h-14"
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 2xl:size-8 rounded-full overflow-hidden">
                      <img
                         src="/usdc.webp"
                         alt=""
@@ -213,7 +216,7 @@ export function SwapForm() {
             </div>
 
             <div>
-               <Label className="flex justify-between text-gray-400 text-xs">
+               <Label className="flex justify-between text-gray-400 text-xs 2xl:text-xl">
                   Quantity
                </Label>
                <div className="relative">
@@ -222,9 +225,9 @@ export function SwapForm() {
                      value={quantityFormatted}
                      onChange={handleQuantityChange}
                      placeholder="0"
-                     className="mt-1"
+                     className="mt-1 2xl:mt-2 2xl:text-2xl 2xl:px-8 2xl:h-14"
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 2xl:size-8 rounded-full overflow-hidden">
                      <img
                         src={SYMBOLS_MAP.get(market)?.imageUrl}
                         alt=""
@@ -235,7 +238,7 @@ export function SwapForm() {
             </div>
 
             <div>
-               <Label className="text-xs flex  text-gray-400 ">
+               <Label className="text-xs 2xl:text-xl flex text-gray-400">
                   Order value
                </Label>
                <div className="relative">
@@ -244,9 +247,9 @@ export function SwapForm() {
                      value={totalPrice}
                      readOnly
                      disabled
-                     className="mt-1"
+                     className="mt-1 2xl:mt-2 2xl:text-2xl 2xl:px-8 2xl:h-14"
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 2xl:size-8 rounded-full overflow-hidden">
                      <img
                         src="/usdc.webp"
                         alt=""
@@ -257,7 +260,7 @@ export function SwapForm() {
             </div>
 
             <Button
-               className={`w-full cursor-pointer ${
+               className={`w-full mt-4 2xl:mt-4 text-base 2xl:text-2xl font-bold cursor-pointer rounded-lg shadow-md transition-colors h-10 2xl:h-16 2xl:rounded-2xl ${
                   activeTab === 'buy'
                      ? 'bg-green-500 hover:bg-green-600'
                      : 'bg-red-500 hover:bg-red-600'

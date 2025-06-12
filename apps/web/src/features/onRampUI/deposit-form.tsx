@@ -67,16 +67,16 @@ export function DepositForm() {
 
    return (
       <div
-         className={`space-y-3 ${
+         className={`space-y-3 p-3${
             API_URL === 'https://api.backpack.exchange/api/v1'
                ? 'opacity-40 pointer-events-none'
                : ''
          }`}
       >
          <Select value={asset} onValueChange={setAsset} defaultValue="USDC">
-            <SelectTrigger className="w-full h-10 px-3 py-2 rounded-lg bg-[#1C1D21] border-none  text-sm text-gray-100 focus:outline-none focus:ring-1 focus:ring-[#3B3C42] hover:bg-[#2C2D33]/50 transition-colors">
+            <SelectTrigger className="w-full h-10 xl:h-14 px-3 xl:px-6 py-2 rounded-lg bg-[#1C1D21] border-none text-sm  text-gray-100 focus:outline-none focus:ring-1 focus:ring-[#3B3C42] hover:bg-[#2C2D33]/50 transition-colors 2xl:p-7 2xl:text-xl">
                <div className="flex items-center gap-2">
-                  <div className="size-5 rounded-full overflow-hidden">
+                  <div className="size-5 2xl:size-7 rounded-full overflow-hidden">
                      {asset === 'USDC' ? (
                         <img
                            src="/usdc.webp"
@@ -102,10 +102,10 @@ export function DepositForm() {
                <SelectGroup>
                   <SelectItem
                      value="USDC"
-                     className="flex items-center gap-2 px-3 py-2 hover:bg-[#2C2D33] focus:bg-[#2C2D33] focus:text-gray-100 cursor-pointer"
+                     className="flex items-center gap-2 px-3 py-2 hover:bg-[#2C2D33] focus:bg-[#2C2D33] focus:text-gray-100 cursor-pointer 2xl:p-5 2xl:text-xl"
                   >
                      <div className="flex items-center gap-2">
-                        <div className="size-5 rounded-full overflow-hidden">
+                        <div className="size-5 2xl:size-7 rounded-full overflow-hidden">
                            <img
                               src="/usdc.webp"
                               alt=""
@@ -119,10 +119,10 @@ export function DepositForm() {
                      <SelectItem
                         key={idx + 1}
                         value={symbol.symbol.split('_')[0]}
-                        className="flex items-center gap-2 px-3 py-2 hover:bg-[#2C2D33] focus:bg-[#2C2D33] focus:text-gray-100 cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-2 hover:bg-[#2C2D33] focus:bg-[#2C2D33] focus:text-gray-100 cursor-pointer 2xl:p-5 2xl:text-xl"
                      >
                         <div className="flex items-center gap-2">
-                           <div className="size-5 rounded-full overflow-hidden">
+                           <div className="size-5 2xl:size-7 rounded-full overflow-hidden">
                               <img
                                  src={symbol.imageUrl}
                                  alt=""
@@ -138,14 +138,14 @@ export function DepositForm() {
          </Select>
 
          <div>
-            <Label className=" text-gray-400 text-xs">Quantity</Label>
+            <Label className="text-gray-400 text-md">Quantity</Label>
             <div className="relative">
                <Input
                   type="text"
                   value={quantityFormatted}
                   onChange={handleQuantityChange}
                   placeholder="0"
-                  className="mt-1"
+                  className="mt-1 text-sm p-3 2xl:p-7"
                />
                <div className="absolute right-3 top-1/2 -translate-y-1/2 size-5 rounded-full overflow-hidden">
                   <img
@@ -164,7 +164,7 @@ export function DepositForm() {
          </div>
 
          <Button
-            className="w-full cursor-pointer bg-white/30 hover:bg-white/50"
+            className="w-full cursor-pointer bg-white/30 hover:bg-white/50 p-1 mt-4 text-base font-semibold rounded-lg shadow-md transition-colors h-11"
             type="submit"
             onClick={handleSubmit}
             disabled={!quantity}

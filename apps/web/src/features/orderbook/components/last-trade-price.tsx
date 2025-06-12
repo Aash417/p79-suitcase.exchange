@@ -13,7 +13,7 @@ export function LastTradePrice({ isPriceUp, lastPrice }: Readonly<Props>) {
                <p
                   className={`font-medium tabular-nums ${
                      isPriceUp ? 'text-green-text' : 'text-red-text'
-                  }`}
+                  } text-base 2xl:text-2xl`}
                >
                   {lastPrice}
                </p>

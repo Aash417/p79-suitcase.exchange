@@ -1,49 +1,39 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { API_URL } from '@/lib/env';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import { Balances } from './balances';
 import { OpenOrders } from './open-orders';
 
 export function Dashboard() {
    return (
       <div
-         className={`w-full max-w-screen-xl mx-auto p-2 sm:p-4 ${
+         className={`w-full h-full flex flex-col p-2 xl:p-6 2xl:p-8 ${
             API_URL === 'https://api.backpack.exchange/api/v1'
                ? 'opacity-40 pointer-events-none'
                : ''
          }`}
       >
-         <Tabs defaultValue="balances" className="w-full">
-            <TabsList className="flex mb-4 sm:mb-6 w-full sm:w-1/2 lg:w-1/3 rounded-lg p-1">
+         <Tabs defaultValue="balances" className="w-full h-full flex flex-col">
+            <TabsList className="">
                <TabsTrigger
                   value="balances"
-                  className="flex-1 px-2 sm:px-4 py-2 text-xs sm:text-sm rounded-md data-[state=active]:bg-zinc-700 data-[state=active]:text-white text-zinc-400 transition-all"
+                  className="text-sm rounded-md px-4 py-2 2xl:py-6 2xl:px-4 2xl:text-xl data-[state=active]:bg-zinc-700/30 data-[state=active]:text-white text-zinc-400 transition-all cursor-pointer"
                >
                   Balances
                </TabsTrigger>
                <TabsTrigger
                   value="open-orders"
-                  className="flex-1 px-2 sm:px-4 py-2 text-xs sm:text-sm rounded-md data-[state=active]:bg-zinc-700 data-[state=active]:text-white text-zinc-400 transition-all"
+                  className="text-sm rounded-md px-4 py-2 2xl:py-6 2xl:px-4 2xl:text-xl data-[state=active]:bg-zinc-700/30 data-[state=active]:text-white text-zinc-400 transition-all cursor-pointer"
                >
                   Open Orders
                </TabsTrigger>
             </TabsList>
 
-            <TabsContent
-               value="balances"
-               className="bg-zinc-800/50 rounded-lg p-3 sm:p-6 h-[40vh] sm:h-[50vh] overflow-hidden"
-            >
-               <div className="space-y-4 h-full">
-                  <Balances />
-               </div>
+            <TabsContent value="balances">
+               <Balances />
             </TabsContent>
 
-            <TabsContent
-               value="open-orders"
-               className="bg-zinc-800/50 rounded-lg p-3 sm:p-6 h-[40vh] sm:h-[50vh] overflow-hidden"
-            >
-               <div className="space-y-4 h-full">
-                  <OpenOrders />
-               </div>
+            <TabsContent value="open-orders">
+               <OpenOrders />
             </TabsContent>
          </Tabs>
       </div>

@@ -64,19 +64,19 @@ function Bid({
                }}
             />
             <div className="flex h-full w-[30%] items-center">
-               <p className="z-[1] text-left text-xs font-normal tabular-nums text-green-text/90">
+               <p className="z-[1] text-left text-xs 2xl:text-lg font-normal tabular-nums text-green-text/90">
                   {price}
                </p>
             </div>
             {/* size  */}
             <div className="flex h-full w-[35%] items-center justify-end">
-               <p className="z-[1] text-right text-xs font-normal tabular-nums text-high-emphasis/80">
+               <p className="z-[1] text-right text-xs 2xl:text-lg font-normal tabular-nums text-high-emphasis/80">
                   {quantity}
                </p>
             </div>
             {/* total  */}
             <div className="flex h-full w-[35%] items-center justify-end">
-               <p className="z-[1] pr-2 text-right text-xs font-normal tabular-nums text-high-emphasis/80">
+               <p className="z-[1] pr-2 text-right text-xs 2xl:text-lg font-normal tabular-nums text-high-emphasis/80">
                   {total.toFixed(2)}
                </p>
             </div>
