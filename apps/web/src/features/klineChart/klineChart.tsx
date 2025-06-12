@@ -71,12 +71,13 @@ export function KlineChart() {
    return (
       <div
          ref={chartRef}
-         className="p-3"
+         className="p-3 min-w-0"
          style={{
             display: 'block',
             height: '100%',
             width: '100%',
-            minHeight: '400px' // Or any appropriate minimum height
+            minHeight: '400px',
+            overflowX: 'auto' // allow horizontal scroll if chart overflows
          }}
       ></div>
    );

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-   CandlestickSeries,
+   AreaSeries,
    ColorType,
    createChart as createLightWeightChart,
    CrosshairMode,
@@ -9,7 +9,7 @@ import {
 } from 'lightweight-charts';
 
 export class ChartManager {
-   private readonly candleSeries: ISeriesApi<'Candlestick'>;
+   private readonly candleSeries: ISeriesApi<'Area'>;
    private lastUpdateTime: number = 0;
    private readonly chart: any;
    private readonly currentBar: {
@@ -30,19 +30,22 @@ export class ChartManager {
          layout: {
             background: {
                type: ColorType.Solid,
-               color: '#14151b' // Dark background like Backpack
+               color: '#14151b'
             },
-            textColor: '#9DA3B3', // Softer text color
-            fontSize: 12
+            textColor: '#9DA3B3',
+            fontSize: 12,
+            fontFamily: 'Inter, Arial, sans-serif'
          },
          grid: {
             vertLines: {
-               color: '#1C1F26', // Subtle grid lines
-               style: 1
+               color: '#23242a',
+               style: 1,
+               visible: true
             },
             horzLines: {
-               color: '#1C1F26',
-               style: 1
+               color: '#23242a',
+               style: 1,
+               visible: true
             }
          },
          crosshair: {
@@ -51,13 +54,15 @@ export class ChartManager {
                color: '#2962FF',
                width: 1,
                style: 3,
-               labelBackgroundColor: '#2962FF'
+               labelBackgroundColor: '#2962FF',
+               visible: true
             },
             horzLine: {
                color: '#2962FF',
                width: 1,
                style: 3,
-               labelBackgroundColor: '#2962FF'
+               labelBackgroundColor: '#2962FF',
+               visible: true
             }
          },
          rightPriceScale: {
@@ -66,12 +71,17 @@ export class ChartManager {
             scaleMargins: {
                top: 0.1,
                bottom: 0.1
-            }
+            },
+            autoScale: true,
+            alignLabels: true
          },
          timeScale: {
             borderColor: '#1C1F26',
             timeVisible: true,
             secondsVisible: false,
+            fixLeftEdge: true,
+            fixRightEdge: true,
+            lockVisibleTimeRangeOnResize: true,
             tickMarkFormatter: (time: number) => {
                const date = new Date(time * 1000);
                return date.toLocaleDateString([], {
@@ -79,31 +89,49 @@ export class ChartManager {
                   day: 'numeric'
                });
             }
+         },
+         handleScroll: true,
+         handleScale: true,
+         localization: {
+            dateFormat: 'yyyy-MM-dd'
          }
       });
       this.chart = chart;
-      this.candleSeries = chart.addSeries(CandlestickSeries);
+      // Use AreaSeries for the chart and set color using applyOptions
+      this.candleSeries = chart.addSeries(AreaSeries);
+      this.candleSeries.applyOptions({
+         topColor: 'rgba(59,130,246,0.4)', // blue-500 with opacity
+         bottomColor: 'rgba(59,130,246,0.05)', // lighter blue
+         lineColor: '#3b82f6', // blue-500
+         lineWidth: 2,
+         crosshairMarkerVisible: true,
+         lastValueVisible: true,
+         priceLineVisible: true
+      });
 
+      // Set area chart data (use close price for area chart)
       this.candleSeries.setData(
          initialData.map((data) => ({
-            ...data,
-            time: (data.timestamp / 1000) as UTCTimestamp
+            time: (data.timestamp / 1000) as UTCTimestamp,
+            value: data.close
          }))
       );
+
+      // Add a watermark and enable scroll/zoom
+      chart.applyOptions({
+         handleScroll: true,
+         handleScale: true
+      });
    }
    public update(updatedPrice: any) {
       if (!this.lastUpdateTime) {
          this.lastUpdateTime = new Date().getTime();
       }
-
+      // Update line chart with close price only
       this.candleSeries.update({
          time: (this.lastUpdateTime / 1000) as UTCTimestamp,
-         close: updatedPrice.close,
-         low: updatedPrice.low,
-         high: updatedPrice.high,
-         open: updatedPrice.open
+         value: updatedPrice.close
       });
-
       if (updatedPrice.newCandleInitiated) {
          this.lastUpdateTime = updatedPrice.time;
       }

@@ -222,16 +222,12 @@ export function MarketsTrades() {
          {/* Mobile Layout (up to lg) */}
          <div className="lg:hidden flex flex-col gap-4 p-4 min-h-screen">
             {/* Mobile Ticker - Always visible */}
-            <div className="flex items-center flex-row bg-base-background-l1 relative w-full rounded-lg">
-               <div className="flex items-center flex-row no-scrollbar mr-4 h-[72px] w-full overflow-auto pl-4">
-                  <div className="flex justify-between flex-row w-full gap-4">
-                     {loadingTicker ? (
-                        <div className=""></div>
-                     ) : (
-                        <Ticker newTicker={newTicker} isPriceUp={isPriceUp} />
-                     )}
-                  </div>
-               </div>
+            <div className="h-[72px] bg-base-background-l1 w-full rounded-lg">
+               {loadingTicker ? (
+                  <div className=""></div>
+               ) : (
+                  <Ticker newTicker={newTicker} isPriceUp={isPriceUp} />
+               )}
             </div>
 
             {/* Mobile Chart - Always visible */}
