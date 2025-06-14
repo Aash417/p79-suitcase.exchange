@@ -37,7 +37,7 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
             ))}
             {/* Render empty rows at the top */}
             {Array.from({ length: emptyRows }).map((_, i) => (
-               <div key={`empty-ask-${i}`} className="flex h-[3.5vh]"></div>
+               <div key={`empty-ask-${i + 1}`} className="flex h-[3.5vh]"></div>
             ))}
          </div>
       </div>

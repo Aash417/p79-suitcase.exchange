@@ -13,7 +13,7 @@ import { WebSocketManager } from '@/lib/websocket-manager';
 import type { Trade } from '@repo/shared-types/messages/client-api';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type TickerUpdate = {
    firstPrice: string;
@@ -43,10 +43,73 @@ export function MarketsTrades() {
 
    // Mobile collapsible states
    const [isOrderbookCollapsed, setIsOrderbookCollapsed] = useState(true);
-   const [isSwapCollapsed, setIsSwapCollapsed] = useState(false); // Trading should be open by default
+   const [isSwapCollapsed, setIsSwapCollapsed] = useState(true); // Trading should be open by default
    const [isDepositCollapsed, setIsDepositCollapsed] = useState(true);
    const [isDashboardCollapsed, setIsDashboardCollapsed] = useState(true);
    const [isTradesCollapsed, setIsTradesCollapsed] = useState(true);
+
+   // Refs for scrolling to expanded sections
+   const swapRef = useRef<HTMLDivElement>(null);
+   const orderbookRef = useRef<HTMLDivElement>(null);
+   const tradesRef = useRef<HTMLDivElement>(null);
+   const dashboardRef = useRef<HTMLDivElement>(null);
+   const depositRef = useRef<HTMLDivElement>(null);
+
+   // Auto-scroll to section when expanded on mobile
+   useEffect(() => {
+      if (!isSwapCollapsed && swapRef.current) {
+         setTimeout(() => {
+            swapRef.current?.scrollIntoView({
+               behavior: 'smooth',
+               block: 'start'
+            });
+         }, 100); // Small delay to allow rendering
+      }
+   }, [isSwapCollapsed]);
+
+   useEffect(() => {
+      if (!isOrderbookCollapsed && orderbookRef.current) {
+         setTimeout(() => {
+            orderbookRef.current?.scrollIntoView({
+               behavior: 'smooth',
+               block: 'start'
+            });
+         }, 100);
+      }
+   }, [isOrderbookCollapsed]);
+
+   useEffect(() => {
+      if (!isTradesCollapsed && tradesRef.current) {
+         setTimeout(() => {
+            tradesRef.current?.scrollIntoView({
+               behavior: 'smooth',
+               block: 'start'
+            });
+         }, 100);
+      }
+   }, [isTradesCollapsed]);
+
+   useEffect(() => {
+      if (!isDashboardCollapsed && dashboardRef.current) {
+         setTimeout(() => {
+            dashboardRef.current?.scrollIntoView({
+               behavior: 'smooth',
+               block: 'start'
+            });
+         }, 100);
+      }
+   }, [isDashboardCollapsed]);
+
+   useEffect(() => {
+      if (!isDepositCollapsed && depositRef.current) {
+         setTimeout(() => {
+            depositRef.current?.scrollIntoView({
+               behavior: 'smooth',
+               block: 'start'
+            });
+         }, 100);
+      }
+   }, [isDepositCollapsed]);
 
    // handles initial data only
    useEffect(() => {
@@ -162,12 +225,39 @@ export function MarketsTrades() {
    const topBids = useMemo(() => bids.slice(0, 10), [bids]);
    const topAsks = useMemo(() => asks.slice(0, 10), [asks]);
 
+   // Auto-scroll to section when opened (mobile)
+   useEffect(() => {
+      if (!isOrderbookCollapsed && orderbookRef.current) {
+         orderbookRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+   }, [isOrderbookCollapsed]);
+   useEffect(() => {
+      if (!isSwapCollapsed && swapRef.current) {
+         swapRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+   }, [isSwapCollapsed]);
+   useEffect(() => {
+      if (!isDepositCollapsed && depositRef.current) {
+         depositRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+   }, [isDepositCollapsed]);
+   useEffect(() => {
+      if (!isDashboardCollapsed && dashboardRef.current) {
+         dashboardRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+   }, [isDashboardCollapsed]);
+   useEffect(() => {
+      if (!isTradesCollapsed && tradesRef.current) {
+         tradesRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+   }, [isTradesCollapsed]);
+
    return (
       <div className="w-full h-screen overflow-y-auto">
          {/* Desktop Layout (lg:) */}
-         <div className="hidden lg:flex flex-row w-full gap-2 px-4 py-1 bg-base-background-l0">
+         <div className="flex-row hidden w-full gap-2 px-4 py-1 lg:flex bg-base-background-l0">
             {/* Left section: 3/4 width */}
-            <div className="w-3/4 h-full rounded-sm flex flex-col gap-2">
+            <div className="flex flex-col w-3/4 h-full gap-2 rounded-sm">
                {/* Top child */}
                <div className="flex flex-col gap-2">
                   {/* Top inner child: 10% of viewport height */}
@@ -182,11 +272,11 @@ export function MarketsTrades() {
                   {/* Bottom inner child: 90% of viewport height */}
                   <div className="h-[90vh] rounded-sm flex flex-row gap-2 w-full">
                      {/* First child: 2/3 of viewport width */}
-                     <div className="w-2/3 bg-base-background-l1 h-full flex items-center justify-center rounded-sm">
+                     <div className="flex items-center justify-center w-2/3 h-full rounded-sm bg-base-background-l1">
                         <KlineChart />
                      </div>
                      {/* Second child: 1/3 of viewport width */}
-                     <div className="w-1/3 bg-base-background-l1 h-full flex items-center justify-center rounded-sm">
+                     <div className="flex items-center justify-center w-1/3 h-full rounded-sm bg-base-background-l1">
                         <OrderBookAndTrades
                            topAsks={topAsks}
                            topBids={topBids}
@@ -220,7 +310,7 @@ export function MarketsTrades() {
          </div>
 
          {/* Mobile Layout (up to lg) */}
-         <div className="lg:hidden flex flex-col gap-4 p-4 min-h-screen">
+         <div className="flex flex-col min-h-screen gap-4 p-4 lg:hidden">
             {/* Mobile Ticker - Always visible */}
             <div className="h-[72px] bg-base-background-l1 w-full rounded-lg">
                {loadingTicker ? (
@@ -232,7 +322,7 @@ export function MarketsTrades() {
 
             {/* Mobile Chart - Always visible */}
             <div className="flex flex-col bg-base-background-l1 h-[300px] sm:h-[400px] overflow-hidden rounded-lg">
-               <div className="tradingview-chart h-full">
+               <div className="h-full tradingview-chart">
                   <KlineChart />
                </div>
             </div>
@@ -242,7 +332,7 @@ export function MarketsTrades() {
                {/* Medium device layout - Orderbook and Swap side by side */}
                <div className="hidden md:flex md:gap-4">
                   {/* Orderbook - Left side on medium+ */}
-                  <div className="bg-base-background-l1 rounded-lg flex-1">
+                  <div className="flex-1 rounded-lg bg-base-background-l1">
                      <div className="px-4 py-3">
                         <span className="text-lg font-semibold text-high-emphasis">
                            Order Book
@@ -263,7 +353,7 @@ export function MarketsTrades() {
                   </div>
 
                   {/* Swap Form - Right side on medium+ */}
-                  <div className="bg-base-background-l1 rounded-lg flex-1">
+                  <div className="flex-1 rounded-lg bg-base-background-l1">
                      <div className="px-4 py-3">
                         <span className="text-lg font-semibold text-high-emphasis">
                            Trade
@@ -276,9 +366,12 @@ export function MarketsTrades() {
                </div>
 
                {/* Small device layout - Stacked (mobile phones) */}
-               <div className="md:hidden flex flex-col gap-4">
+               <div className="flex flex-col gap-4 md:hidden">
                   {/* Swap Form */}
-                  <div className="bg-base-background-l1 rounded-lg">
+                  <div
+                     className="rounded-lg bg-base-background-l1"
+                     ref={swapRef}
+                  >
                      <button
                         onClick={() => setIsSwapCollapsed(!isSwapCollapsed)}
                         className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
@@ -300,7 +393,10 @@ export function MarketsTrades() {
                   </div>
 
                   {/* Orderbook */}
-                  <div className="bg-base-background-l1 rounded-lg">
+                  <div
+                     className="rounded-lg bg-base-background-l1"
+                     ref={orderbookRef}
+                  >
                      <button
                         onClick={() =>
                            setIsOrderbookCollapsed(!isOrderbookCollapsed)
@@ -317,7 +413,7 @@ export function MarketsTrades() {
                         )}
                      </button>
                      {!isOrderbookCollapsed && (
-                        <div className="px-4 pb-4 h-[400px] overflow-hidden">
+                        <div className="px-4 pb-4 h-[600px] overflow-hidden">
                            {loadingDepth ? (
                               <div className=""></div>
                            ) : (
@@ -334,7 +430,10 @@ export function MarketsTrades() {
                </div>
 
                {/* Recent Trades */}
-               <div className="bg-base-background-l1 rounded-lg">
+               <div
+                  className="rounded-lg bg-base-background-l1"
+                  ref={tradesRef}
+               >
                   <button
                      onClick={() => setIsTradesCollapsed(!isTradesCollapsed)}
                      className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"
@@ -360,7 +459,10 @@ export function MarketsTrades() {
                </div>
 
                {/* Dashboard */}
-               <div className="bg-base-background-l1 rounded-lg">
+               <div
+                  className="rounded-lg bg-base-background-l1"
+                  ref={dashboardRef}
+               >
                   <button
                      onClick={() =>
                         setIsDashboardCollapsed(!isDashboardCollapsed)
@@ -377,14 +479,17 @@ export function MarketsTrades() {
                      )}
                   </button>
                   {!isDashboardCollapsed && (
-                     <div className="px-4 pb-4">
+                     <div className="px-4 pb-4 overflow-hidden h-[350px]">
                         <Dashboard />
                      </div>
                   )}
                </div>
 
                {/* Deposit Form */}
-               <div className="bg-base-background-l1 rounded-lg">
+               <div
+                  className="rounded-lg bg-base-background-l1"
+                  ref={depositRef}
+               >
                   <button
                      onClick={() => setIsDepositCollapsed(!isDepositCollapsed)}
                      className="flex items-center justify-between w-full px-4 py-3 text-left focus:outline-none"

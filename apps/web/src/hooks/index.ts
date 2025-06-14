@@ -97,10 +97,10 @@ export function useGetUserBalances(userId: string) {
    });
 }
 
-export function useGetUserOpenOrders(market: string, userId: string) {
+export function useGetUserOpenOrders(userId: string, market?: string) {
    return useQuery({
-      queryKey: ['userOpenOrders', market],
-      queryFn: () => fetchUserOpenOrders(market, userId),
+      queryKey: ['userOpenOrders', userId, market ?? 'all'],
+      queryFn: () => fetchUserOpenOrders(userId, market),
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30000
@@ -205,12 +205,14 @@ export async function fetchUserBalance(userId: string) {
    return data;
 }
 
-export async function fetchUserOpenOrders(market: string, userId: string) {
-   const response = await fetch(
-      `${API_URL}/order/open?symbol=${market}&userId=${userId}`
-   );
+export async function fetchUserOpenOrders(userId: string, market?: string) {
+   const url = market
+      ? `${API_URL}/order/open?userId=${userId}&symbol=${market}`
+      : `${API_URL}/order/open?userId=${userId}`;
+
+   const response = await fetch(url);
    if (!response.ok) {
-      throw new Error('Failed to fetch user balances');
+      throw new Error('Failed to fetch user orders');
    }
 
    const data: OpenOrders = await response.json();

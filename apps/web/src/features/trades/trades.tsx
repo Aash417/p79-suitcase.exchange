@@ -8,26 +8,26 @@ type Props = {
 };
 export function Trades({ newTrades }: Readonly<Props>) {
    return (
-      <div className="flex flex-col grow overflow-y-hidden">
+      <div className="flex flex-col overflow-y-hidden grow">
          {/* Desktop Layout */}
-         <div className="hidden sm:flex flex-col h-full px-3">
+         <div className="flex-col hidden h-full px-3 sm:flex">
             {/* heading */}
-            <div className="flex justify-between flex-row w-2/3">
-               <p className="text-med-emphasis px-1 text-left text-xs font-semibold">
+            <div className="flex flex-row justify-between w-2/3">
+               <p className="px-1 text-xs font-semibold text-left text-med-emphasis">
                   Price (USDC)
                </p>
-               <p className="text-med-emphasis px-1 text-left text-xs font-semibold">
+               <p className="px-1 text-xs font-semibold text-left text-med-emphasis">
                   Qty (SOL)
                </p>
             </div>
 
             {/* data */}
-            <div className="flex flex-col no-scrollbar overflow-y-auto">
+            <div className="flex flex-col overflow-y-auto no-scrollbar">
                <ScrollArea className="h-[75dvh] rounded-md">
                   {newTrades.map((trade, idx) => (
                      <div
                         key={idx + 1}
-                        className="flex flex-row w-full cursor-default bg-transparent hover:bg-white/4"
+                        className="flex flex-row w-full bg-transparent cursor-default hover:bg-white/4"
                      >
                         <div className="flex items-center flex-row w-[33.3%] py-1">
                            <p
@@ -41,12 +41,12 @@ export function Trades({ newTrades }: Readonly<Props>) {
                            </p>
                         </div>
                         <div className="flex items-center flex-row w-[33.3%] py-1">
-                           <p className="text-high-emphasis/90 w-full text-sm font-normal capitalize tabular-nums text-right">
+                           <p className="w-full text-sm font-normal text-right capitalize text-high-emphasis/90 tabular-nums">
                               {trade.quantity}
                            </p>
                         </div>
                         <div className="flex items-center flex-row w-[33.3%] py-1">
-                           <p className="w-full text-sm font-normal capitalize tabular-nums text-med-emphasis text-right">
+                           <p className="w-full text-sm font-normal text-right capitalize tabular-nums text-med-emphasis">
                               {formatTimestamp(trade.timestamp)}
                            </p>
                         </div>
@@ -57,17 +57,17 @@ export function Trades({ newTrades }: Readonly<Props>) {
          </div>
 
          {/* Mobile Layout */}
-         <div className="sm:hidden flex flex-col h-full px-2">
-            <ScrollArea className="h-[50vh] rounded-md">
+         <div className="flex flex-col h-full px-2 sm:hidden">
+            <ScrollArea className="h-[44vh] rounded-md">
                <div className="space-y-2">
                   {newTrades.map((trade, idx) => (
                      <div
                         key={idx + 1}
-                        className="bg-white/5 rounded-lg p-3 border border-white/10"
+                        className="px-3 py-2 border rounded-lg bg-white/5 border-white/10"
                      >
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center justify-between">
                            <span
-                              className={`text-lg font-semibold tabular-nums ${
+                              className={`text-base font-semibold tabular-nums ${
                                  trade.isBuyerMaker
                                     ? 'text-[#F6465D]'
                                     : 'text-[#0ECB81]'
@@ -80,21 +80,21 @@ export function Trades({ newTrades }: Readonly<Props>) {
                            </span>
                         </div>
 
-                        <div className="flex justify-between items-center">
-                           <div className="flex flex-col">
+                        <div className="flex items-center justify-between mt-1">
+                           <div className="flex flex-row items-center gap-2">
                               <span className="text-xs text-med-emphasis">
-                                 Quantity
+                                 Qty:
                               </span>
-                              <span className="text-sm text-high-emphasis/90 font-medium">
+                              <span className="text-xs text-high-emphasis/90">
                                  {trade.quantity} SOL
                               </span>
                            </div>
-                           <div className="flex flex-col items-end">
+                           <div className="flex flex-row items-center gap-1">
                               <span className="text-xs text-med-emphasis">
-                                 Side
+                                 Side:
                               </span>
                               <span
-                                 className={`text-sm font-medium ${
+                                 className={`text-xs font-medium ${
                                     trade.isBuyerMaker
                                        ? 'text-[#F6465D]'
                                        : 'text-[#0ECB81]'
