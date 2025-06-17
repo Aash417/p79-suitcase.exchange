@@ -17,11 +17,16 @@ async function requestCounter(c: Context, next: Next) {
    requestCount++;
    await next();
 }
+const allowedOrigins = [
+   'https://suitcase.exchange.aashishk.works',
+   'https://suitcase-exchange.vercel.app',
+   'http://localhost:3000'
+];
 
 app.use('*', requestCounter);
 app.use(
    cors({
-      origin: '*', // Allow all origins (for development only!)
+      origin: allowedOrigins,
       allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'Accept']
    })

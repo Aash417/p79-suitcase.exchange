@@ -5,7 +5,7 @@ import type {
 } from '@repo/shared-types/messages/api-engine';
 import { randomUUID } from 'crypto';
 import { QUOTE_ASSET } from '../utils/constants';
-import type { Order } from '../utils/types';
+import type { Order, OrderWithMarket } from '../utils/types';
 import { BalanceService } from './balance-service';
 import { MarketDataService } from './market-data-service';
 import { OrderBookService } from './orderbook-service';
@@ -75,9 +75,17 @@ export class OrderService {
          ? [this.getOrderBook(symbol)]
          : this.orderbooks;
 
-      const orders = relevantBooks.flatMap((ob) => ob.getOpenOrders(userId));
+      const ordersWithMarket: OrderWithMarket[] = relevantBooks.flatMap(
+         (ob) => {
+            const market = ob.ticker();
+            return ob.getOpenOrders(userId).map((order) => ({
+               ...order,
+               market
+            }));
+         }
+      );
 
-      this.marketDataService.sendOpenOrders(clientId, orders);
+      this.marketDataService.sendOpenOrders(clientId, ordersWithMarket);
    }
 
    private unlockFunds(order: Order) {

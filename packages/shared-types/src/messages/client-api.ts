@@ -72,5 +72,6 @@ export type OpenOrder = {
    price: string;
    quantity: string;
    side: string;
+   market: string;
 };
 export type OpenOrders = OpenOrder[];

@@ -11,19 +11,29 @@ export function Balances() {
 
    let balances: [string, { available: number; locked: number }][] = [];
    if (data) {
-      balances = Object.entries(data).map(([asset, balance]) => [
-         asset,
-         {
-            available:
-               typeof balance.available === 'string'
-                  ? Number(balance.available)
-                  : balance.available,
-            locked:
-               typeof balance.locked === 'string'
-                  ? Number(balance.locked)
-                  : balance.locked
-         }
-      ]);
+      balances = Object.entries(data)
+         .map(([asset, balance]) => {
+            // Ensure balance is an object with available/locked properties
+            if (
+               typeof balance === 'object' &&
+               balance !== null &&
+               'available' in balance &&
+               'locked' in balance
+            ) {
+               return [
+                  asset,
+                  {
+                     available: Number(balance.available),
+                     locked: Number(balance.locked)
+                  }
+               ] as [string, { available: number; locked: number }];
+            }
+            return null;
+         })
+         .filter(
+            (item): item is [string, { available: number; locked: number }] =>
+               !!item && (item[1].available > 0 || item[1].locked > 0)
+         );
    }
 
    if (isLoading)

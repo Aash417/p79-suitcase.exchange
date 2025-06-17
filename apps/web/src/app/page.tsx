@@ -265,7 +265,7 @@ export default async function Page() {
                   href={session ? '/markets' : '/auth'}
                   className="inline-block px-8 sm:px-10 lg:px-12 2xl:px-16 py-3 sm:py-4 lg:py-4 2xl:py-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg text-lg sm:text-xl lg:text-xl 2xl:text-3xl font-bold hover:shadow-2xl hover:shadow-purple-500/25 transition-all transform hover:scale-105"
                >
-                  Get Started Now
+                  Start Trading Now
                </Link>
                <div className="mt-4 sm:mt-6 text-xs sm:text-sm lg:text-sm 2xl:text-lg text-gray-400">
                   No fees for your first 30 days • Instant verification • Start

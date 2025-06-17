@@ -4,15 +4,12 @@ import { MessageLoading } from '@/components/ui/message-loading';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useGetUserOpenOrders } from '@/hooks';
 import { authClient } from '@/lib/auth-client';
-import { useParams } from 'next/navigation';
+import { SYMBOLS_MAP } from '@/lib/constants';
+import Image from 'next/image';
 
 export function OpenOrders() {
-   const { market } = useParams<{ market: string }>();
    const { data: session } = authClient.useSession();
-   const { data, isLoading } = useGetUserOpenOrders(
-      session?.user.id ?? '0',
-      market // Pass market as optional parameter
-   );
+   const { data, isLoading } = useGetUserOpenOrders(session?.user.id ?? '0');
 
    if (isLoading)
       return (
@@ -25,7 +22,7 @@ export function OpenOrders() {
       <ScrollArea className="h-[44vh] rounded-xl p-2 sm:p-4">
          {/* Mobile Card Layout */}
          <div className="block space-y-2 sm:hidden 2xl:max-w-2xl 2xl:mx-auto">
-            {data?.map(({ id, price, quantity, side }, idx) => (
+            {data?.map(({ id, price, quantity, side, market }, idx) => (
                <div
                   key={idx + 1}
                   className="px-3 py-2 border rounded-lg bg-white/5 border-white/10"
@@ -43,6 +40,22 @@ export function OpenOrders() {
                      >
                         {side.toUpperCase()}
                      </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                     <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                           <Image
+                              src={SYMBOLS_MAP.get(market)?.imageUrl ?? ''}
+                              alt={market.split('_')[0]}
+                              width={16}
+                              height={16}
+                              className="object-contain"
+                           />
+                           <span className="text-xs text-white">
+                              {market.split('_')[0]}
+                           </span>
+                        </div>
+                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-1">
                      <div className="flex items-center gap-2">
@@ -78,6 +91,9 @@ export function OpenOrders() {
                      <th className="px-3 py-2 text-xs font-medium text-left sm:py-4 sm:px-6 sm:text-base 2xl:text-lg text-zinc-400">
                         Order Id
                      </th>
+                     <th className="px-3 py-3 text-xs font-medium text-left sm:py-4 sm:px-6 sm:text-base 2xl:text-lg text-zinc-400">
+                        Market
+                     </th>
                      <th className="px-3 py-3 text-xs font-medium text-right sm:py-4 sm:px-6 sm:text-base 2xl:text-lg text-zinc-400">
                         Quantity
                      </th>
@@ -87,13 +103,27 @@ export function OpenOrders() {
                   </tr>
                </thead>
                <tbody>
-                  {data?.map(({ id, price, quantity, side }, idx) => (
+                  {data?.map(({ id, price, quantity, side, market }, idx) => (
                      <tr
                         key={idx + 1}
                         className={`border-b border-zinc-700/50 hover:bg-zinc-700/30 transition-colors`}
                      >
                         <td className="px-3 py-3 text-xs font-medium text-white sm:py-4 sm:px-6 sm:text-sm 2xl:text-lg">
                            {id}
+                        </td>
+                        <td
+                           className={`text-right py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm 2xl:text-lg `}
+                        >
+                           <div className="flex items-center justify-start gap-2">
+                              <Image
+                                 src={SYMBOLS_MAP.get(market)?.imageUrl ?? ''}
+                                 alt={market.split('_')[0]}
+                                 width={20}
+                                 height={20}
+                                 className="object-contain"
+                              />
+                              {market.split('_')[0]}
+                           </div>
                         </td>
                         <td
                            className={`text-right py-3 sm:py-4 px-3 sm:px-6 text-xs sm:text-sm 2xl:text-lg ${

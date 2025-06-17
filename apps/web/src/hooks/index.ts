@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 
 // Mutations
 
-export function useExecuteOrder(market: string) {
+export function useExecuteOrder() {
    const queryClient = useQueryClient();
    const mutation = useMutation<string, Error, ExecuteOrder>({
       mutationFn: async (data) => {
@@ -40,7 +40,7 @@ export function useExecuteOrder(market: string) {
             queryKey: ['userBalance', userId]
          });
          queryClient.invalidateQueries({
-            queryKey: ['userOpenOrders', market]
+            queryKey: ['userOpenOrders', userId]
          });
       },
       onError: (error) => {
@@ -97,10 +97,10 @@ export function useGetUserBalances(userId: string) {
    });
 }
 
-export function useGetUserOpenOrders(userId: string, market?: string) {
+export function useGetUserOpenOrders(userId: string) {
    return useQuery({
-      queryKey: ['userOpenOrders', userId, market ?? 'all'],
-      queryFn: () => fetchUserOpenOrders(userId, market),
+      queryKey: ['userOpenOrders', userId],
+      queryFn: () => fetchUserOpenOrders(userId),
       retry: 2,
       refetchOnWindowFocus: true,
       staleTime: 30000
@@ -205,10 +205,8 @@ export async function fetchUserBalance(userId: string) {
    return data;
 }
 
-export async function fetchUserOpenOrders(userId: string, market?: string) {
-   const url = market
-      ? `${API_URL}/order/open?userId=${userId}&symbol=${market}`
-      : `${API_URL}/order/open?userId=${userId}`;
+export async function fetchUserOpenOrders(userId: string) {
+   const url = `${API_URL}/order/open?userId=${userId}`;
 
    const response = await fetch(url);
    if (!response.ok) {

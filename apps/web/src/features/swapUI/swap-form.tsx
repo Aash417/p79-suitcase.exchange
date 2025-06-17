@@ -25,7 +25,7 @@ export function SwapForm() {
    const [quantity, setQuantity] = useState('');
    const [quantityFormatted, setQuantityFormatted] = useState('');
    const [totalPrice, setTotalPrice] = useState('');
-   const { mutate } = useExecuteOrder(market);
+   const { mutate } = useExecuteOrder();
    const { data: balance, isLoading } = useGetUserBalances(
       session?.user.id ?? '0'
    );

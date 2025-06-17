@@ -270,7 +270,7 @@ export function MarketsTrades() {
                   </div>
 
                   {/* Bottom inner child: 90% of viewport height */}
-                  <div className="h-[90vh] rounded-sm flex flex-row gap-2 w-full">
+                  <div className="h-[88vh] rounded-sm flex flex-row gap-2 w-full">
                      {/* First child: 2/3 of viewport width */}
                      <div className="flex items-center justify-center w-2/3 h-full rounded-sm bg-base-background-l1">
                         <KlineChart />

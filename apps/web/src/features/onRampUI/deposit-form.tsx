@@ -138,7 +138,7 @@ export function DepositForm() {
          </Select>
 
          <div>
-            <Label className="text-gray-400 text-md">Quantity</Label>
+            <Label className="text-gray-400 text-xs">Quantity</Label>
             <div className="relative">
                <Input
                   type="text"

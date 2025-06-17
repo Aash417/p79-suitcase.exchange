@@ -15,3 +15,7 @@ export interface Order {
    side: OrderSide;
    userId: string;
 }
+
+export interface OrderWithMarket extends Order {
+   market: string;
+}

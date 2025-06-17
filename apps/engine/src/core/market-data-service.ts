@@ -3,7 +3,7 @@ import type {
    OnRamp,
    OrderSide
 } from '@repo/shared-types/messages/api-engine';
-import type { Order, UserBalance } from '../utils/types';
+import type { OrderWithMarket, UserBalance } from '../utils/types';
 import { OrderBookService } from './orderbook-service';
 import { RedisService } from './redis-service';
 
@@ -57,14 +57,15 @@ export class MarketDataService {
       });
    }
 
-   sendOpenOrders(clientId: string, orders: Order[]) {
+   sendOpenOrders(clientId: string, orders: OrderWithMarket[]) {
       RedisService.getInstance().sendToClient(clientId, {
          type: 'OPEN_ORDERS',
          payload: orders.map((o) => ({
             id: o.orderId,
             price: (o.price / 100).toFixed(2),
             quantity: o.quantity.toFixed(2),
-            side: o.side
+            side: o.side,
+            market: o.market
          }))
       });
    }
