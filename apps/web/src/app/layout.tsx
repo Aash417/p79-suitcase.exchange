@@ -1,3 +1,4 @@
+import { MaintenanceModal } from '@/components/maintenance-modal';
 import { QueryProvider } from '@/components/query-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -30,6 +31,7 @@ export default function RootLayout({
          <body className={`${geistSans.variable} ${geistMono.variable}`}>
             <QueryProvider>
                {children}
+               <MaintenanceModal />
                <ReactQueryDevtools initialIsOpen={false} />
             </QueryProvider>
             <Toaster position="top-center" />

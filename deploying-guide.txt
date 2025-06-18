@@ -1,0 +1,57 @@
+1. SSH into Your EC2 Instance
+
+2. Install Essential Dependencies
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y docker.io docker-compose git
+sudo usermod -aG docker $USER  # Add your user to docker group
+newgrp docker  # Refresh group permissions
+
+
+3. Clone Your Project
+git clone https://github.com/Aash417/p79-suitcase.exchange.git
+cd p79-suitcase.exchange
+
+4. Build and Run with Docker Compose
+docker-compose up -d --build
+
+5. Verify Containers Are Running
+docker ps -a  # Should show 4 containers (api, engine, websocket, redis)
+docker logs <container_name>  # Check logs for errors
+
+
+6. Configure Nginx (For HTTPS + WebSocket)
+
+Install Nginx and Certbot:
+sudo apt install -y nginx certbot python3-certbot-nginx
+
+
+Configure /etc/nginx/sites-available/:
+with your config
+
+check you config:
+sudo nginx -t
+
+
+7 .Get SSL Certificate
+Create Missing SSL Files:
+sudo mkdir -p /etc/letsencrypt/
+sudo curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf -o /etc/letsencrypt/options-ssl-nginx.conf
+sudo curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem -o /etc/letsencrypt/ssl-dhparams.pem
+
+
+Now run Certbot:
+sudo certbot --nginx -d your-domain.com
+
+Check if it worked:
+sudo nginx -t  # Should show "syntax is OK"
+sudo systemctl status nginx
+
+
+Restart Nginx:
+sudo systemctl restart nginx
+
+8. Test Your Endpoints
+
+    API: https://your-domain.com/api/health
+
+    WebSocket: wss://your-domain.com/ws

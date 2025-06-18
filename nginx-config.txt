@@ -1,0 +1,41 @@
+# HTTP → HTTPS redirect (Certbot-managed)
+server {
+    listen 80;
+    server_name suitcase.server.aashishk.works;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS configuration (primary server block)
+server {
+    listen 443 ssl;
+    server_name suitcase.server.aashishk.works;
+
+    # SSL certificates
+    ssl_certificate /etc/letsencrypt/live/suitcase.server.aashishk.works/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/suitcase.server.aashishk.works/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # API Proxy
+    location /api {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # WebSocket Proxy
+    location /ws {
+        proxy_pass http://localhost:3003;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # Block all other requests
+    location / {
+        return 404;
+    }
+}
